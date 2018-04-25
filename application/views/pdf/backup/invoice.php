@@ -1,0 +1,161 @@
+<!-- счет на оплату -->
+<?php
+defined('BASEPATH') OR exit('No direct script access allowed');
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style type="text/css">
+
+        * {
+            font-family: Times, "Times New Roman"; /*Calibri, Tahoma, Sans;*/
+        }
+
+        .date{
+            width: 100%;
+            text-align: center;
+            border-collapse: collapse;
+            border: 0px;
+        }
+        .date td{
+            border: 0px;
+        }
+
+        .date .inline{
+            border: 0px;
+            border-bottom: solid 1px black;
+            text-align: left;
+            font-size: 21px;
+            font-weight: bold;
+        }
+        .table_border{
+            width: 100%;
+            border-collapse: collapse;
+            text-indent: 8px;
+            margin: 0px;
+            text-align: center;
+        }
+        .table_border td{
+            border: solid 1px black;
+        }
+        .details td{
+            padding: 5px 0px;
+        }
+        table td{
+            font-size: 12px;
+            font-family: Times, "Times New Roman"; /*Calibri, Tahoma, Sans;*/
+        }
+        .down{
+            vertical-align: bottom;
+        }
+        .bold{
+            font-weight: bold;
+            text-align: left;
+        }
+        .right{
+            text-align: right;
+        }
+        .left{
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+<htmlpagefooter name="myFooter" style="display:none">
+    <div align="center" style="padding: 20px;">Страница {PAGENO}</div>
+</htmlpagefooter>
+
+<sethtmlpagefooter name="myFooter" />
+<table class="date">
+    <tr>
+        <td width="653" class="inline">Счет на оплату № <?php echo $InvoiceInfo['InvoiceIdentificator']; ?> от <?php echo $InvoiceInfo['CreatingDateTime']; ?></td>
+        <td width="393" class="barcode"><!--barcode--></td>
+    </tr>
+</table>
+<table class="details" style="width: 100%; margin-top: 10px;">
+    <tr>
+        <td width="20%" class="down">Поставщик</td>
+        <td width="50%"><b>
+                <?php if(isset($_GET['bank'])): ?>
+                    ОсОО «Юниверсал Бизнес Репорт»,Адрес: г.Бишкек ул.Д.Асановой д.2, кв.12, ОКПО:28980218, ИНН: 01212201410184, ГНИ: Первомайская  (004), БАНК: ОАО «Бакай Банк», БИК: 124001, Р/С: 1242000200015453
+                <?php else: ?>
+                    ОсОО «Юниверсал Бизнес Репорт»
+                <?php endif; ?>
+            </b></td>
+    </tr>
+    <tr>
+        <td class="down">Покупатель</td>
+        <td><b>ИНН <?php echo $InvoiceInfo['INN']; ?></b></td>
+    </tr>
+    <tr>
+        <td>Комментарий </td>
+        <td><b><i>Оплата за выдачу токенов и/или ЭЦП</i></b></td>
+    </tr>
+</table>
+<table class="table_border">
+    <tr>
+        <td class="bold" width="5%">№ п/п</td>
+        <td class="bold" width="25%">Наименование</td>
+        <td class="bold" width="10%">Количество</td>
+        <td class="bold" width="15%">Цена</td>
+        <td class="bold" width="15%">Сумма</td>
+    </tr>
+    <?php $all = 0; ?>
+    <?php foreach ($Invoice as $key => $value) : ?>
+        <tr>
+            <td height="18"><?php echo $key + 1; ?></td>
+            <td><?php echo $value['Name']; ?></td>
+            <td><?php echo $value['Count']; ?></td>
+            <td><?php echo number_format($value['Price'], 2, '.', ' '); ?></td>
+            <td><?php echo number_format($value['Sum'], 2, '.', ' '); $all += $value['Sum']; ?></td>
+        </tr>
+    <?php endforeach; ?>
+</table>
+
+<table style="width: 100%; margin-top: 5px;">
+    <tr>
+        <td width="50%" style="font-size: 9px;">* Действителен в течении 7 банковских дней!</td>
+        <td width="14%" class="right"><b>Итого:</b></td>
+        <td width="16%" class="right"><b><?php echo number_format($all, 2, '.', ' '); ?></b></td>
+    </tr>
+    <?php $SumWithout = $all / 1.14; ?>
+    <?php /*
+					<tr>
+						<td></td>
+						<td class="right"><b>в том числе НДС:</b></td>
+						<td class="right"><b><?php echo number_format($SumWithout * 0.12, 2, '.', ' '); ?></b></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="right"><b>в том числе НСП:</b></td>
+						<td class="right"><b><?php echo number_format($SumWithout * 0.02, 2, '.', ' '); ?></b></td>
+					</tr> */ ?>
+</table>
+
+<table class="details" style="margin-top: 5px;">
+    <tr>
+        <td width="30px"></td>
+        <td class="left">Всего наименований <?php echo count($Invoice); ?>, на сумму <?php echo number_format($all, 2, '.', ''); ?> сом</td>
+    </tr>
+    <tr>
+        <td></td>
+        <td class="left"><b><?php echo static::mb_ucfirst(\Classes\Num2Str::num2str($all), 'UTF-8'); ?></b></td>
+    </tr>
+</table>
+<div style="position: absolute;; width: 700px;">
+    <table class="details" style="margin-top: 5px;">
+        <tr>
+            <td width="30px"></td>
+            <td class="bold" style="padding-bottom: 25px">Оператор </td>
+            <td width="180" height="80" style="padding: 5px"><?php /* <img src="resources/img/invoice/signature.png"  width="130" height="60" alt=""> */ ?></td>
+            <td style="padding-bottom: 25px">М.П.</td>
+        </tr>
+    </table>
+</div>
+<div style="position: relative; width: 700px;">
+    <?php /* <img style="padding: 45px 0px 0px 240px;" src="resources/img/invoice/stamp.png"  width="130" height="130" alt=""> */ ?>
+
+</div>
+</body>
+</html>
