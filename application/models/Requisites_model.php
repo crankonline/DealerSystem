@@ -8,7 +8,7 @@ class Requisites_model extends CI_Model {
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
     private function requisites_client() {
-        $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl'; //debug
+        $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //debug
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -23,7 +23,7 @@ class Requisites_model extends CI_Model {
     }
 
     private function reference_client() {
-        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
+        $wsdl = 'http://api-dev.dostek.ev/RequisitesMeta.php?wsdl';
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
