@@ -288,11 +288,12 @@ class Requisites_model extends CI_Model {
 
     private function soap_1c_client() {
         ini_set("soap.wsdl_cache_enabled", "0");
+        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl';
         //$wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/ENOT/?wsdl';
-        $wsdl = 'http://1c.dostek.kg:8080/UBR/ws/ENOT/?wsdl';
+        //$wsdl = 'http://1c.dostek.kg:8080/UBR/ws/ENOT/?wsdl';
         $user = array(
-            'login' => 'enot',
-            'password' => 'dhfkueleif948594kgerg345kgg0e4j34',
+            'login' => 'sochi',
+            'password' => 'ufvguygbvjvbugjsb6546fg964b96',
             "trace" => 1, "exception" => 0
         );
         return new SoapClient($wsdl, $user);
@@ -419,7 +420,7 @@ class Requisites_model extends CI_Model {
 
             $parameters->data = json_encode($json_register, JSON_UNESCAPED_UNICODE);
             $client = $this->soap_1c_client();
-            $result = $client->registration($parameters);
+            $client->registration($parameters);
         } catch (Exception $ex) {
             throw new Exception('Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage());
         }
