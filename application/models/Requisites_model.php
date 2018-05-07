@@ -5,10 +5,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Requisites_model extends CI_Model {
 
     private $ApiRequestSubscriberToken_SF = '337663544b22bbb86a236a090a36d82eeed942121142b6252e31329d1f61c6ad'; //SF
-    private $ApiRequestSubscriberToken_ENOT = 'a9166fa0966ecbcf1b4ad7193daa4b760580255fbf95040718c51e15876ee166'; //ENOT
+    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
     private function requisites_client() {
-        $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //debug
+        $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl'; //debug
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -23,7 +23,7 @@ class Requisites_model extends CI_Model {
     }
 
     private function reference_client() {
-        $wsdl = 'http://api-dev.dostek.ev/RequisitesMeta.php?wsdl';
+        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -31,19 +31,19 @@ class Requisites_model extends CI_Model {
         return new SoapClient($wsdl, $user);
     }
 
-    private function pki_ubr_client() {
-        $wsdl = 'http://pkiservice.ubr.kg/pkiservice.php?wsdl';
-        $options = [
-            'soap_version' => SOAP_1_1,
-            'exceptions' => true,
-            'trace' => 1,
-            'cache_wsdl' => WSDL_CACHE_NONE,
-            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 10
-        ];
-
-        return new SoapClient($wsdl, $options);
-    }
+//    private function pki_ubr_client() {
+//        $wsdl = 'http://pkiservice.ubr.kg/pkiservice.php?wsdl';
+//        $options = [
+//            'soap_version' => SOAP_1_1,
+//            'exceptions' => true,
+//            'trace' => 1,
+//            'cache_wsdl' => WSDL_CACHE_NONE,
+//            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+//            'connection_timeout' => 10
+//        ];
+//
+//        return new SoapClient($wsdl, $options);
+//    }
 
     private function pki_dtg_client() {
         $wsdl = 'http://pkiservice.dostek.kg/pkiservice.php?wsdl';
@@ -197,33 +197,33 @@ class Requisites_model extends CI_Model {
     }
 
     public function get_reference_by_id($reference) {
-        $ApiRequestSubscriberToken_SF = $this->ApiRequestSubscriberToken_SF;
+        $ApiRequestSubscriberToken = $this->ApiRequestSubscriberToken_DTG;
         $client = $this->reference_client();
-        ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonLegalFormById') ? $result = $client->getCommonLegalFormById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCivilLegalStatusById') ? $result = $client->getCommonCivilLegalStatusById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCapitalFormById') ? $result = $client->getCommonCapitalFormById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getFullCommonSettlementById') ? $result = $client->getFullCommonSettlementById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getSfRegionById') ? $result = $client->getSfRegionById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getSfTariffById') ? $result = $client->getSfTariffById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getStiRegionById') ? $result = $client->getStiRegionById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonLegalFormById') ? $result = $client->getCommonLegalFormById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonCivilLegalStatusById') ? $result = $client->getCommonCivilLegalStatusById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonCapitalFormById') ? $result = $client->getCommonCapitalFormById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getFullCommonSettlementById') ? $result = $client->getFullCommonSettlementById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getSfRegionById') ? $result = $client->getSfRegionById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getSfTariffById') ? $result = $client->getSfTariffById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getStiRegionById') ? $result = $client->getStiRegionById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
 
-        ($reference['reference'] == 'getCommonOwnershipForms') ? $result = $client->getCommonOwnershipForms($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonActivityByGked') ? $result = $client->getCommonActivityByGked($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonLegalForms') ? $result = $client->getCommonLegalForms($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCivilLegalStatuses') ? $result = $client->getCommonCivilLegalStatuses($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCapitalForms') ? $result = $client->getCommonCapitalForms($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonManagementForms') ? $result = $client->getCommonManagementForms($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonBankById') ? $result = $client->getCommonBankById($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonRegions') ? $result = $client->getCommonRegions($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonDistricts') ? $result = $client->getCommonDistricts($ApiRequestSubscriberToken_SF, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonSettlements') ? $result = $client->getCommonSettlements($ApiRequestSubscriberToken_SF, $reference['id_region'], $reference['id_district']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getSfTariffs') ? $result = $client->getSfTariffs($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonChiefBasises') ? $result = $client->getCommonChiefBasises($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getSfRegions') ? $result = $client->getSfRegions($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getSTIRegions') ? $result = $client->getSTIRegions($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonRepresentativePositions') ? $result = $client->getCommonRepresentativePositions($ApiRequestSubscriberToken_SF) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonOwnershipForms') ? $result = $client->getCommonOwnershipForms($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonActivityByGked') ? $result = $client->getCommonActivityByGked($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonLegalForms') ? $result = $client->getCommonLegalForms($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonCivilLegalStatuses') ? $result = $client->getCommonCivilLegalStatuses($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonCapitalForms') ? $result = $client->getCommonCapitalForms($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonManagementForms') ? $result = $client->getCommonManagementForms($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonBankById') ? $result = $client->getCommonBankById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonRegions') ? $result = $client->getCommonRegions($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonDistricts') ? $result = $client->getCommonDistricts($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonSettlements') ? $result = $client->getCommonSettlements($ApiRequestSubscriberToken, $reference['id_region'], $reference['id_district']) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getSfTariffs') ? $result = $client->getSfTariffs($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonChiefBasises') ? $result = $client->getCommonChiefBasises($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getSfRegions') ? $result = $client->getSfRegions($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getSTIRegions') ? $result = $client->getSTIRegions($ApiRequestSubscriberToken) : NULL; //?? php 7.0
+        ($reference['reference'] == 'getCommonRepresentativePositions') ? $result = $client->getCommonRepresentativePositions($ApiRequestSubscriberToken) : NULL; //?? php 7.0
         if (empty($result)) {
             throw new Exception("Ничего не удалось найти");
         }
@@ -232,12 +232,12 @@ class Requisites_model extends CI_Model {
 
     public function get_requisites_by_inn($inn) {
         try { // если нет CФ, лезть в ЕНОТ
-            $token_ENOT = $this->ApiRequestSubscriberToken_ENOT;
+            $token_DTG = $this->ApiRequestSubscriberToken_DTG;
             $token_SF = $this->ApiRequestSubscriberToken_SF;
             $client = $this->requisites_client();
-            $result = $client->getByInn($token_SF, $inn);
+            $result = $client->getByInn($token_DTG, $inn);
             if (is_null($result)) {
-                $result = $client->getByInn($token_ENOT, $inn);
+                $result = $client->getByInn($token_SF, $inn);
             }
             return $result;
         } catch (Exception $ex) {
@@ -246,11 +246,10 @@ class Requisites_model extends CI_Model {
     }
 
     public function requisites_saver($json) {
-        //log_message('debug', json_encode($json, JSON_UNESCAPED_UNICODE));
-        // throw new Exception('Проверка');
-        $token_ENOT = $this->ApiRequestSubscriberToken_ENOT;
+        $token_DTG = $this->ApiRequestSubscriberToken_DTG;
         $token_SF = $this->ApiRequestSubscriberToken_SF;
         $client = $this->requisites_client();
+        //var_dump(json_encode($json,JSON_UNESCAPED_UNICODE));
         try {
             $result_sf = $client->getByInn($token_SF, $json->common->inn);
             if (is_null($result_sf)) { //sf
@@ -264,19 +263,18 @@ class Requisites_model extends CI_Model {
             throw new Exception('Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage());
         }
         try {
-            $result_enot = $client->getByInn($token_ENOT, $json->common->inn);
-            if (is_null($result_enot)) { //enot
-                $uid_ENOT = $client->register($token_ENOT, $json);
-                $result_enot = $client->getByUid($token_ENOT, $uid_ENOT);
+            $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
+            if (is_null($result_dtg)) { //enot
+                $uid_ENOT = $client->register($token_DTG, $json);
+                $result_dtg = $client->getByUid($token_DTG, $uid_ENOT);
             } else {
-                $client->update($token_ENOT, $result_enot->uid, $json);
-                $result_enot = $client->getByUid($token_ENOT, $result_enot->uid);
+                $client->update($token_DTG, $result_dtg->uid, $json);
+                $result_dtg = $client->getByUid($token_DTG, $result_dtg->uid);
             }
         } catch (Exception $ex) {
-            throw new Exception('Ошибка при сохранении в службу реквизитов UBR -> ' . $ex->getMessage());
+            throw new Exception('Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage());
         }
-
-        return $result_enot;
+        return $result_dtg;
     }
 
     /*
@@ -290,8 +288,8 @@ class Requisites_model extends CI_Model {
 
     private function soap_1c_client() {
         ini_set("soap.wsdl_cache_enabled", "0");
-        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/ENOT/?wsdl';
-        //$wsdl = 'http://1c.dostek.kg:8080/UBR/ws/ENOT/?wsdl';
+        //$wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/ENOT/?wsdl';
+        $wsdl = 'http://1c.dostek.kg:8080/UBR/ws/ENOT/?wsdl';
         $user = array(
             'login' => 'enot',
             'password' => 'dhfkueleif948594kgerg345kgg0e4j34',
@@ -403,15 +401,15 @@ class Requisites_model extends CI_Model {
 
     public function get_certificates($serachWord) {
         try {
-            $client_ubr = $this->pki_ubr_client();
-            $result = $client_ubr->search($serachWord);
-            if (is_null($result)) {
-                $client_dtg = $this->pki_dtg_client();
+            $client_dtg = $this->pki_dtg_client();
+//            $result = $client_ubr->search($serachWord);
+//            if (is_null($result)) {
+                //$client_dtg = $this->pki_dtg_client();
                 $result = $client_dtg->search($serachWord);
-            }
+            //}
             return $result;
         } catch (Exception $ex) {
-            throw new Exception('Запрос в службу PKI UBR -> ' . $ex->getMessage());
+            throw new Exception('Запрос в службу PKI -> ' . $ex->getMessage());
         }
     }
 

@@ -18,6 +18,7 @@ class Authenticate extends CI_Controller {
     public function backdor() {
         $allovedIp = array(
             "172.16.3.5",
+            "172.16.3.6",
             "172.16.3.11",
             "172.16.3.9",
             "172.16.2.17"
