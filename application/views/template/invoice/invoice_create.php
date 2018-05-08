@@ -98,7 +98,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 ng-model="dataCount.selectedOption" ng-change="changeInventory()">
                                         </select></td>
                                     <td><input type="text" class="form-control" readonly="true" ng-model="inventoryPriceAllValue"></td>
-                                    <td><button type="button" class="btn btn-warning" ng-click="addNewChoice()" ng-hide="inventoryPriceAllValue === '0' || dataInventory.selectedOption.id_inventory === '0'"><span class="glyphicon glyphicon-plus"></span> Добавить</button></td>
+                                    <td><button type="button" class="btn btn-warning" ng-click="addNewChoice()" ng-hide="dataInventory.id_inventory == 0"><span class="glyphicon glyphicon-plus"></span> Добавить</button></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -119,15 +119,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     var app = angular.module('InvoiceConstruct', []);
     app.controller('IvoiceController', ['$scope','$http','$window', function ($scope, $http, $window) {
         window.scope = $scope;
-        /*$scope.dataInventory = {
-            availableOptions: [
-                {value: '0', name: 'Выберите значение'},
-                {value: '1', name: 'Электронная подпись'},
-                {value: '2', name: 'Рутокен ЭЦП'},
-                {value: '3', name: 'Облочное хранилище ЭП'}
-            ],
-            selectedOption: {value: '0', name: 'Выберите значение'} //This sets the default value of the select in the ui
-        }; //гризить из справочника*/
 
         $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_price_reference', {}).
                             then(function (response) {
@@ -166,10 +157,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         $scope.calculate = function () {
             $scope.PriceAll = '0.00';
             angular.forEach($scope.inventory_row, function (value) {
-                //$scope.PriceAll = parseInt($scope.PriceAll) + parseInt(value.inventoryPriceAll);
                 $scope.PriceAll = parseFloat($scope.PriceAll) + parseFloat(value.inventoryPriceAll);
-
             });
+            $scope.inventoryPriceValue = '0.00';//значение по умолчанию
+            $scope.inventoryPriceAllValue = '0.00';//значение по умолчанию
         };
 
         $scope.inventory_row = [];
@@ -181,25 +172,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 inventoryCount: $scope.dataCount.selectedOption['value'],
                 inventoryPriceAll: $scope.inventoryPriceAllValue
             });
-            //$scope.dataInventory.availableOptions.splice($scope.dataInventory.availableOptions.findIndex(x => x.name === $scope.dataInventory.selectedOption.name), 1);//удаляем из массива выбранное
-            //$scope.dataInventory.splice($scope.dataInventory);
-            //$scope.InventoryName.splice($scope.InventoryName.findIndex(x=>x.id_inventory == $scope.dataInventory.id_inventory));
-            //console.log ($scope.InventoryName);
-
+  
+            $scope.InventoryName.splice($scope.InventoryName.findIndex(x => x.id_inventory == $scope.dataInventory.id_inventory),1); //удаляем из массива выбранное
             $scope.calculate();
-            //$scope.dataInventory.selectedOption = $scope.dataInventory.availableOptions[0];//значение по умолчанию
             $scope.dataCount.selectedOption = $scope.dataCount.availableOptions[0];//значение по умолчанию
 
             //$scope.changeInventory($scope.dataInventory.selectedOption.value);
             $scope.dataInventory = $scope.InventoryName[$scope.InventoryName.findIndex(x => x.id_inventory == 0)];
         };
         $scope.removeChoice = function (z) {
+            $scope.InventoryName.splice($scope.inventory_row[z].inventoryId, 0, {id_inventory: $scope.inventory_row[z].inventoryId, inventory_name: $scope.inventory_row[z].inventoryText, price: $scope.inventory_row[z].inventoryPrice});//добавляем в массив удаленный улемент с соблючдением порядкового номера (наркомания просто)            
             $scope.inventory_row.splice(z, 1);
             $scope.calculate();
         };
     }]);
-
-//    var app2 = angular.module('InnNumber', []);
 
     app.directive('numbersOnly', function () {
         return {
