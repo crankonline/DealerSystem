@@ -9,11 +9,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="shortcut icon" href="<?php echo base_url(); ?>img/favicon.ico">
-
-        <title>TOKEN</title>
-
-
+        <link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url(); ?>resources/img/favicon.ico">
+        <title>Авторизация</title>
         <!-- Bootstrap core CSS -->
         <link href="<?php echo base_url(); ?>resources/css/bootstrap.min.css" rel="stylesheet">
 
@@ -43,8 +40,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             }
             ?>
             <h2 class="form-signin-heading" align="center">Авторизация</h2>
-            <input type="text" name ="username" class="form-control" placeholder="Login" required="" autofocus="">
-            <input type="password" name="password" class="form-control" placeholder="Password" required="">
+            <input type="text" name ="username" class="form-control" placeholder="Логин" required="" autofocus="">
+            <input type="password" name="password" class="form-control" placeholder="Пароль" required="">
             <label class="checkbox">
                 <input type="checkbox" value="remember-me"> Запомнить меня
             </label>

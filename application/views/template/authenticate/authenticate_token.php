@@ -8,8 +8,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="">
         <meta name="author" content="">
-        <link rel="shortcut icon" href="<?php echo base_url(); ?>img/favicon.ico">
-        <title>TOKEN</title>
+        <link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url(); ?>resources/img/favicon.ico">
+        <title>Авторизация</title>
         <script type="text/javascript" src="<?php echo base_url(); ?>resources/js/Token_Rutoken.js"></script>
         <script type="text/javascript" src="<?php echo base_url(); ?>resources/js/Token_PluginManager.js"></script>
         <script type="text/javascript" src="<?php echo base_url(); ?>resources/js/jquery.min.js"></script>
@@ -48,7 +48,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             }
             ?>
             <form class="form-signin" role="form" name="authorization" onsubmit="Sign(); return false;"
-                  action="<?php echo base_url(); ?>index.php/authenticate/user_login_process_cert" method = "post">
+                  action="<?php echo base_url(); ?>index.php/authenticate/user_login_process_token" method = "post">
                 <h2 class="form-signin-heading" align="center">Авторизация</h2>
                 <select class="form-control" id="tokenlist" required=""></select>
                 <input type="password" class="form-control" placeholder="ПИН-КОД" required="" maxlength="14" autocomplete="off" id="pincode"  onkeypress="SignOnEnter(event);">
