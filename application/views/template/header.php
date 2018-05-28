@@ -10,7 +10,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="shortcut icon" type="image/x-icon" href="<?php echo base_url(); ?>resources/img/favicon.ico">
-        <title>Диреская DTG</title>
+        <title>Дилерская</title>
         <!-- Bootstrap core CSS -->
         <link href="<?php echo base_url(); ?>resources/css/bootstrap.min.css" rel="stylesheet">
         <!-- Bootstrap theme -->

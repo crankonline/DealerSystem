@@ -110,10 +110,10 @@ class Authenticate extends CI_Controller {
 
     public function auth_login() {
         $allovedIp = array(
-            "172.16.3.5", //Я
-            "172.16.3.6", //Джон
+            "172.16.3.5",  //Я
+            "172.16.3.6",  //Джон
             "172.16.3.11", //Вика
-            "172.16.3.10"//Женя
+            "172.16.3.10"  //Женя
         );
         $ip = $this->input->ip_address();
         if (in_array($ip, $allovedIp)) {
@@ -127,7 +127,7 @@ class Authenticate extends CI_Controller {
     public function logout() {
         // Removing session data
         $sess_array = array(
-            'UserName' => ''
+            'logged_in' => ''
         );
         $this->session->unset_userdata('logged_in', $sess_array);
         $data = array(

@@ -45,7 +45,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <?php endif; ?>
                         <?php if ($invoice_data[0]->pay_date_time == NULL): //проверка на существование оплат, если оплаты нет можно удалять (взаимоисключаемое условие с пред`идущим)?> 
                             <button onclick="window.location.href = '<?php echo base_url() . "index.php/invoice/invoice_delete/" . $invoice_data[0]->invoice_serial_number ?>'" type="button" class="btn btn-danger"><span
-                                    class = "glyphicon glyphicon-trash"></span> Удалить счет на опалту
+                                    class = "glyphicon glyphicon-trash"></span> Удалить счет на оплату
                             </button>
                         <?php endif; ?>
                     </div>
@@ -199,7 +199,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <input name="pay_sum" 
                                                type="text" 
                                                class="form-control" 
-                                               placeholder="<?php echo 'Сумма к оплате - ' . $invoice_data[0]->total_sum; ?>" 
+                                               placeholder="<?php echo 'Сумма к оплате - ' . ($invoice_data[0]->total_sum - $invoice_data[0]->pay_sum); ?>" 
                                                required="" maxlength="9" 
                                                ng-model="val2" 
                                                numbers-only>
