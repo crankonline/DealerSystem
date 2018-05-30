@@ -545,7 +545,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <span class="sr-only">{{progressphy}}%</span>
             </div>
         </div>
-        <div align="center"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Создать заявку</button></div>
+        <div align="center" ng-show="toggle"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Создать заявку</button></div>
     </form>
 </div>
 
@@ -572,7 +572,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $scope.passport_side_2 = [];
                     $scope.passport_copy = [];
                     $scope.json_original = <?php echo (isset($json_original) ? "'" . $json_original . "'" : "''"); ?>;
-                    //console.log('количесвтво эцп:' + $scope.count);
+                    $scope.toggle=true;
                     $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonCapitalForms', id: ''}).
                             then(function (response) {
                                 $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
@@ -829,20 +829,23 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 });
                     };
                     $scope.Upload = function () {
-                    console.log($scope.Data.common.capitalForm);
+                    $scope.errorMsg = null;
+                    $scope.resultupload = null;
+                    $scope.toggle=false;
                         if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
                             alert('Рег. номер Министерства Юстиции не соответствует маске XXXXXX-YYYY-ZZZ');
+                            $scope.toggle=true;
                             return;
                         }
                         if (!$scope.Data.common.mainActivity.gked || !/^\d{2,2}\.\d{2,2}\.\d+$/.test($scope.Data.common.mainActivity.gked)) {
                             alert('Номер ГКЕД не соответствует маске XX.YY.ZZ');
+                            $scope.toggle=true;
                             return;
                         }
                         if ($scope.Data.common.civilLegalStatus === 'Физическое лицо'){
                             $scope.Data.common.capitalForm = null ;
                             $scope.Data.common.managementForm = null ;
                             $scope.Data.common.rnmj = null;
-                            console.log($scope.Data.common.capitalForm);
                         }
                         
                         var id_requisites = null;
@@ -880,6 +883,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         if (responsejur.status > 0) {
                                             $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + responsejur.status + '. <br> Сообщение: ' + responsejur.data);
                                             $scope.ErrorMessage = $scope.errorMsg;
+                                            $scope.toggle=true;
                                         }
                                     }, function (evt) {
                                         $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
@@ -902,6 +906,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             {
                                                 $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + responsephy.status + '. <br> Сообщение: ' + responsephy.data);
                                                 $scope.ErrorMessage = $scope.errorMsg;
+                                                $scope.toggle=true;
                                             }
                                         }, function (evt) {
                                             $scope.progressphy = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
@@ -911,6 +916,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 }, function (response) {
                                     $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + response.status + '. <br> Сообщение: ' + response.data);
                                     $scope.ErrorMessage = $scope.errorMsg;
+                                    $scope.toggle=true;
                                 });
                         setInterval(function () {
                             if (check_jur === true && $scope.count === count_of_count) {
@@ -918,6 +924,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             }
                         }, 5000);
                     };
+                    
                     $scope.range = function (min, max, step) {
                         step = step || 1;
                         var input = [];
