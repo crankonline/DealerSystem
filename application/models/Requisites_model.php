@@ -8,7 +8,10 @@ class Requisites_model extends CI_Model {
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
     private function requisites_client() {
-        $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //debug
+        (ENVIRONMENT == 'production') ?
+                        $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl' : //prod
+                        $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //dev
+        log_message('error', "ENV: ".ENVIRONMENT);
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -23,7 +26,9 @@ class Requisites_model extends CI_Model {
     }
 
     private function reference_client() {
-        $wsdl = 'http://api-dev.dostek.ev/RequisitesMeta.php?wsdl';
+        (ENVIRONMENT == 'production') ?
+                        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl' : //prod
+                        $wsdl = 'http://api-dev.dostek.ev/RequisitesMeta.php?wsdl'; //dev
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -288,9 +293,10 @@ class Requisites_model extends CI_Model {
 
     private function soap_1c_client() {
         ini_set("soap.wsdl_cache_enabled", "0");
-        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl';
-        //$wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/ENOT/?wsdl';
-        //$wsdl = 'http://1c.dostek.kg:8080/UBR/ws/ENOT/?wsdl';
+        (ENVIRONMENT == 'production') ?
+                        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl' : //prod
+                        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl'; //dev
+
         $user = array(
             'login' => 'sochi',
             'password' => 'ufvguygbvjvbugjsb6546fg964b96',
@@ -405,8 +411,8 @@ class Requisites_model extends CI_Model {
             $client_dtg = $this->pki_dtg_client();
 //            $result = $client_ubr->search($serachWord);
 //            if (is_null($result)) {
-                //$client_dtg = $this->pki_dtg_client();
-                $result = $client_dtg->search($serachWord);
+            //$client_dtg = $this->pki_dtg_client();
+            $result = $client_dtg->search($serachWord);
             //}
             return $result;
         } catch (Exception $ex) {
