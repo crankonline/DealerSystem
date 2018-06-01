@@ -527,13 +527,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
             <?php //endfor; ?>
         </div>
-        <div class="alert alert-danger" ng-hide="!errorMsg">
-<!--            <strong>Oh snap! </strong> {{errorMsg}}-->
-            <p ng-bind-html ="ErrorMessage"></p>
-        </div>
         <div class="alert alert-success" ng-hide="!resultupload">
 <!--            <strong>Well done! </strong> {{resultupload}}-->
             <p ng-bind-html ="ResUpload"></p>
+        </div>
+        <div class="alert alert-danger" ng-hide="!errorMsg">
+<!--            <strong>Oh snap! </strong> {{errorMsg}}-->
+            <p ng-bind-html ="ErrorMessage"></p>
         </div>
         <div class="progress progress-striped active" ng-hide="!progressjur || progressjur === 100" >
             <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{progressjur}}%">

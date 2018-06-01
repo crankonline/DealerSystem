@@ -96,8 +96,10 @@ class Authenticate extends CI_Controller {
     }
 
     public function index() {
-        //$this->output->cache(30);
-        $this->load->view('template/authenticate/main');
+        $this->output->cache(30);
+        empty($this->session->userdata['logged_in']) ?
+                        $this->load->view('template/authenticate/main') :
+                        redirect(base_url() . 'index.php/dash/');
     }
 
     public function auth_token() {
@@ -110,8 +112,8 @@ class Authenticate extends CI_Controller {
 
     public function auth_login() {
         $allovedIp = array(
-            "172.16.3.5",  //Я
-            "172.16.3.6",  //Джон
+            "172.16.3.5", //Я
+            "172.16.3.6", //Джон
             "172.16.3.11", //Вика
             "172.16.3.10"  //Женя
         );
