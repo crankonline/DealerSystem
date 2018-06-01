@@ -96,7 +96,6 @@ class Authenticate extends CI_Controller {
     }
 
     public function index() {
-        $this->output->cache(30);
         empty($this->session->userdata['logged_in']) ?
                         $this->load->view('template/authenticate/main') :
                         redirect(base_url() . 'index.php/dash/');
@@ -122,6 +121,7 @@ class Authenticate extends CI_Controller {
             $this->load->view('template/authenticate/authenticate_login');
         } else {
             $data['error_message'] = "У вас нет доступа к данной функции";
+            log_message('error', "У вас нет доступа к данной функции: " . $this->input->ip_address());
             $this->load->view("template/authenticate/main", $data);
         }
     }
