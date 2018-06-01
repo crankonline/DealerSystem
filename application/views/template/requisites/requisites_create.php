@@ -842,7 +842,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             $scope.toggle=true;
                             return;
                         }
-                        if ($scope.Data.common.civilLegalStatus === 'Физическое лицо'){
+                        if ($scope.Data.common.civilLegalStatus.name === 'Физическое лицо'){
                             $scope.Data.common.capitalForm = null ;
                             $scope.Data.common.managementForm = null ;
                             $scope.Data.common.rnmj = null;

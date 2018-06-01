@@ -128,10 +128,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><?php echo $requisites_data->json->common->civilLegalStatus->name; ?></td>
                         </tr><tr>
                             <td><strong>Форма участия в капитале</strong></td>
-                            <td><?php echo $requisites_data->json->common->capitalForm->name; ?></td>
+                            <td><?php echo (isset($requisites_data->json->common->capitalForm->name))?$requisites_data->json->common->capitalForm->name:"отсутсвует"; ?></td>
                         </tr><tr>
                             <td><strong>Форма управления</strong></td>
-                            <td><?php echo $requisites_data->json->common->managementForm->name; ?></td>
+                            <td><?php echo (isset($requisites_data->json->common->managementForm->name))?$requisites_data->json->common->managementForm->name:"отсутсвует"; ?></td>
                         </tr>
                         <tr>
                             <td><strong>Электронная почта</strong></td>
