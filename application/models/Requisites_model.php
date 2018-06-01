@@ -7,11 +7,11 @@ class Requisites_model extends CI_Model {
     private $ApiRequestSubscriberToken_SF = '337663544b22bbb86a236a090a36d82eeed942121142b6252e31329d1f61c6ad'; //SF
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
-    private function requisites_client() {
+    private function requisites_client() { 
         (ENVIRONMENT == 'production') ?
                         $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl' : //prod
                         $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //dev
-        log_message('error', "ENV: ".ENVIRONMENT);
+        
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
