@@ -665,7 +665,7 @@ class Requisites extends CI_Controller {
                     $accountant = (string)$rep->person->surname . " "
                         . (string)$rep->person->name . " "
                         . (string)$rep->person->middleName;
-                    $accountantpasport = (string)$rep->person->pasport->series . ", "
+                    $accountantpasport = (string)$rep->person->passport->series . ", "
                         . (string)$rep->person->passport->number . ", "
                         . (string)$rep->person->passport->issuingAuthority . ", "
                         . (string)$rep->person->passport->issuingDate;
