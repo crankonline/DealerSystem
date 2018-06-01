@@ -666,9 +666,9 @@ class Requisites extends CI_Controller {
                         . (string)$rep->person->name . " "
                         . (string)$rep->person->middleName;
                     $accountantpasport = (string)$rep->person->pasport->series . ", "
-                        . (string)$rep->person->pasport->number . ", "
-                        . (string)$rep->person->pasport->issuingAuthority . ", "
-                        . (string)$rep->person->pasport->issuingDate;
+                        . (string)$rep->person->passport->number . ", "
+                        . (string)$rep->person->passport->issuingAuthority . ", "
+                        . (string)$rep->person->passport->issuingDate;
                     $accountantphone = $rep->phone;
                 }
             }
@@ -684,8 +684,8 @@ class Requisites extends CI_Controller {
         $json_register->okpo = $json->common->okpo;
         $json_register->urAdres  = $juristicAddressText;
         $json_register->fAdres  = $physicalAddressText;
-        $json_register->bank  = $json->common->bank->name;
-        $json_register->bik  = $json->common->bank->id;
+        is_null($json->common->bank) ? : $json_register->bank  = $json->common->bank->name;
+        is_null($json->common->bank) ? : $json_register->bik  = $json->common->bank->id;
         $json_register->rs   = $json->common->bankAccount;
         $json_register->leader  = $leader;
         $json_register->leaderpasport  = $leaderpasport;
