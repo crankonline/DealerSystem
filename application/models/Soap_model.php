@@ -53,11 +53,9 @@ class Soap_model extends CI_Model {
                 }
                 $i++;
             }
-//                    var_dump($ret_val);
-            error_log("return \$ret_val;");
             return $ret_val;
         } else {
-            error_log("return false;");
+            log_message('error',"soap 1c -> get_invoice_serial_2_soap -> return false;");
             return false;
         }
 
@@ -149,11 +147,9 @@ class Soap_model extends CI_Model {
                 }
                 $i++;
             }
-//                    var_dump($ret_val);
-            error_log("return \$ret_val;");
             return $ret_val;
         } else {
-            error_log("return false;");
+            log_message('error',"soap 1c -> get_invoice_serial_soap -> return false;");
             return false;
         }
 
@@ -321,11 +317,9 @@ AND \"requisites_creating_date_time\" <= '$dateK') OR \"requisites_creating_date
                 }
                 $i++;
             }
-//                    var_dump($ret_val);
-            error_log("return \$ret_val;");
             return $ret_val;
         } else {
-            error_log("return false;");
+            log_message('error',"soap 1c -> get_invoices_by_date -> return false;");
             return false;
         }
 
@@ -400,11 +394,9 @@ AND \"requisites_creating_date_time\" <= '$dateK') OR \"requisites_creating_date
                 }
                 $i++;
             }
-//                    var_dump($ret_val);
-            error_log("return \$ret_val;");
             return $ret_val;
         } else {
-            error_log("return false;");
+            log_message('error', "soap 1c -> get_invoices_by_create_date -> return false;");
             return false;
         }
 
@@ -475,11 +467,9 @@ AND \"requisites_creating_date_time\" <= '$dateK') OR \"requisites_creating_date
                 }
                 $i++;
             }
-//                    var_dump($ret_val);
-            error_log("return \$ret_val;");
             return $ret_val;
         } else {
-            error_log("return false;");
+            log_message('error', "soap 1c -> get_invoices_by_pay_date -> return false;");
             return false;
         }
 
@@ -562,11 +552,9 @@ AND \"requisites_creating_date_time\" <= '$dateK') OR \"requisites_creating_date
                 }
                 $i++;
             }
-//                    var_dump($ret_val);
-            error_log("return \$ret_val;");
             return $ret_val;
         } else {
-            error_log("return false;");
+            log_message('error',"soap 1c -> get_invoices_by_requisites_date -> return false;");
             return false;
         }
 
