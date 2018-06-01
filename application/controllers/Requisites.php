@@ -317,9 +317,9 @@ class Requisites extends CI_Controller {
 
         //fix
         $js_upd_dec->common->mainActivity = $gked->id;
-        $js_upd_dec->common->capitalForm = $js_upd_dec->common->capitalForm->id;
+        is_null($js_upd_dec->common->capitalForm) ? : $js_upd_dec->common->capitalForm = $js_upd_dec->common->capitalForm->id;
         $js_upd_dec->common->legalForm = $js_upd_dec->common->legalForm->id;
-        $js_upd_dec->common->managementForm = $js_upd_dec->common->managementForm->id;
+        is_null($js_upd_dec->common->managementForm) ? : $js_upd_dec->common->managementForm = $js_upd_dec->common->managementForm->id;
         $js_upd_dec->common->civilLegalStatus = $js_upd_dec->common->civilLegalStatus->id;
         $js_upd_dec->common->chiefBasis = $js_upd_dec->common->chiefBasis->id;
         $js_upd_dec->common->juristicAddress->settlement = $js_upd_dec->common->juristicAddress->settlement->id;
