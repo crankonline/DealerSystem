@@ -15,8 +15,9 @@ class Invoice_model extends CI_Model {
     }
 
     private function pay_service_client() {
-        //$wsdl = 'https://pay.ubr.kg/api-soap.php?service=Payment&wsdl'; //prod
-        $wsdl = 'http://pay.ubr.my/api-soap.php?service=Payment&wsdl'; //test
+        (ENVIRONMENT == 'production') ?
+                        $wsdl = 'https://pay.dostek.kg/reg/api-soap.php?service=Payment&wsdl' : //prod
+                        $wsdl = 'http://pay.ubr.my/api-soap.php?service=Payment&wsdl'; //test
         $context = stream_context_create([
             'ssl' => [
                 // set some SSL/TLS specific options

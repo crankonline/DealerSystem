@@ -294,7 +294,7 @@ class Requisites_model extends CI_Model {
     private function soap_1c_client() {
         ini_set("soap.wsdl_cache_enabled", "0");
         (ENVIRONMENT == 'production') ?
-                        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl' : //prod
+                        $wsdl = 'http://1c.dostek.kg:8080/dtb/ws/SOCHI/?wsdl' : //prod
                         $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl'; //dev
 
         $user = array(

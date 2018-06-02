@@ -114,14 +114,19 @@ class Authenticate extends CI_Controller {
             "172.16.3.5", //Я
             "172.16.3.6", //Джон
             "172.16.3.11", //Вика
-            "172.16.3.10"  //Женя
+            "172.16.3.10",  //Женя
+            "11.0.0.6",
+            "11.0.0.10",
+            "11.0.0.11",
+            "11.0.0.12",
+            "11.0.0.13"
         );
         $ip = $this->input->ip_address();
         if (in_array($ip, $allovedIp)) {
             $this->load->view('template/authenticate/authenticate_login');
         } else {
             $data['error_message'] = "У вас нет доступа к данной функции";
-            log_message('error', "У вас нет доступа к данной функции: " . $this->input->ip_address());
+            log_message('error', $data['error_message'].": " . $this->input->ip_address());
             $this->load->view("template/authenticate/main", $data);
         }
     }
