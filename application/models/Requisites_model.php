@@ -240,9 +240,9 @@ class Requisites_model extends CI_Model {
             $token_DTG = $this->ApiRequestSubscriberToken_DTG;
             $token_SF = $this->ApiRequestSubscriberToken_SF;
             $client = $this->requisites_client();
-            $result = $client->getByInn($token_DTG, $inn);
+            $result = $client->getByInn($token_SF, $inn);
             if (is_null($result)) {
-                $result = $client->getByInn($token_SF, $inn);
+                $result = $client->getByInn($token_DTG, $inn);
             }
             return $result;
         } catch (Exception $ex) {
