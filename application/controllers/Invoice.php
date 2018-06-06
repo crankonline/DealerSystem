@@ -89,6 +89,7 @@ class Invoice extends CI_Controller {
                 throw new Exception("Запрошенный счет на оплату не найден");
             }
             $data['invoice_data'] = $InvoiceData;
+            $data['pay_log'] = $this->invoice_model->pay_log($InvoiceSerialNumber);
             $data['message'] = $message;
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();

@@ -195,4 +195,17 @@ class Invoice_model extends CI_Model {
         }
     }
 
+    public function pay_log($invoice_number) {
+        $result = $this->db->select('PayLog.Account')->
+                        select('PayLog.Sum')->
+                        select('PayLog.DateTime')->
+                        select('PaymentSystem.Name')->
+                        from('"Dealer_payments".PayLog')->
+                        join('"Dealer_payments".PaymentSystem', 'PayLog.PaymentSystemID = PaymentSystem.IDPaymentSystem')->
+                        where('PayLog.Account', $invoice_number)->
+                        order_by('PayLog.DateTime','DESC')->
+                        get()->result();
+        return $result;
+    }
+
 }
