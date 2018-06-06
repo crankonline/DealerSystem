@@ -138,7 +138,7 @@ class Invoice extends CI_Controller {
                 throw new Exception("Получены не верные параметры.");
             }
             $this->invoice_model->invoice_delete($InvoiceSerialNumber);
-            $this->invoice_list_view(NULL, "Счет на оплату " . $InvoiceSerialNumber . " успешно удален");
+            redirect(base_url() . 'index.php/invoice/invoice_list_view/');
         } catch (Exception $ex) {
             show_error($ex->getMessage(), 500, $heading = 'Произошла ошибка'); // не гружу вьюху т.к. данный метод ее не прудусматривает
         }
