@@ -126,6 +126,7 @@ class Invoice extends CI_Controller {
                 throw new Exception('Получены не верные параметры');
             }
             //var_dump($this->input->post('SellDataInventoryId')); die;
+            log_message('error', $this->session->userdata['logged_in']['UserName'].": создал счет");
             $this->invoice_show_view($this->invoice_model->invoice_create($this->input->post()), "Счет на оплату успешно создан");
         } catch (Exception $ex) {
             show_error($ex->getMessage(), 500, $heading = 'Произошла ошибка'); // не гружу вьюху т.к. данный метод ее не предусматривает

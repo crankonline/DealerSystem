@@ -171,7 +171,7 @@ class Invoice_model extends CI_Model {
         $this->db->insert_batch('"Dealer_data".sell', $SellDataBatch);
         $this->db->trans_complete(); //конец транзакции
         if ($this->db->trans_status() === FALSE) { // производит ошибку... или используйте функцию log_message() для журналирования ошибок
-            throw new Exception($ex);
+            throw new Exception("Ошибка транзакции при сохранении счета на опалту.");
         }
         return $InvoiceSerialNumber;
     }
