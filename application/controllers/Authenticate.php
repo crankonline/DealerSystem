@@ -122,8 +122,7 @@ class Authenticate extends CI_Controller {
             "11.0.0.10",
             "11.0.0.11",
             "11.0.0.12",
-            "11.0.0.13",
-            "10.0.100.5" // temp smoking
+            "11.0.0.13"
         );
         $ip = $this->input->ip_address();
         if (in_array($ip, $allovedIp)) {
