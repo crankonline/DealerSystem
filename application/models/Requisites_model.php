@@ -7,11 +7,11 @@ class Requisites_model extends CI_Model {
     private $ApiRequestSubscriberToken_SF = '337663544b22bbb86a236a090a36d82eeed942121142b6252e31329d1f61c6ad'; //SF
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
-    private function requisites_client() { 
+    private function requisites_client() {
         (ENVIRONMENT == 'production') ?
                         $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl' : //prod
                         $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //dev
-        
+
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -174,7 +174,9 @@ class Requisites_model extends CI_Model {
                 return $result; //[0][2]; //только номер минюста
             }
         } catch (Exception $ex) {
-            throw new Exception('Запрос в службу министерсва юстиции -> ' . $ex->getMessage());
+            $message = 'Запрос в службу министерсва юстиции -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
     }
 
@@ -188,7 +190,9 @@ class Requisites_model extends CI_Model {
                 return $result->PayerInfo;
             }
         } catch (Exception $ex) {
-            throw new Exception('Запрос в службу социального фонда -> ' . $ex->getMessage());
+            $message = 'Запрос в службу социального фонда -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
     }
 
@@ -246,7 +250,9 @@ class Requisites_model extends CI_Model {
             }
             return $result;
         } catch (Exception $ex) {
-            throw new Exception('Запрос в службу реквизитов -> ' . $ex->getMessage());
+            $message = 'Запрос в службу реквизитов -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
     }
 
@@ -265,7 +271,9 @@ class Requisites_model extends CI_Model {
                 //$result_sf = $client->getByUid($token_SF, $result_sf->uid);
             }
         } catch (Exception $ex) {
-            throw new Exception('Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage());
+            $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
         try {
             $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
@@ -277,7 +285,9 @@ class Requisites_model extends CI_Model {
                 $result_dtg = $client->getByUid($token_DTG, $result_dtg->uid);
             }
         } catch (Exception $ex) {
-            throw new Exception('Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage());
+            $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
         return $result_dtg;
     }
@@ -311,7 +321,9 @@ class Requisites_model extends CI_Model {
             $client = $this->soap_1c_client();
             $result = $client->GetNumberSF($array);
             if ($result == null) {
-                throw new exception("Запрос в службу 1С -> Номера электронных счетов фактур закончились");
+                $message = "Запрос в службу 1С -> Номера электронных счетов фактур закончились";
+                log_message('error', $message);
+                throw new exception($message);
             }
             $exp_res = explode("^", $result->return);
             $serial = $exp_res[0];
@@ -416,7 +428,9 @@ class Requisites_model extends CI_Model {
             //}
             return $result;
         } catch (Exception $ex) {
-            throw new Exception('Запрос в службу PKI -> ' . $ex->getMessage());
+            $message = 'Запрос в службу PKI -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
     }
 
@@ -428,7 +442,9 @@ class Requisites_model extends CI_Model {
             $client = $this->soap_1c_client();
             $client->registration($parameters);
         } catch (Exception $ex) {
-            throw new Exception('Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage());
+            $message = 'Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage();
+            log_message('error', $message);
+            throw new Exception($message);
         }
     }
 
