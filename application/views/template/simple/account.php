@@ -126,4 +126,27 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
     <?php endif; ?>
+     <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title"><span class="glyphicon glyphicon-qrcode"></span> Информация о системе</h4>
+            </div>
+         <div class="panel-body">
+             <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Фреймворк</th>
+                            <th><?php echo "CodeIgniter ".CI_VERSION; ?></th>
+                        </tr>
+                        <tr>
+                            <th>Время генерации</th>
+                            <th>{elapsed_time}</th>
+                        </tr>
+                        <tr>
+                            <th>Использования памяти сессией</th>
+                            <th>{memory_usage}</th>
+                        </tr>
+                    </thead>
+             </table>
+         </div>
+     </div>
 </div>

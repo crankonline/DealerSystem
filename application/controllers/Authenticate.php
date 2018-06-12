@@ -136,10 +136,7 @@ class Authenticate extends CI_Controller {
 
     public function logout() {
         // Removing session data
-        $sess_array = array(
-            'logged_in' => ''
-        );
-        $this->session->unset_userdata('logged_in', $sess_array);
+        $this->session->unset_userdata('logged_in');
         $data = array(
             'error_message' => 'Выход осуществлен'
         );
