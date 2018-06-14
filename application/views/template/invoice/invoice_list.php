@@ -57,8 +57,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <th style="width: 116px;">ИНН</th>
                     <th>Наименование компании</th>
                     <th style="width: 126px;">Дата создания</th>
-                    <th>Токены</th>
-                    <th>Сертификаты</th>
+<!--                    <th>Токены</th>
+                    <th>Сертификаты</th>-->
+                    <th style="width: 126px;">Сумма к оплате</th>
                     <th style="width: 126px;">Сумма оплаты </th>
                     <?php if ($this->session->userdata['logged_in']['Show_Operator'] == TRUE): ?>
                         <th style="width: 126px;">Оператор </th>
@@ -83,8 +84,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td><?php echo $invoice_item->inn ?></td>
                         <td><?php echo $invoice_item->company_name ?></td>
                         <td><?php echo $invoice_item->creatingdatetime ?></td>
-                        <td><?php echo $invoice_item->tokencount ?></td>
-                        <td><?php echo $invoice_item->edscount ?></td>
+<!--                        <td><?php //echo $invoice_item->tokencount ?></td>
+                        <td><?php //echo $invoice_item->edscount ?></td>-->
+                        <td><?php echo $invoice_item->total_sum ?></td>
                         <td><?php echo $invoice_item->pay_sum ?></td>
                         <?php if ($this->session->userdata['logged_in']['Show_Operator'] == TRUE): ?>
                             <td><?php echo $invoice_item->username ?> </td>
