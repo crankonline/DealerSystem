@@ -333,6 +333,7 @@ class Requisites_model extends CI_Model {
 
             $this->db->insert('"Dealer_data".pay_invoice', $data);
         } catch (Exception $ex) {
+            log_message('error', $message);
             throw new Exception('Запрос в службу 1C  -> ' . $ex->getMessage());
         }
 
@@ -413,7 +414,7 @@ class Requisites_model extends CI_Model {
     public function get_invoice_data_by_id($id_invoice) {
         return $this->db->select('invoice.inn')->
                         select('invoice.invoice_serial_number')->
-                        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =1),\'0\') AS eds_count')->
+                        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3)),\'0\') AS eds_count')->
                         from('"Dealer_data".invoice')->
                         where(array('id_invoice' => $id_invoice))->get()->row();
     }
