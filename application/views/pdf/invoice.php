@@ -91,7 +91,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     </tr>
     <tr>
         <td>Комментарий </td>
-        <td><b><i>Оплата за выдачу токенов и/или ЭЦП</i></b></td>
+        <td><b><i>В НАЗНАЧЕНИИ ПЛАТЕЖА УКАЖИТЕ ИНН ВАШЕЙ КОМПАНИИ</i></b></td>
     </tr>
 </table>
 <table class="table_border">
