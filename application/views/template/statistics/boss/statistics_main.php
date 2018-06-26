@@ -105,6 +105,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $i = 1;
                     $edscount = 0;
                     $tokencount = 0;
+                    $pay_sum = 0;
                     $invoice = 0;
                     foreach ($statistics_daily_all as $val):
                         ?>
@@ -123,7 +124,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 echo $val->invoice_count;
                                 $invoice += $val->invoice_count;
                                 ?></td>
-                            <td><?php echo number_format(($val->edscount * 550.00) + ($val->tokencount * 2300.00), 2, '.', ' '); ?></td>
+                            <td><?php
+                                echo number_format($val->pay_sum, 2, '.', ' ');
+                                $pay_sum += $val->pay_sum;
+                                ?></td>
                         </tr>
                     <?php endforeach; ?>
                     <tr>
@@ -132,7 +136,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td><h4><?php echo $edscount; ?></h4></td>
                         <td><h4><?php echo $tokencount; ?></h4></td>
                         <td><h4><?php echo $invoice; ?></h4></td>
-                        <td><h4><?php echo number_format(($edscount * 550.00) + ($tokencount * 2300.0), 2, '.', ' '); ?></h4></td>
+                        <td><h4><?php echo number_format($pay_sum, 2, '.', ' '); ?></h4></td>
                     </tr>
                 </tbody>
             </table>
@@ -157,6 +161,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         $i = 1;
                         $edscount = 0;
                         $tokencount = 0;
+                        $pay_sum = 0;
                         $invoice = 0;
                         foreach ($operator['data'] as $val):
                             ?>
@@ -175,7 +180,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     echo $val->invoice_count;
                                     $invoice += $val->invoice_count;
                                     ?></td>
-                                <td><?php echo number_format(($val->edscount * 550.00) + ($val->tokencount * 2300.00), 2, '.', ' ') ?></td>
+                                <td><?php
+                                    echo number_format($val->pay_sum, 2, '.', ' ');
+                                    $pay_sum += $val->pay_sum;
+                                    ?></td>
                             </tr>
                         <?php endforeach; ?>
                         <tr>
@@ -184,7 +192,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><h4><?php echo $edscount; ?></h4></td>
                             <td><h4><?php echo $tokencount; ?></h4></td>
                             <td><h4><?php echo $invoice; ?></h4></td>
-                            <td><h4><?php echo number_format(($edscount * 550.00) + ($tokencount * 2300.0), 2, '.', ' '); ?></h4></td>
+                            <td><h4><?php echo number_format($pay_sum, 2, '.', ' '); ?></h4></td>
                         </tr>
                     </tbody>
                 </table>
