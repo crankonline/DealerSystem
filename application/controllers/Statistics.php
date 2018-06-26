@@ -151,7 +151,10 @@ class Statistics extends CI_Controller {
             }
             $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting();
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent = $data['statistics_reiting'][0]->count;
+                $fullpercent=0;
+                foreach ($data['statistics_reiting'] as $value){
+                    $fullpercent +=$value->count;
+                }
                 foreach ($data['statistics_reiting'] as $value) {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
@@ -468,7 +471,10 @@ class Statistics extends CI_Controller {
 
             $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting($period_start, $period_end);
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent = $data['statistics_reiting'][0]->count;
+                $fullpercent=0;
+                foreach ($data['statistics_reiting'] as $value){
+                    $fullpercent +=$value->count;
+                }
                 foreach ($data['statistics_reiting'] as $value) {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
