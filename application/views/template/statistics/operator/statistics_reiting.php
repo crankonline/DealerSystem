@@ -44,9 +44,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </table>
         </div>
 
-        <div class="well">
+ <!--       <div class="well">
             <h3><span class="glyphicon glyphicon-tower"></span> Рейтинг операторов по ошибкам за текущий месяц - СКОРО!</h3>
-<!--            <table class="table">
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Место</th>
@@ -77,7 +77,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </tr>
                     <?php //endforeach; ?>
                 </tbody>
-            </table>-->
-        </div>
+            </table>
+        </div>-->
     <?php endif; ?>
 </div>
