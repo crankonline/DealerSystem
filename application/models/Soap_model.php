@@ -263,7 +263,7 @@ class Soap_model extends CI_Model {
 //            var_dump($result->result_array());
 
             foreach ($result->result_array() as $row) {
-                if (!empty($row['json'])) {
+                if (!empty($row['json'])) { //yнадо добавить во все методы
                     $json = json_decode($row['json']);
                     $row['id_ownershipForm'] = $json->common->legalForm->ownershipForm->id;
                 }
