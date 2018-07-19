@@ -14,6 +14,7 @@ class Statistics extends CI_Controller {
         $this->load->model('invoice_model');
         $this->load->model('requisites_model');
         $this->load->library('pagination');
+        $this->load->library('statds');//test
     }
 
     private $per_page = 20;
@@ -159,6 +160,7 @@ class Statistics extends CI_Controller {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
             }
+            $data['reiting'] = $this->statds->EDS_error_reiting();//библиотека
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();
         }
@@ -248,7 +250,7 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_boss_error_eds() {
+    public function  statistics_view_boss_error_eds() {
         try {
             if ($this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');

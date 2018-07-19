@@ -72,7 +72,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         echo 'info';
                                     }if ($value['count'] > 21 && $value['count'] <= 50) {
                                         echo 'warning';
-                                    }if ($value['count'] > 51) {
+                                    }if ($value['count'] >= 51) {
                                         echo 'danger';
                                     }
                                     ?>" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $value['count'] . "%" ?>">

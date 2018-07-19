@@ -5,7 +5,7 @@
     </button>
     <button type="button" <?php echo (strripos($_SERVER['REQUEST_URI'], 'statistics_view_boss_error_eds')) ? 'class="btn btn-lg btn-default active"' : 'class="btn btn-lg btn-default"'; ?> 
             onclick="window.location.href = '<?php echo base_url() . "index.php/statistics/statistics_view_boss_error_eds/" ?>'">
-        <span class="glyphicon glyphicon-certificate"></span> Ошибки ЭЦП
+        <span class="glyphicon glyphicon-certificate"></span> Выданные ЭП
     </button>
     <button type="button" <?php echo (strripos($_SERVER['REQUEST_URI'], 'statistics_view_boss_cash_history')) ? 'class="btn btn-lg btn-default active"' : 'class="btn btn-lg btn-default"'; ?> 
             onclick="window.location.href = '<?php echo base_url() . "index.php/statistics/statistics_view_boss_cash_history/" ?>'">
