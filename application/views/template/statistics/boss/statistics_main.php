@@ -71,7 +71,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="progress-bar progress-bar-<?php
                                     if ($value->count <= 15) {
                                         echo 'danger';
-                                    }if ($value->count > 15 && $value->count < 51) {
+                                    }if ($value->count > 16 && $value->count < 51) {
                                         echo 'warning';
                                     }if ($value->count >= 51) {
                                         echo 'success';
