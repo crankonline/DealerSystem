@@ -27,7 +27,7 @@ class Statistics_model extends CI_Model { //модель сосзда на вс�
   SELECT
     to_date(to_char("requisites_creating_date_time",\'DD-MM-YYYY\'), \'DD-MM-YYYY\') as requisites_creating_date_time,
     CASE WHEN inventory_id = 2 THEN "count" ELSE \'0\' END as tokencount,
-    CASE WHEN inventory_id = 1 OR inventory_id = 3 THEN "count" ELSE \'0\' END as edscount,
+    CASE WHEN inventory_id = 1 OR inventory_id = 3 OR inventory_id = 5 THEN "count" ELSE \'0\' END as edscount,
     "invoice"."id_invoice" as invoice_111,
     invoice.pay_sum as pay_sum
   FROM "Dealer_data"."invoice"
@@ -54,7 +54,7 @@ ORDER BY requisites_creating_date_time DESC';
   SELECT
     to_date(to_char("requisites_creating_date_time",\'DD-MM-YYYY\'), \'DD-MM-YYYY\') as requisites_creating_date_time,
     CASE WHEN inventory_id = 2 THEN "count" ELSE \'0\' END as tokencount,
-    CASE WHEN inventory_id = 1 OR inventory_id = 3 THEN "count" ELSE \'0\' END as edscount,
+    CASE WHEN inventory_id = 1 OR inventory_id = 3 OR inventory_id = 5 THEN "count" ELSE \'0\' END as edscount,
     "invoice"."id_invoice" as invoice_111,
     invoice.pay_sum as pay_sum
   FROM "Dealer_data"."invoice"
@@ -89,7 +89,7 @@ ORDER BY requisites_creating_date_time DESC';
   SELECT
     to_date(to_char("requisites_creating_date_time",\'DD-MM-YYYY\'), \'DD-MM-YYYY\') as requisites_creating_date_time,
     CASE WHEN inventory_id = 2 THEN "count" ELSE \'0\' END as tokencount,
-    CASE WHEN inventory_id = 1 OR inventory_id = 3 THEN "count" ELSE \'0\' END as edscount,
+    CASE WHEN inventory_id = 1 OR inventory_id = 3 OR inventory_id = 5 THEN "count" ELSE \'0\' END as edscount,
     "invoice"."id_invoice" as invoice_111
   FROM "Dealer_data"."invoice"
     LEFT JOIN "Dealer_data"."requisites" ON "requisites"."requisites_invoice_id" = "invoice"."id_invoice"
@@ -143,7 +143,7 @@ ORDER BY requisites_creating_date_time DESC';
     public function get_statistics_error_eds_pki_ext($period_start, $period_end, $user_id = null) {
         $this->db->select('invoice.invoice_serial_number')->
                 select('invoice.inn')->
-                select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3)),\'0\') AS EDSCount')->//???????
+                select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3 OR inventory_id =5)),\'0\') AS EDSCount')->//???????
                 select('to_char(requisites.requisites_creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
                 select('users."name" AS username');
         is_null($user_id) ? NULL : $this->db->select("CONCAT (users.surname, ' ',users.\"name\",' ',users.patronymic_name) AS user_full_name");
