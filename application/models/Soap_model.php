@@ -54,7 +54,7 @@ class Soap_model extends CI_Model {
             }
             return $ret_val;
         } else {
-            log_message('error', "soap 1c -> get_invoice_serial_2_soap -> return false;");
+            //log_message('error', "soap 1c -> get_invoice_serial_2_soap -> return false;");
             return false;
         }
     }
@@ -147,7 +147,7 @@ class Soap_model extends CI_Model {
             }
             return $ret_val;
         } else {
-            log_message('error', "soap 1c -> get_invoice_serial_soap -> return false;");
+            //log_message('error', "soap 1c -> get_invoice_serial_soap -> return false;");
             return false;
         }
 
@@ -312,7 +312,7 @@ class Soap_model extends CI_Model {
             }
             return $ret_val;
         } else {
-            log_message('error', "soap 1c -> get_invoices_by_date -> return false;");
+            //log_message('error', "soap 1c -> get_invoices_by_date -> return false;");
             return false;
         }
     }
@@ -385,7 +385,7 @@ class Soap_model extends CI_Model {
             }
             return $ret_val;
         } else {
-            log_message('error', "soap 1c -> get_invoices_by_create_date -> return false;");
+            //log_message('error', "soap 1c -> get_invoices_by_create_date -> return false;");
             return false;
         }
     }
@@ -456,7 +456,7 @@ class Soap_model extends CI_Model {
             }
             return $ret_val;
         } else {
-            log_message('error', "soap 1c -> get_invoices_by_pay_date -> return false;");
+            //log_message('error', "soap 1c -> get_invoices_by_pay_date -> return false;");
             return false;
         }
     }
@@ -539,7 +539,7 @@ class Soap_model extends CI_Model {
             }
             return $ret_val;
         } else {
-            log_message('error', "soap 1c -> get_invoices_by_requisites_date -> return false;");
+            //log_message('error', "soap 1c -> get_invoices_by_requisites_date -> return false;");
             return false;
         }
     }

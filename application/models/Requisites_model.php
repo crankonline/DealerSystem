@@ -272,12 +272,13 @@ class Requisites_model extends CI_Model {
             }
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
+            log_message('error', json_encode($json));
             log_message('error', $message);
             throw new Exception($message);
         }
         try {
             $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
-            if (is_null($result_dtg)) { //enot
+            if (is_null($result_dtg)) { //DTG
                 $uid_ENOT = $client->register($token_DTG, $json);
                 $result_dtg = $client->getByUid($token_DTG, $uid_ENOT);
             } else {
@@ -287,6 +288,7 @@ class Requisites_model extends CI_Model {
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
             log_message('error', $message);
+            log_message('error', json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;
