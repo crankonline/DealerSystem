@@ -296,8 +296,11 @@ class Requisites extends CI_Controller {
 
         foreach ($rep_merge as $rep_merge_value) {
 
-            $rep_merge_value->edsUsageModel = 1;
-
+            if($rep_merge_value->deviceSerial != null) {
+                $rep_merge_value->edsUsageModel = 1;
+            } else {
+                $rep_merge_value->edsUsageModel = 2;
+            }
             $roles_override_array = array();
             foreach ($rep_merge_value->roles as $rep_merge_value_roles) {
                 if (is_numeric($rep_merge_value_roles)) {
