@@ -26,11 +26,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><?php echo $value->username; ?> </td>
                             <td><div class="progress">
                                     <div class="progress-bar progress-bar-<?php
-                                    if ($value->count <= 20) {
+                                    if ($value->count <= 15) {
                                         echo 'danger';
-                                    }if ($value->count > 20 && $value->count < 80) {
+                                    }if ($value->count > 16 && $value->count <= 50) {
                                         echo 'warning';
-                                    }if ($value->count >= 80) {
+                                    }if ($value->count >= 51) {
                                         echo 'success';
                                     }
                                     ?>" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $value->count . "%" ?>">
@@ -45,8 +45,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
 
         <div class="well">
-            <h3><span class="glyphicon glyphicon-tower"></span> Рейтинг операторов по ошибкам за текущий месяц - СКОРО!</h3>
-<!--            <table class="table">
+            <h3><span class="glyphicon glyphicon-tower"></span> Рейтинг операторов по ошибкам за текущий месяц</h3>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>Место</th>
@@ -55,29 +55,29 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </tr>
                 </thead>
                 <tbody>
-                    <?php //$i = 1; ?>
-                    <?php //foreach ($statistics_reiting_eds_error as $value): ?>
+                    <?php $i = 1; ?>
+                    <?php foreach ($reiting['statistics_reiting_eds_error'] as $key=> $value): ?>
                         <tr>
-                            <td><?php //echo $i++; ?></td>
-                            <td><?php //echo $value->username; ?> </td>
+                            <td><?php echo $i++; ?></td>
+                            <td><?php echo $value['name']; ?> </td>
                             <td><div class="progress">
                                     <div class="progress-bar progress-bar-<?php
-                                    //if ($value['count'] <= 20) {
-                                      //  echo 'info';
-                                   // }if ($value['count'] > 20 && $value['count'] <= 80) {
-                                     //   echo 'warning';
-                                    //}if ($value['count'] > 80) {
-                                      //  echo 'danger';
-                                   // }
-                                    ?>" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: <?php //echo $value->count . "%" ?>">
-                                        <span class="sr-only"><?php //echo $value->count . "%" ?></span>
+                                    if ($value['count'] <= 20) {
+                                        echo 'info';
+                                    }if ($value['count'] > 21 && $value['count'] <= 50) {
+                                        echo 'warning';
+                                    }if ($value['count'] >=51) {
+                                        echo 'danger';
+                                    }
+                                    ?>" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $value['count'] . "%" ?>">
+                                        <span class="sr-only"><?php echo $value['count'] . "%" ?></span>
                                     </div>
                                 </div></td>
-                            <td><?php //echo number_format($value->count, 1, '.', ' ') . " %" ?></td>
+                            <td><?php echo number_format($value['count'], 1, '.', ' ') . " %" ?></td>
                         </tr>
-                    <?php //endforeach; ?>
+                    <?php endforeach; ?>
                 </tbody>
-            </table>-->
+            </table>
         </div>
     <?php endif; ?>
 </div>

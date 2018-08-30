@@ -122,8 +122,7 @@ class Authenticate extends CI_Controller {
             "11.0.0.10",
             "11.0.0.11",
             "11.0.0.12",
-            "11.0.0.13",
-            "10.0.100.5" // temp smoking
+            "11.0.0.13"
         );
         $ip = $this->input->ip_address();
         if (in_array($ip, $allovedIp)) {
@@ -137,10 +136,7 @@ class Authenticate extends CI_Controller {
 
     public function logout() {
         // Removing session data
-        $sess_array = array(
-            'logged_in' => ''
-        );
-        $this->session->unset_userdata('logged_in', $sess_array);
+        $this->session->unset_userdata('logged_in');
         $data = array(
             'error_message' => 'Выход осуществлен'
         );

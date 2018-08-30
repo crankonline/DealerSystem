@@ -14,6 +14,7 @@ class Statistics extends CI_Controller {
         $this->load->model('invoice_model');
         $this->load->model('requisites_model');
         $this->load->library('pagination');
+        $this->load->library('statds');//test
     }
 
     private $per_page = 20;
@@ -151,11 +152,15 @@ class Statistics extends CI_Controller {
             }
             $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting();
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent = $data['statistics_reiting'][0]->count;
+                $fullpercent=0;
+                foreach ($data['statistics_reiting'] as $value){
+                    $fullpercent +=$value->count;
+                }
                 foreach ($data['statistics_reiting'] as $value) {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
             }
+            $data['reiting'] = $this->statds->EDS_error_reiting();//библиотека
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();
         }
@@ -230,10 +235,10 @@ class Statistics extends CI_Controller {
                     }
                 }
 
-                $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //общий список
-                foreach ($data['statistics_period_all'] as $daily_all) {
-                    $daily_all->EDS_error_count = $this->EDS_error_count($daily_all->requisites_creating_date_time . ' 00:00:00', $daily_all->requisites_creating_date_time . ' 23:59:59', $daily_all->edscount);
-                }
+//                $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //общий список
+//                foreach ($data['statistics_period_all'] as $daily_all) {
+//                    $daily_all->EDS_error_count = $this->EDS_error_count($daily_all->requisites_creating_date_time . ' 00:00:00', $daily_all->requisites_creating_date_time . ' 23:59:59', $daily_all->edscount);
+//                }
             }
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();
@@ -245,7 +250,7 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_boss_error_eds() {
+    public function  statistics_view_boss_error_eds() {
         try {
             if ($this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');
@@ -265,6 +270,7 @@ class Statistics extends CI_Controller {
 
 
             $operators = $this->statistics_model->get_operators_enum(); // все операторы
+            $count_all_errors = 0; // все ошибки за переод
             foreach ($operators as $key => $operator) {
                 if ($this->session->userdata['logged_in']['UserID'] == $operator->id_users) {
                     continue;
@@ -277,20 +283,22 @@ class Statistics extends CI_Controller {
                 foreach ($data['statistics_period_operators'][$key]['data'] as $daily_operators) {
                     $daily_operators->EDS_error_count = $this->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
                     $data['statistics_reiting_eds_error'][$key]['count'] += ($daily_operators->EDS_error_count->EDS_count_error < 0) ? 0 : $daily_operators->EDS_error_count->EDS_count_error; //для рейтинга 
+                    $count_all_errors += ($daily_operators->EDS_error_count->EDS_count_error < 0) ? 0 : $daily_operators->EDS_error_count->EDS_count_error; //для рейтинга
                 }
             }
 
-            $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //общий список
-            foreach ($data['statistics_period_all'] as $daily_all) {
-                $daily_all->EDS_error_count = $this->EDS_error_count($daily_all->requisites_creating_date_time . ' 00:00:00', $daily_all->requisites_creating_date_time . ' 23:59:59', $daily_all->edscount);
-            }
+//            $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //общий список
+//            foreach ($data['statistics_period_all'] as $daily_all) {
+//                $daily_all->EDS_error_count = $this->EDS_error_count($daily_all->requisites_creating_date_time . ' 00:00:00', $daily_all->requisites_creating_date_time . ' 23:59:59', $daily_all->edscount);
+//            }
 
             usort($data['statistics_reiting_eds_error'], function($a, $b) {//сортировка
                 return ($b['count'] - $a['count']);
             });
 
             if ($data['statistics_reiting_eds_error'][0]['count'] > 0) {//перепод в проценты, рейтинг
-                $fullpercent = $data['statistics_reiting_eds_error'][0]['count'];
+                //$fullpercent = $data['statistics_reiting_eds_error'][0]['count'];
+                $fullpercent = $count_all_errors;
                 foreach ($data['statistics_reiting_eds_error'] as &$value) {
                     $value['count'] = ($value['count'] * 100) / $fullpercent;
                 }
@@ -468,7 +476,10 @@ class Statistics extends CI_Controller {
 
             $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting($period_start, $period_end);
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent = $data['statistics_reiting'][0]->count;
+                $fullpercent=0;
+                foreach ($data['statistics_reiting'] as $value){
+                    $fullpercent +=$value->count;
+                }
                 foreach ($data['statistics_reiting'] as $value) {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }

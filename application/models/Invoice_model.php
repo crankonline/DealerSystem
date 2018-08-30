@@ -94,8 +94,8 @@ class Invoice_model extends CI_Model {
                 select('invoice.inn')->
                 select('invoice.company_name')->
                 select('to_char(invoice.creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
-                select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =2),\'0\') AS TokenCount')->
-                select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =1),\'0\') AS EDSCount')->
+                //select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =2),\'0\') AS TokenCount')->
+                //select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =1),\'0\') AS EDSCount')->
                 select('COALESCE((SELECT requisites.requisites_invoice_id FROM "Dealer_data".requisites WHERE requisites_invoice_id=id_invoice),\'0\') AS id_requisites')->
                 select('invoice.pay_sum')->
                 select('invoice.total_sum')->
@@ -116,8 +116,8 @@ class Invoice_model extends CI_Model {
                 select('invoice.inn')->
                 select('invoice.company_name')->
                 select('to_char(invoice.creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
-                select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =2),\'0\') AS TokenCount')->
-                select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =1),\'0\') AS EDSCount')->
+                //select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =2),\'0\') AS TokenCount')->
+                //select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND inventory_id =1),\'0\') AS EDSCount')->
                 select('COALESCE((SELECT requisites.requisites_invoice_id FROM "Dealer_data".requisites WHERE requisites_invoice_id=id_invoice),\'0\') AS id_requisites')->
                 select('invoice.pay_sum')->
                 select('invoice.total_sum')->
