@@ -333,7 +333,7 @@
             <td colspan="9"><?php echo $Record->inventory_name; ?></td>
             <td colspan="3" class="center">шт.</td>
             <td colspan="3" class="center"><?php echo $Record->count; ?></td>
-            <td colspan="3" class="center"><?php echo number_format($Record->price / 1.12, 2, '.', ''); ?></td>
+            <td colspan="3" class="center"><?php echo number_format(($Record->price_count / $Record->count) / 1.12, 2, '.', ''); ?></td>
             <td colspan="4" class="center"><?php echo number_format($Record->price_count / 1.12, 2, '.', ''); ?></td>
             <td colspan="2" class="center">12</td>
             <td colspan="4" class="center"><?php echo number_format($Record->pay_sum * 12 / 112, 2, '.', ''); ?></td>
