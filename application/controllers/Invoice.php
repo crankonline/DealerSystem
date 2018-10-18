@@ -125,7 +125,7 @@ class Invoice extends CI_Controller {
             if (is_null($this->input->post())) {
                 throw new Exception('Получены не верные параметры');
             }
-             redirect(base_url() . "index.php/invoice/invoice_show_view/". $this->invoice_model->invoice_create($this->input->post()));
+            redirect(base_url() . "index.php/invoice/invoice_show_view/". $this->invoice_model->invoice_create($this->input->post()));
         } catch (Exception $ex) {
             show_error($ex->getMessage(), 500, $heading = 'Произошла ошибка'); // не гружу вьюху т.к. данный метод ее не предусматривает
         }
