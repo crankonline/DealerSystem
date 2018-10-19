@@ -146,9 +146,14 @@ class Invoice_model extends CI_Model {
     public function invoice_create($InvoiceData) { //!!!!переписать!!!!
         /* обрабатываю-поготовливаю данные в модели тут т.к. часть данных завсит от инсертов */
         $TotalSumm = 0;
-        foreach ($InvoiceData['SellDataInventoryPriceAll'] as $val) {//считаем общую сумму для invoice
-            $TotalSumm += $val;
+        if (is_array($InvoiceData['SellDataInventoryPriceAll'])) {
+            foreach ($InvoiceData['SellDataInventoryPriceAll'] as $val) {//считаем общую сумму для invoice
+                $TotalSumm += $val;
+            }
+        } else {
+            $TotalSumm = $InvoiceData['SellDataInventoryPriceAll'];
         }
+
         $InvoiceDataBatch = array('users_id' => $this->session->userdata['logged_in']['UserID'], //готовим данные для инсерта в invoice
             'inn' => $InvoiceData['InvoiceDataInn'],
             'company_name' => $InvoiceData['InvoiceCompanyName'],
@@ -203,7 +208,7 @@ class Invoice_model extends CI_Model {
                         from('"Dealer_payments".PayLog')->
                         join('"Dealer_payments".PaymentSystem', 'PayLog.PaymentSystemID = PaymentSystem.IDPaymentSystem')->
                         where('PayLog.Account', $invoice_number)->
-                        order_by('PayLog.DateTime','DESC')->
+                        order_by('PayLog.DateTime', 'DESC')->
                         get()->result();
         return $result;
     }
