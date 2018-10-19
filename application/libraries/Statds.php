@@ -18,7 +18,7 @@ class Statds {
 
     public function __construct() {
         $this->CI = & get_instance();
-        //$this->CI->load->library('session');
+        $this->CI->load->library('session');
         $this->CI->load->model('requisites_model');
         $this->CI->load->model('statistics_model');
     }
@@ -66,12 +66,18 @@ class Statds {
     
     public function EDS_error_reiting($period_start = NULL, $period_end = NULL) {
         $operators = $this->CI->statistics_model->get_operators_enum(); // все операторы
+        
+        $iam = new stdClass();
+        $iam->id_users=$this->CI->session->userdata['logged_in']['UserID'];
+        $iam->username=$this->CI->session->userdata['logged_in']['UserName'];
+        array_push($operators, $iam);//наркоман штоле?
+        
         $count_all_errors = 0; // все ошибки за переод
         $data = null;
         foreach ($operators as $key => $operator) {
-            if ($this->CI->session->userdata['logged_in']['UserID'] == $operator->id_users) {
+            /*if ($this->CI->session->userdata['logged_in']['UserID'] == $operator->id_users) {
                 continue;
-            }
+            }*/
             $data['statistics_period_operators'][$key]['name'] = $operator->username;
             $data['statistics_period_operators'][$key]['id_users'] = $operator->id_users;
             $data['statistics_period_operators'][$key]['data'] = $this->CI->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);

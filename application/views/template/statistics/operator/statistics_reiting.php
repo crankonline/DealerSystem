@@ -28,9 +28,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <div class="progress-bar progress-bar-<?php
                                     if ($value->count <= 15) {
                                         echo 'danger';
-                                    }if ($value->count > 16 && $value->count <= 50) {
+                                    }if ($value->count > 15 && $value->count <= 50) {
                                         echo 'warning';
-                                    }if ($value->count >= 51) {
+                                    }if ($value->count > 50) {
                                         echo 'success';
                                     }
                                     ?>" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $value->count . "%" ?>">
