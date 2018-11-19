@@ -14,7 +14,7 @@ class Statistics extends CI_Controller {
         $this->load->model('invoice_model');
         $this->load->model('requisites_model');
         $this->load->library('pagination');
-        $this->load->library('statds');//test
+        $this->load->library('statds'); //test
     }
 
     private $per_page = 20;
@@ -40,47 +40,6 @@ class Statistics extends CI_Controller {
         $config['total_rows'] = $this->statistics_model->pay_count();
         $this->pagination->initialize($config);
         return $this->pagination->create_links();
-    }
-
-    private function EDS_error_count($date_start, $date_finish, $count_EDS, $UsersID = NULL) {
-        $EDS_count_pki = 0;
-//        if (is_null($Inn)) {
-        //получаем список инн по дате
-        $inn_list = $this->requisites_model->get_inn_list_by_date($date_start, $date_finish, $UsersID); //get_inn_list_by_date принимает USERID null
-//        } else {
-//            $inn_list = array((object) ['inn' => $Inn]);
-//        }
-        //получаем список сертификатов, фильтруем сертификаты по дате и отзыву
-        foreach ($inn_list as $inn) {
-            //$cert_list = $this->requisites_model->get_certificates($inn->inn);
-            $cert_list = $this->statistics_model->get_statistics_pki($date_start, $date_finish, $inn->inn);
-            if (!is_null($cert_list)) {
-                foreach ($cert_list as $key => $cert) {
-                    //готовим дату т.к. ЭЦП переиздается в течении отчетного переода т.е. текущего месяца или указанного переода в поиске
-                    $date_year_start = date('Y', strtotime($date_start));
-                    $date_month_start = date('m', strtotime($date_start));
-                    $date_year_finish = date('Y', strtotime($date_finish));
-                    $date_month_finish = date('m', strtotime($date_finish));
-                    $date_start_eds = $date_year_start . "-" . $date_month_start . "-01 00:00";
-                    $date_finish_eds = $date_year_finish . "-" . $date_month_finish . "-" . date("t", strtotime($date_finish)) . " 23:59";
-                    //if (!((strtotime($cert->DateStart) >= strtotime($date_start_eds)) && (strtotime($cert->DateStart) <= strtotime($date_finish_eds)))) {
-                    if (!((strtotime($cert->DateStart) >= strtotime($date_start)) && (strtotime($cert->DateStart) <= strtotime($date_finish)))) {
-                        unset($cert_list[$key]);
-                    }
-                }
-            }
-            $EDS_count_pki += count($cert_list);
-        }
-
-        //смотрим колличество превышения сертов
-        $result = new stdClass();
-        $result->EDS_count_pki = $EDS_count_pki;
-        $result->EDS_count_error = $EDS_count_pki - $count_EDS;
-        if (is_null($UsersID)) {
-            $result->EDS_count_pki_all = count($this->statistics_model->get_statistics_pki($date_start, $date_finish));
-            $result->EDS_count_error_pki = $result->EDS_count_pki_all - $count_EDS;
-        }
-        return $result;
     }
 
     private function my_array_unique($array, $keep_key_assoc = false) {
@@ -152,15 +111,15 @@ class Statistics extends CI_Controller {
             }
             $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting();
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent=0;
-                foreach ($data['statistics_reiting'] as $value){
-                    $fullpercent +=$value->count;
+                $fullpercent = 0;
+                foreach ($data['statistics_reiting'] as $value) {
+                    $fullpercent += $value->count;
                 }
                 foreach ($data['statistics_reiting'] as $value) {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
             }
-            $data['reiting'] = $this->statds->EDS_error_reiting();//библиотека
+            $data['reiting'] = $this->statds->EDS_error_reiting(); //библиотека
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();
         }
@@ -221,7 +180,7 @@ class Statistics extends CI_Controller {
 
             $data['statistics_period_self'] = $this->statistics_model->get_statistics_operator_period($period_start, $period_end); //Текущий оператор
             foreach ($data['statistics_period_self'] as $daily_self) {
-                $daily_self->EDS_error_count = $this->EDS_error_count($daily_self->requisites_creating_date_time . ' 00:00:00', $daily_self->requisites_creating_date_time . ' 23:59:59', $daily_self->edscount, $this->session->userdata['logged_in']['UserID']);
+                $daily_self->EDS_error_count = $this->statds->EDS_error_count($daily_self->requisites_creating_date_time . ' 00:00:00', $daily_self->requisites_creating_date_time . ' 23:59:59', $daily_self->edscount, $this->session->userdata['logged_in']['UserID']);
             }
 
             if ($this->session->userdata['logged_in']['Show_Statistics_Operators'] || $this->session->userdata['logged_in']['UserRoleID'] == 4) { //если есть доступ к стату всех операторов
@@ -231,7 +190,7 @@ class Statistics extends CI_Controller {
                     $data['statistics_period_operators'][$key]['id_users'] = $operator->id_users;
                     $data['statistics_period_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
                     foreach ($data['statistics_period_operators'][$key]['data'] as $daily_operators) {
-                        $daily_operators->EDS_error_count = $this->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
+                        $daily_operators->EDS_error_count = $this->statds->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
                     }
                 }
 
@@ -250,7 +209,7 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function  statistics_view_boss_error_eds() {
+    public function statistics_view_boss_error_eds() {
         try {
             if ($this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');
@@ -281,7 +240,7 @@ class Statistics extends CI_Controller {
                 $data['statistics_reiting_eds_error'][$key]['name'] = $operator->username; //для рейтинга
                 $data['statistics_reiting_eds_error'][$key]['count'] = 0; //для рейтинга
                 foreach ($data['statistics_period_operators'][$key]['data'] as $daily_operators) {
-                    $daily_operators->EDS_error_count = $this->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
+                    $daily_operators->EDS_error_count = $this->statds->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
                     $data['statistics_reiting_eds_error'][$key]['count'] += ($daily_operators->EDS_error_count->EDS_count_error < 0) ? 0 : $daily_operators->EDS_error_count->EDS_count_error; //для рейтинга 
                     $count_all_errors += ($daily_operators->EDS_error_count->EDS_count_error < 0) ? 0 : $daily_operators->EDS_error_count->EDS_count_error; //для рейтинга
                 }
@@ -375,9 +334,9 @@ class Statistics extends CI_Controller {
                     }
                 }
             }
-             /* Тут проблема, если 2 инвойса на 1 инн, то тут, косячный серт будет дублироваться, на каждый инвойс, но этот костыль решает */
+            /* Тут проблема, если 2 инвойса на 1 инн, то тут, косячный серт будет дублироваться, на каждый инвойс, но этот костыль решает */
             $data_view_push = $this->my_array_unique($data_view);
-            
+
             $data['period_start'] = date_format(date_create($period_start), 'd.m.Y');
             $data['eds_pki_ext'] = $data_view_push;
         } catch (Exception $ex) {
@@ -441,10 +400,6 @@ class Statistics extends CI_Controller {
                 $object->username = NULL;
                 array_push($data_view, $object);
             }
-            // echo '<pre>' ;print_r($data_view); echo'</pre>';
-//            usort($cert_list, function($a, $b) {//сортировка
-//                return (strtotime($a->creatingdatetime) - strtotime($b->creatingdatetime));
-//            });
 
             $data['period_start'] = date_format(date_create($period_start), 'd.m.Y');
             $data['eds_pki_ext'] = $data_view;
@@ -476,9 +431,9 @@ class Statistics extends CI_Controller {
 
             $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting($period_start, $period_end);
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent=0;
-                foreach ($data['statistics_reiting'] as $value){
-                    $fullpercent +=$value->count;
+                $fullpercent = 0;
+                foreach ($data['statistics_reiting'] as $value) {
+                    $fullpercent += $value->count;
                 }
                 foreach ($data['statistics_reiting'] as $value) {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг

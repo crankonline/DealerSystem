@@ -23,7 +23,7 @@ class Statds {
         $this->CI->load->model('statistics_model');
     }
 
-        private function EDS_error_count($date_start, $date_finish, $count_EDS, $UsersID = NULL) {
+    public function EDS_error_count($date_start, $date_finish, $count_EDS, $UsersID = NULL) {
         $EDS_count_pki = 0;
 //        if (is_null($Inn)) {
         //получаем список инн по дате
