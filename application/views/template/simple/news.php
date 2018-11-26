@@ -18,7 +18,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     <?php else: ?>
 
         <?php if (isset($messages)): ?>
-            <div class="page-header"><h2><span class="glyphicon glyphicon-comment"></span> Новости</h2></div>
+            <div class="page-header"><h2><span class="glyphicon glyphicon-tags"></span> Новости</h2></div>
             <?php foreach ($messages as $message): ?>
                 <div class="well">
                     <h3 align="center"> <?php echo $message->CaptionRu; ?></h3>
