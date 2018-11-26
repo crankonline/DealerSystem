@@ -9,7 +9,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
-                <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'dash')) ? 'class="active"' : NULL; ?>><a href="<?php echo base_url(); ?>index.php/dash/"><span class="glyphicon glyphicon-home"></span> Главная</a></li>
+                <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'dash')) ? 'class="active"' : NULL; ?> class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-home"></span> Главная <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li> <a href="<?php echo base_url(); ?>index.php/dash/messages"><span class="glyphicon glyphicon-comment"></span> Сообщения</a></li>
+                        <li> <a href="<?php echo base_url(); ?>index.php/dash/news"><span class="glyphicon glyphicon-tags"></span> Новости</a></li>
+                    </ul>
+                    
+                </li>
                 <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'price')) ? 'class="active"' : NULL; ?>><a href="<?php echo base_url(); ?>index.php/price/price_view/"><span class="glyphicon glyphicon-usd"></span>Цены</a></li>
                 <?php if ($this->session->userdata['logged_in']['Show_Statistics']): //проверка на доступ?>
                     <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'statistics')) ? 'class="active"' : NULL; ?>><a href="<?php echo base_url(); ?>index.php/statistics/"><span class="glyphicon glyphicon-stats"></span> Статистика</a></li>
