@@ -12,11 +12,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   <style>
    .leftimg {
     float:left; /* Выравнивание по левому краю */
-    margin: 7px 7px 7px 0; /* Отступы вокруг картинки */
+    margin: 7px 15px 3px 0; /* Отступы вокруг картинки */
    }
    .rightimg  {
     float: right; /* Выравнивание по правому краю  */ 
-    margin: 7px 0 7px 7px; /* Отступы вокруг картинки */
+    margin: 7px 0 15px 7px; /* Отступы вокруг картинки */
    }
   </style>
 
@@ -31,7 +31,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="page-header"><h2><span class="glyphicon glyphicon-tags"></span> Новости</h2></div>
             <?php foreach ($messages as $message): ?>
                 <div class="well">
-                    <h3 align="center"> <?php echo $message->CaptionRu; ?></h3>
+                    <h3 align="left"> <?php echo $message->CaptionRu; ?></h3>
                     <img src="<?php echo $message->Illustration; ?>" style = "width: 25%; height:25%" class="leftimg"> <!--верстка-->
                     <?php echo $message->ContentRu; ?>
                     <p align="right">
