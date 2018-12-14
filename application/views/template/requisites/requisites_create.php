@@ -38,7 +38,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </tr>
                         <tr>
                             <td>Рег. номер Социального Фонда</td>
-                            <td><input type="text" class="form-control" placeholder="7-10 цифр" minlength="7" maxlength="10" required="" numbers-only 
+                            <td><input type="text" class="form-control" placeholder="7-12 цифр" minlength="7" maxlength="12" required="" numbers-only 
                                        ng-model="Data.common.rnsf" 
                                        ng-init="Data.common.rnsf = '<?php echo (isset($requisites_json->common->rnsf)) ? $requisites_json->common->rnsf : NULL; ?>'">
                             </td>
