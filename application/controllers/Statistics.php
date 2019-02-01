@@ -439,10 +439,25 @@ class Statistics extends CI_Controller {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
             }
+            
             $operators = $this->statistics_model->get_operators_enum(); //по операторам
             foreach ($operators as $key => $operator) {
                 $data['statistics_daily_operators'][$key]['name'] = $operator->username;
                 $data['statistics_daily_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
+                $endscount=0; $tokencount=0; $invoice_count =0; $pay_sum =0;
+                foreach($data['statistics_daily_operators'][$key]['data'] as $totaldigits){
+                    $endscount += $totaldigits->edscount;
+                    $tokencount += $totaldigits->tokencount;
+                    $invoice_count += $totaldigits->invoice_count;
+                    $pay_sum += $totaldigits->pay_sum;
+                }
+                $data['statistics_daily_operators'][$key]['totaldigits']['endscount'] = $endscount;
+                $data['statistics_daily_operators'][$key]['totaldigits']['tokencount'] = $tokencount;
+                $data['statistics_daily_operators'][$key]['totaldigits']['invoice_count'] = $invoice_count;
+                $data['statistics_daily_operators'][$key]['totaldigits']['pay_sum'] = $pay_sum;
+                usort($data['statistics_daily_operators'], function($a, $b) {//сортировка
+                    return ($b['totaldigits']['invoice_count'] - $a['totaldigits']['invoice_count']);
+                });
             }
 
             $data['statistics_daily_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //все

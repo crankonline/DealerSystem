@@ -2,7 +2,7 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 //var_dump($statistics_reiting)
 ?>
-<div class="container theme-showcase" role="main">
+<div class="container theme-showcase" role="main" ng-app="StatMainBoss" ng-controller="StatMainBossData">
     <?php if (isset($error_message)): ?>
         <div class="alert alert-danger">
             <strong>Oh snap! </strong> <?php echo $error_message; ?>
@@ -50,7 +50,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </form>
         </div>
 
-        <div class="well">
+    <div class="well">
             <h3><span class="glyphicon glyphicon-tower"></span> Рейтинг операторов</h3>
             <table class="table">
                 <thead>
@@ -79,7 +79,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     ?>" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $value->count . "%" ?>">
                                         <span class="sr-only"><?php echo $value->count . "%" ?></span>
                                     </div>
-                                </div></td>
+                                </div>
+                            </td>
                             <td><?php echo number_format($value->count, 1, '.', ' ') . " %" ?></td>
                         </tr>
                     <?php endforeach; ?>
@@ -88,16 +89,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         </div>
 
         <div class="well">
-            <h3><span class="glyphicon glyphicon-stats"></span> Общая cтатистика продаж по всем операторам</h3>
+            <h3>
+                <span class="glyphicon glyphicon-stats"></span> Общая cтатистика продаж по всем операторам  
+            </h3>
             <table class="table">
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Дата</th>
+                        <th ng-hide="!cummunism">Дата</th>
                         <th>Кол-во ЭП <br> по счетам</th>
                         <th>РуТокен</th>
                         <th>Кол-во заявок</th>
-                        <th><span class="glyphicon glyphicon-usd"></span><th>
+                        <th><span class="glyphicon glyphicon-usd"></span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -109,7 +112,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $invoice = 0;
                     foreach ($statistics_daily_all as $val):
                         ?>
-                        <tr>
+                        <tr ng-hide="!cummunism">
                             <td><?php echo $i++; ?></td>
                             <td><?php echo $val->requisites_creating_date_time; ?></td>
                             <td><?php
@@ -132,78 +135,86 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <?php endforeach; ?>
                     <tr>
                         <td><h4>Итого</h4></td>
-                        <td><strong></strong></td>
+                        <td ng-hide="!cummunism"><strong></strong></td>
                         <td><h4><?php echo $edscount; ?></h4></td>
                         <td><h4><?php echo $tokencount; ?></h4></td>
                         <td><h4><?php echo $invoice; ?></h4></td>
-                        <td><h4><?php echo number_format($pay_sum, 2, '.', ' '); ?></h4></td>
+                        <td><h4><?php echo number_format($pay_sum, 2, '.', ','); ?></h4></td>
                     </tr>
                 </tbody>
             </table>
+            <button type="button" class="btn btn-block" ng-click="HideTableCommunism()">
+                <span class="{{CommunismArrow}}"></span> {{CommunismText}}
+            </button>
         </div>
 
-        <?php foreach ($statistics_daily_operators as $key => $operator): ?>
-            <div class="well">
-                <h3><span class="glyphicon glyphicon-stats"></span> Статистика оператора - <?php echo $operator['name']; ?></h3>
+        <div class="well" ng-repeat="(key_p, OperatorData) in CapitalisticOperatorsData">
+                <h3>
+                    <span class="glyphicon glyphicon-stats"></span> Статистика оператора - {{OperatorData.name}}
+                </h3>
                 <table class="table">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Дата</th>
+                            <th ng-hide="!operator[key_p]">Дата</th>
                             <th>Кол-во ЭП <br> по счетам</th>
                             <th>РуТокен</th>
                             <th>Кол-во заявок</th>
                             <th><span class="glyphicon glyphicon-usd"></span><th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <?php
-                        $i = 1;
-                        $edscount = 0;
-                        $tokencount = 0;
-                        $pay_sum = 0;
-                        $invoice = 0;
-                        foreach ($operator['data'] as $val):
-                            ?>
-                            <tr>
-                                <td><?php echo $i++; ?></td>
-                                <td><?php echo $val->requisites_creating_date_time; ?></td>
-                                <td><?php
-                                    echo $val->edscount;
-                                    $edscount += $val->edscount;
-                                    ?></td>
-                                <td><?php
-                                    echo $val->tokencount;
-                                    $tokencount += $val->tokencount;
-                                    ?></td>
-                                <td><?php
-                                    echo $val->invoice_count;
-                                    $invoice += $val->invoice_count;
-                                    ?></td>
-                                <td><?php
-                                    echo number_format($val->pay_sum, 2, '.', ' ');
-                                    $pay_sum += $val->pay_sum;
-                                    ?></td>
+                    <tbody>     
+                        <tr ng-repeat="(key, Data) in OperatorData.data" ng-hide="!operator[key_p]">
+                                <td>{{key+1}}</td>
+                                <td>{{Data.requisites_creating_date_time}}</td>
+                                <td>{{Data.edscount}}</td>
+                                <td>{{Data.tokencount}}</td>
+                                <td>{{Data.invoice_count}}</td>
+                                <td>{{Data.pay_sum | number:'2'}}</td>
                             </tr>
-                        <?php endforeach; ?>
                         <tr>
                             <td><h4>Итого</h4></td>
-                            <td><strong></strong></td>
-                            <td><h4><?php echo $edscount; ?></h4></td>
-                            <td><h4><?php echo $tokencount; ?></h4></td>
-                            <td><h4><?php echo $invoice; ?></h4></td>
-                            <td><h4><?php echo number_format($pay_sum, 2, '.', ' '); ?></h4></td>
+                            <td ng-hide="!operator[key_p]"><strong></strong></td>
+                            <td><h4>{{OperatorData.totaldigits.endscount}}</h4></td>
+                            <td><h4>{{OperatorData.totaldigits.tokencount}}</h4></td>
+                            <td><h4>{{OperatorData.totaldigits.invoice_count}}</h4></td>
+                            <td><h4>{{OperatorData.totaldigits.pay_sum | number:' 2'}}</h4></td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        <?php endforeach; ?>
+                <button type="button" class="btn btn-block" ng-click="operator[key_p] = !operator[key_p]">
+                    <span class = "glyphicon" ng-class="{ 'glyphicon-arrow-down': !operator[key_p], 'glyphicon-arrow-up': operator[key_p]}"></span> 
+                    <ng-if ng-if="!operator[key_p]">Рзвернуть</ng-if>
+                    <ng-if ng-if="operator[key_p]">Свернуть</ng-if>
+                </button>
+        </div>
     </div>
 <?php endif; ?>
 <link href="<?php echo base_url(); ?>resources/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <script src="<?php echo base_url(); ?>resources/js/moment-with-locales.min.js"></script>
 <script src="<?php echo base_url(); ?>resources/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript">
+    var StatMainBoss = angular.module("StatMainBoss",[]);
+    StatMainBoss.controller("StatMainBossData", function($scope){
+    window.scope = $scope;
+    $scope.cummunism = false;
+    $scope.CommunismArrow ='glyphicon glyphicon-arrow-down';
+    $scope.CommunismText ='Развернуть';
+    $scope.CapitalisticOperatorsData = <?php echo json_encode($statistics_daily_operators); ?>;
+    
+    $scope.HideTableCommunism = function() {
+        if ($scope.cummunism === false){
+            $scope.cummunism = true;
+            $scope.CommunismArrow ='glyphicon glyphicon-arrow-up';
+            $scope.CommunismText ='Свернуть';
+        } else {
+            $scope.cummunism = false;
+            $scope.CommunismArrow ='glyphicon glyphicon-arrow-down';
+            $scope.CommunismText ='Развернуть';
+        }
+    };
+    });
+    
     $(function () {
         //Установим для виджета русскую локаль с помощью параметра language и значения ru
         $('#datetimepicker1').datetimepicker(
