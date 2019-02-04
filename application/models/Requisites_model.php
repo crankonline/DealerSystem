@@ -272,8 +272,8 @@ class Requisites_model extends CI_Model {
             }
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
-            log_message('error', json_encode($json));
             log_message('error', $message);
+	    log_message('error', json_encode($json));
             throw new Exception($message);
         }
         try {
@@ -288,7 +288,7 @@ class Requisites_model extends CI_Model {
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
             log_message('error', $message);
-            log_message('error', json_encode($json));
+	    log_message('error', json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;

@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-//var_dump($pay_log);
+//var_dump($invoice_data);
 ?>
 <div class="container theme-showcase" role="main" ng-app="InvoiceShow">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере  ?>
@@ -167,7 +167,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td><?php echo $i++; ?></td>
                                 <td><?php echo $invoice_item->inventory_name; ?></td>
                                 <td><?php echo $invoice_item->count; ?></td>
-        <!--                                <td><?php //echo $invoice_item->price;     ?></td>Переписать  модель-->
+        <!--                                <td><?php //echo $invoice_item->price;   ?></td>Переписать  модель-->
                                 <td><?php echo number_format($invoice_item->price_count / $invoice_item->count, 2, '.', ''); ?></td>
                                 <td><?php echo $invoice_item->price_count; ?></td>
                             </tr>
@@ -206,7 +206,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <?php endif; ?>
             </div>
         </div>
-    <?php if (($this->session->userdata['logged_in']['Payer_Invoce'] == TRUE) && ($invoice_data[0]->requisites_invoice_id == NULL)): //вывод панели оплаты счета на оплату если у пользователя есть доступ  ?>
+        <?php if (($this->session->userdata['logged_in']['Payer_Invoce'] == TRUE) && ($invoice_data[0]->requisites_invoice_id == NULL)): //вывод панели оплаты счета на оплату если у пользователя есть доступ ?>
             <div class="panel panel-danger">
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> Оплата счета на оплату</h3>
@@ -214,105 +214,105 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="panel-body">
                     <table class="table">
                         <tbody></tbody>
-        <?php //if ($invoice_data[0]->pay_sum != 0): //если счет оплачен вывод строки со свойством сервиса оплаты      ?>
-        <!--                                <tr>
+                            <?php //if ($invoice_data[0]->pay_sum != 0): //если счет оплачен вывод строки со свойством сервиса оплаты     ?>
+<!--                                <tr>
                                     <td><h4>Наименование сервиса через которого прошла оплата</h4></td>
                                     <td><h4>Сервис платежей временно не доступен!</h4></td>
                                     <td></td>
                                 </tr>-->
-                        <?php //endif; ?>
-        <?php //if ($invoice_data[0]->pay_sum < $invoice_data[0]->total_sum): //если счет не оплачен даем возможность заплатить    ?>      
-                        <tr>
-                            <td><h4>Изменить сумму оплаты согласно платежному поручению</h4></td>
-                        <form action="<?php echo base_url() . "index.php/invoice/invoice_update/pay_sum" ?>" method="post">
-                            <td>
-                                <input name="pay_sum" 
-                                       type="text" 
-                                       class="form-control" 
-                                       placeholder="<?php echo 'Сумма к оплате - ' . ($invoice_data[0]->total_sum - $invoice_data[0]->pay_sum); ?>" 
-                                       required="" maxlength="9" 
-                                       ng-model="val2" 
-                                       numbers-only>
-                                <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
-                            </td>
-                            <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
-                        </form>
-                        </tr>
-        <?php //endif;  ?>
-                    </table>
-                </div>
-            </div>
-        <?php endif; ?>
-
-    <?php if ($this->session->userdata['logged_in']['Reassing_Invoice'] == TRUE): //вывод панели свойств счета на оплату если у пользователя есть доступ ?>
-            <div class="panel panel-warning">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Переназначение счета на оплату</h3>
-                </div>
-                <div class="panel-body">
-                    <table class="table">
-                        <tr>
-                            <td><h4>Пользователь создавший счет на оплату</h4></td>
-                            <td><h4><?php echo $invoice_data[0]->surname . " " . $invoice_data[0]->name . " " . $invoice_data[0]->patronymic_name; ?></h4></td>
-                            <td></td>
-                        </tr>
-        <?php if ($invoice_data[0]->id_requisites == 0): //если нет связаного реквизита даем возможность переназначить оператора  ?>
-                            <tr>
-                                <td><h4>Переназначить счет на оплату на оператора</h4></td>
-                            <form action="<?php echo base_url() . "index.php/invoice/invoice_update/user" ?>" method="post">
-                                <td>
-                                    <select name="user" class="form-control" required="">
-                                        <option value="" selected="selected">Выберите оператора</option>
-                                        <?php $users_data = $this->invoice_model->enum_operators(); //переписать на angular?>
-                                            <?php foreach ($users_data as $user_data_item): ?>
-                                            <option value="<?php echo $user_data_item->id_users ?>">
-                                            <?php echo $user_data_item->surname . " " . $user_data_item->name . " " . $user_data_item->patronymic_name; ?>
-                                            </option>
-            <?php endforeach; ?>
-                                    </select>
-                                    <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
-                                </td>
-                                <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
+                            <?php //endif; ?>
+                            <?php //if ($invoice_data[0]->pay_sum < $invoice_data[0]->total_sum): //если счет не оплачен даем возможность заплатить   ?>      
+                                <tr>
+                                    <td><h4>Изменить сумму оплаты согласно платежному поручению</h4></td>
+                                <form action="<?php echo base_url() . "index.php/invoice/invoice_update/pay_sum" ?>" method="post">
+                                    <td>
+                                        <input name="pay_sum" 
+                                               type="text" 
+                                               class="form-control" 
+                                               placeholder="<?php echo 'Сумма к оплате - ' . ($invoice_data[0]->total_sum - $invoice_data[0]->pay_sum); ?>" 
+                                               required="" maxlength="9" 
+                                               ng-model="val2" 
+                                               numbers-only>
+                                        <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
+                                    </td>
+                                    <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
+                                </form>
                                 </tr>
-                            </form>
-                    <?php endif; ?>
+                            <?php //endif; ?>
                     </table>
-        <?php //if ($invoice_data[0]->pay_sum == 0): //если присутствует хоть какая то оплата то нам сохранять нечего      ?>
-                    <!--                        <div align="center">
-                                                <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-save"></span>
-                                                    Сохранить
-                                                </button>
-                                            </div>-->
-        <?php //endif;  ?>
                 </div>
             </div>
+            <?php endif; ?>
+
+            <?php if ($this->session->userdata['logged_in']['Reassing_Invoice'] == TRUE): //вывод панели свойств счета на оплату если у пользователя есть доступ?>
+                <div class="panel panel-warning">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Оператор создавший счета на оплату</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <tr>
+                                <td><h4>Пользователь создавший счет на оплату</h4></td>
+                                <td><h4><?php echo $invoice_data[0]->surname . " " . $invoice_data[0]->name . " " . $invoice_data[0]->patronymic_name; ?></h4></td>
+                                <td></td>
+                            </tr>
+                            <?php if ($invoice_data[0]->id_requisites == 0): //если нет связаного реквизита даем возможность переназначить оператора ?>
+                                <tr>
+                                    <td><h4>Переназначить счет на оплату на оператора</h4></td>
+                                <form action="<?php echo base_url() . "index.php/invoice/invoice_update/user" ?>" method="post">
+                                    <td>
+                                        <select name="user" class="form-control" required="">
+                                            <option value="" selected="selected">Выберите оператора</option>
+                                            <?php $users_data = $this->invoice_model->enum_operators(); //переписать на angular?>
+                                            <?php foreach ($users_data as $user_data_item): ?>
+                                                <option value="<?php echo $user_data_item->id_users ?>">
+                                                    <?php echo $user_data_item->surname . " " . $user_data_item->name . " " . $user_data_item->patronymic_name; ?>
+                                                </option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
+                                    </td>
+                                    <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
+                                    </tr>
+                                </form>
+                            <?php endif; ?>
+                        </table>
+                        <?php //if ($invoice_data[0]->pay_sum == 0): //если присутствует хоть какая то оплата то нам сохранять нечего     ?>
+                        <!--                        <div align="center">
+                                                    <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-save"></span>
+                                                        Сохранить
+                                                    </button>
+                                                </div>-->
+                        <?php //endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
         <?php endif; ?>
-<?php endif; ?>
-</div>
+    </div>
 
-<script type="text/javascript">
+    <script type="text/javascript">
 
-    var app = angular.module('InvoiceShow', []);
+        var app = angular.module('InvoiceShow', []);
 
-    app.directive('numbersOnly', function () {
-        return {
-            require: 'ngModel',
-            link: function (scope, element, attr, ngModelCtrl) {
-                scope.val = '<?php echo $invoice_data[0]->inn; ?>';
-                function fromUser(text) {
-                    if (text) {
-                        var transformedInput = text.replace(/[^0-9.,-]/g, '');
+        app.directive('numbersOnly', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, element, attr, ngModelCtrl) {
+                    scope.val = '<?php echo $invoice_data[0]->inn; ?>';
+                    function fromUser(text) {
+                        if (text) {
+                            var transformedInput = text.replace(/[^0-9.,-]/g, '');
 
-                        if (transformedInput !== text) {
-                            ngModelCtrl.$setViewValue(transformedInput);
-                            ngModelCtrl.$render();
+                            if (transformedInput !== text) {
+                                ngModelCtrl.$setViewValue(transformedInput);
+                                ngModelCtrl.$render();
+                            }
+                            return transformedInput;
                         }
-                        return transformedInput;
+                        return undefined;
                     }
-                    return undefined;
+                    ngModelCtrl.$parsers.push(fromUser);
                 }
-                ngModelCtrl.$parsers.push(fromUser);
-            }
-        };
-    });
-</script>
+            };
+        });
+    </script>
