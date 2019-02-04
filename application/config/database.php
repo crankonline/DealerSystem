@@ -76,9 +76,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => '192.168.1.7',
+    'hostname' => '172.16.4.8',
     'username' => 'postgres',
-    'password' => 'f,shdfkr',
+    'password' => '1qaz2WSX$$',
     'database' => 'DealerSystemDTG',
     'dbdriver' => 'postgre',
     'dbprefix' => '',
