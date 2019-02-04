@@ -6,7 +6,7 @@ class Authenticate extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-
+        
         $this->load->model('authenticate_model');
     }
 
@@ -110,6 +110,10 @@ class Authenticate extends CI_Controller {
     }
 
     public function auth_login() {
+         !empty($this->session->userdata['logged_in']) ?
+                        redirect(base_url() . 'index.php/dash/') :
+                        NULL;
+        
         $allovedIp = array(
             "172.16.3.5", //Я
             "172.16.3.6", //Джон
