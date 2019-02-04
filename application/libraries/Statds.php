@@ -67,12 +67,12 @@ class Statds {
     public function EDS_error_reiting($period_start = NULL, $period_end = NULL) {
         $operators = $this->CI->statistics_model->get_operators_enum(); // все операторы
         
-        $iam = new stdClass();
+	$iam = new stdClass();
         $iam->id_users=$this->CI->session->userdata['logged_in']['UserID'];
         $iam->username=$this->CI->session->userdata['logged_in']['UserName'];
-        array_push($operators, $iam);//наркоман штоле?
+        array_push($operators, $iam); //наркоман штоле?
         
-        $count_all_errors = 0; // все ошибки за переод
+	$count_all_errors = 0; // все ошибки за переод
         $data = null;
         foreach ($operators as $key => $operator) {
             /*if ($this->CI->session->userdata['logged_in']['UserID'] == $operator->id_users) {

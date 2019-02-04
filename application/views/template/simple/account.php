@@ -126,7 +126,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         </div>
     <?php endif; ?>
-     <div class="panel panel-primary">
+ <div class="panel panel-primary">
             <div class="panel-heading">
                 <h4 class="panel-title"><span class="glyphicon glyphicon-qrcode"></span> Информация о системе</h4>
             </div>
