@@ -8,7 +8,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Oh snap! </strong> <?php echo $error_message; ?>
         </div>
     <?php else: ?>    
-        <?php $this->load->view('template/statistics/boss/statistics_menu'); //меню оператора?>
         <div class="alert alert-warning">
             <span class="glyphicon glyphicon-warning-sign"></span> Внимание данный запрос будет обрабатываться дельше чем обычно! Чем больше указан период, тем дольше происходит обработка! 
             Данную статистику рекомендуется смотреть, когда не происходит процесс выдачи ЭЦП!

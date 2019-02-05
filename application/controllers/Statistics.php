@@ -68,12 +68,13 @@ class Statistics extends CI_Controller {
             if (!$this->session->userdata['logged_in']['Show_Statistics']) {
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
             }
-            if ($this->session->userdata['logged_in']['UserRoleID'] == 3) {
-                $this->statistics_view_operator_main();
-            }
-            if ($this->session->userdata['logged_in']['UserRoleID'] == 4) {
-                $this->statistics_view_boss_main();
-            }
+//            if ($this->session->userdata['logged_in']['UserRoleID'] == 3) {
+//                $this->statistics_view_operator_main();
+//            }
+//            if ($this->session->userdata['logged_in']['UserRoleID'] == 4) {
+//                $this->statistics_view_main();
+//            }
+            $this->statistics_view_main();
         } catch (Exception $ex) {
             show_error($ex->getMessage(), 404, 'Произошла Ошибка');
         }
@@ -209,7 +210,7 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_boss_error_eds() {
+    public function statistics_view_error_eds() {
         try {
             if ($this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');
@@ -268,7 +269,7 @@ class Statistics extends CI_Controller {
 
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/boss/statistics_error_eds', $data); //взависимости от авторизации
+        $this->load->view('template/statistics/statistics_error_eds', $data); //взависимости от авторизации
         $this->load->view('template/footer');
     }
 
@@ -413,13 +414,13 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_boss_main() {
+    public function statistics_view_main() {
         try {
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 4) {
-                throw new Exception('Вы не являетесь руководителем. Доступ запрещен.');
+            if ($this->session->userdata['logged_in']['UserRoleID'] != 4 && $this->session->userdata['logged_in']['UserRoleID'] != 3) {//кто ты
+                throw new Exception('Вам доступ запрещен.');
             }
 
-            if ($this->input->post('period_start') != '' && $this->input->post('period_end') != '') {
+            if ($this->input->post('period_start') != '' && $this->input->post('period_end') != '') { //подставляем даты по умолчанию
                 $period_start = $this->input->post('period_start');
                 $period_end = $this->input->post('period_end');
                 $data['period_start'] = $period_start;
@@ -429,7 +430,7 @@ class Statistics extends CI_Controller {
                 $period_end = NULL;
             }
 
-            $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting($period_start, $period_end);
+            $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting($period_start, $period_end); //рейтинг
             if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
                 $fullpercent = 0;
                 foreach ($data['statistics_reiting'] as $value) {
@@ -439,38 +440,78 @@ class Statistics extends CI_Controller {
                     $value->count = ($value->count * 100) / $fullpercent; //рейтинг
                 }
             }
-            
-            $operators = $this->statistics_model->get_operators_enum(); //по операторам
-            foreach ($operators as $key => $operator) {
-                $data['statistics_daily_operators'][$key]['name'] = $operator->username;
-                $data['statistics_daily_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
-                $endscount=0; $tokencount=0; $invoice_count =0; $pay_sum =0;
-                foreach($data['statistics_daily_operators'][$key]['data'] as $totaldigits){
+
+            if ($this->session->userdata['logged_in']['UserRoleID'] == 4 || $this->session->userdata['logged_in']['Show_Statistics_Operators'] == TRUE) { //если босс или старший     
+                $operators = $this->statistics_model->get_operators_enum(); //по операторам
+                foreach ($operators as $key => $operator) {
+                    $data['statistics_daily_operators'][$key]['name'] = $operator->username;
+                    $data['statistics_daily_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
+                    $endscount = 0;
+                    $tokencount = 0;
+                    $invoice_count = 0;
+                    $pay_sum = 0;
+                    foreach ($data['statistics_daily_operators'][$key]['data'] as $totaldigits) {//суммирование итоговых сумм (можно было и в модели)
+                        $endscount += $totaldigits->edscount;
+                        $tokencount += $totaldigits->tokencount;
+                        $invoice_count += $totaldigits->invoice_count;
+                        $pay_sum += $totaldigits->pay_sum;
+                    }
+                    $data['statistics_daily_operators'][$key]['totaldigits']['endscount'] = $endscount;
+                    $data['statistics_daily_operators'][$key]['totaldigits']['tokencount'] = $tokencount;
+                    $data['statistics_daily_operators'][$key]['totaldigits']['invoice_count'] = $invoice_count;
+                    $data['statistics_daily_operators'][$key]['totaldigits']['pay_sum'] = $pay_sum;
+                    usort($data['statistics_daily_operators'], function($a, $b) {//сортировка
+                        return ($b['totaldigits']['invoice_count'] - $a['totaldigits']['invoice_count']);
+                    });
+                }
+                $data['statistics_daily_all']['data'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //все операторы
+                $endscount = 0;
+                $tokencount = 0;
+                $invoice_count = 0;
+                $pay_sum = 0;
+                foreach ($data['statistics_daily_all']['data'] as $totaldigits) {//суммирование итоговых сумм (можно было и в модели)
                     $endscount += $totaldigits->edscount;
                     $tokencount += $totaldigits->tokencount;
                     $invoice_count += $totaldigits->invoice_count;
                     $pay_sum += $totaldigits->pay_sum;
                 }
-                $data['statistics_daily_operators'][$key]['totaldigits']['endscount'] = $endscount;
-                $data['statistics_daily_operators'][$key]['totaldigits']['tokencount'] = $tokencount;
-                $data['statistics_daily_operators'][$key]['totaldigits']['invoice_count'] = $invoice_count;
-                $data['statistics_daily_operators'][$key]['totaldigits']['pay_sum'] = $pay_sum;
+                $data['statistics_daily_all']['totaldigits']['endscount'] = $endscount;
+                $data['statistics_daily_all']['totaldigits']['tokencount'] = $tokencount;
+                $data['statistics_daily_all']['totaldigits']['invoice_count'] = $invoice_count;
+                $data['statistics_daily_all']['totaldigits']['pay_sum'] = $pay_sum;
+            }
+            
+            if ($this->session->userdata['logged_in']['UserRoleID'] == 3 && $this->session->userdata['logged_in']['Show_Statistics_Operators'] == FALSE ) { //если простой оператор
+                $data['statistics_daily_operators'][0]['name'] = $this->session->userdata['logged_in']['UserName'];
+                $data['statistics_daily_operators'][0]['data'] = $this->statistics_model->get_statistics_operator_daily($this->session->userdata['logged_in']['UserID']);
+                $endscount = 0;
+                $tokencount = 0;
+                $invoice_count = 0;
+                $pay_sum = 0;
+                foreach ($data['statistics_daily_operators'][0]['data'] as $totaldigits) {//суммирование итоговых сумм (можно было и в модели)
+                    $endscount += $totaldigits->edscount;
+                    $tokencount += $totaldigits->tokencount;
+                    $invoice_count += $totaldigits->invoice_count;
+                    $pay_sum += $totaldigits->pay_sum;
+                }
+                $data['statistics_daily_operators'][0]['totaldigits']['endscount'] = $endscount;
+                $data['statistics_daily_operators'][0]['totaldigits']['tokencount'] = $tokencount;
+                $data['statistics_daily_operators'][0]['totaldigits']['invoice_count'] = $invoice_count;
+                $data['statistics_daily_operators'][0]['totaldigits']['pay_sum'] = $pay_sum;
                 usort($data['statistics_daily_operators'], function($a, $b) {//сортировка
                     return ($b['totaldigits']['invoice_count'] - $a['totaldigits']['invoice_count']);
                 });
             }
-
-            $data['statistics_daily_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //все
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getTraceAsString(); //
         }
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/boss/statistics_main', $data); //взависимости от авторизации
+        $this->load->view('template/statistics/statistics_main', $data); //взависимости от авторизации
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_boss_cash_history() {
+    public function statistics_view_cash_history() {
         try {
             $data['pay_history'] = $this->statistics_model->get_statistics_boss_cash_history($this->per_page, $this->uri->segment(3), $this->input->post('search_field'));
             $data['pagination'] = $this->pagination_gen();
@@ -480,7 +521,7 @@ class Statistics extends CI_Controller {
 
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/boss/statistics_cash_history', $data); //взависимости от авторизации
+        $this->load->view('template/statistics/statistics_cash_history', $data); //взависимости от авторизации
         $this->load->view('template/footer');
     }
 

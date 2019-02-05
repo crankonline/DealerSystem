@@ -12,9 +12,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         if ($this->session->userdata['logged_in']['UserRoleID'] == 3) {
             $this->load->view('template/statistics/operator/statistics_menu'); //меню оператора
         }
-        if ($this->session->userdata['logged_in']['UserRoleID'] == 4) {
-            $this->load->view('template/statistics/boss/statistics_menu'); //меню оператора
-        }
         ?>
     <div class="alert alert-warning">
         <h4><span class="glyphicon glyphicon-info-sign"></span> Как правильно читать эту таблицу:</h4>

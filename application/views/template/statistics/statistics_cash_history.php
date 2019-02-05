@@ -8,9 +8,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Oh snap! </strong> <?php echo $error_message; ?>
         </div>
     <?php else: ?>    
-
-        <?php $this->load->view('template/statistics/boss/statistics_menu'); //меню оператора?>
-
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title"><span class="glyphicon glyphicon-search"></span> ПОИСК ОПЛАТЫ</h3>
