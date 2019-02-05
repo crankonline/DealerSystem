@@ -10,7 +10,7 @@ class Requisites_model extends CI_Model {
     private function requisites_client() {
         (ENVIRONMENT == 'production') ?
                         $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl' : //prod
-                        $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //dev
+                        $wsdl = 'http://api.dostek.test/RequisitesData.php?wsdl'; //dev
 
         $user = array(
             'soap_version' => SOAP_1_1,
@@ -28,7 +28,7 @@ class Requisites_model extends CI_Model {
     private function reference_client() {
         (ENVIRONMENT == 'production') ?
                         $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl' : //prod
-                        $wsdl = 'http://api-dev.dostek.ev/RequisitesMeta.php?wsdl'; //dev
+                        $wsdl = 'http://api.dostek.test/RequisitesMeta.php?wsdl'; //dev
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'

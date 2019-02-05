@@ -98,9 +98,9 @@ $db['default'] = array(
 
 $db['pki'] = array(
     'dsn' => '',
-    'hostname' => '172.16.1.15',
-    'username' => 'pki',
-    'password' => 'Vg3P4c5ZltLwFUqWZ0cI',
+    'hostname' => '172.16.4.8',
+    'username' => 'root',
+    'password' => '1qaz2WSX$$',
     'database' => 'PkiApi',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',
