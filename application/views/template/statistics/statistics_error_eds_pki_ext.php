@@ -8,11 +8,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Oh snap!</strong> <?php echo $error_message; ?>
         </div>
     <?php else: ?>
-        <?php
-        if ($this->session->userdata['logged_in']['UserRoleID'] == 3) {
-            $this->load->view('template/statistics/operator/statistics_menu'); //меню оператора
-        }
-        ?>
     <div class="alert alert-warning">
         <h4><span class="glyphicon glyphicon-info-sign"></span> Как правильно читать эту таблицу:</h4>
         <p> <b class="alert-info"><span class="glyphicon glyphicon-certificate"></span> ЭЛЕКТРОННАЯ ПОДПИСЬ</b> - Блок таблицы ЭП</p>
