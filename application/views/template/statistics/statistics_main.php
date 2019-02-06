@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-//var_dump($statistics_reiting)
 ?>
 <div class="container theme-showcase" role="main" ng-app="StatMainBoss" ng-controller="StatMainBossData">
     <?php if (isset($error_message)): ?>
@@ -116,7 +115,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><h4>{{CommunismData.totaldigits.endscount}}</h4></td>
                             <td><h4>{{CommunismData.totaldigits.tokencount}}</h4></td>
                             <td><h4>{{CommunismData.totaldigits.invoice_count}}</h4></td>
-                            <td><h4>{{CommunismData.totaldigits.pay_sum}}</h4></td>
+                            <td><h4>{{CommunismData.totaldigits.pay_sum| number:'2'}}</h4></td>
                         </tr>
                     </tbody>
                 </table>

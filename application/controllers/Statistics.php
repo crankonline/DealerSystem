@@ -65,15 +65,9 @@ class Statistics extends CI_Controller {
 
     public function index() {
         try {
-            if (!$this->session->userdata['logged_in']['Show_Statistics']) {
+            if (!$this->session->userdata['logged_in']['Show_Statistics'] && $this->session->userdata['logged_in']['UserRoleID'] != 4) { //в каждую функцию котрола
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
             }
-//            if ($this->session->userdata['logged_in']['UserRoleID'] == 3) {
-//                $this->statistics_view_operator_main();
-//            }
-//            if ($this->session->userdata['logged_in']['UserRoleID'] == 4) {
-//                $this->statistics_view_main();
-//            }
             $this->statistics_view_main();
         } catch (Exception $ex) {
             show_error($ex->getMessage(), 404, 'Произошла Ошибка');
@@ -82,92 +76,13 @@ class Statistics extends CI_Controller {
 //        дальнейшая маршрутизация
     }
 
-    public function statistics_view_operator_main() {
+    public function statistics_view_error_eds() {
         try {
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 3) {
-                throw new Exception('Вы не являетесь оператором. Доступ запрещен.');
-            }
-            $data['statistics_daily_self'] = $this->statistics_model->get_statistics_operator_daily($this->session->userdata['logged_in']['UserID']); //текущий оператор
-
-            $operators = $this->statistics_model->get_operators_enum();
-            foreach ($operators as $key => $operator) {
-                $data['statistics_daily_operators'][$key]['name'] = $operator->username;
-                $data['statistics_daily_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users); // все операторы
-            }
-
-            $data['statistics_daily_all'] = $this->statistics_model->get_statistics_all_daily(); //общий список
-        } catch (Exception $ex) {
-            $data['error_message'] = $ex->getMessage();
-        }
-        $this->load->view('template/header');
-        $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/operator/statistics_main', $data); //взависимости от авторизации
-        $this->load->view('template/footer');
-    }
-
-    public function statistics_view_operator_reiting() {
-        try {
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 3) {
-                throw new Exception('Вы не являетесь оператором. Доступ запрещен.');
-            }
-            $data['statistics_reiting'] = $this->statistics_model->get_statistics_operator_reiting();
-            if ((count($data['statistics_reiting']) != 0) && ($data['statistics_reiting'][0]->count > 0)) {
-                $fullpercent = 0;
-                foreach ($data['statistics_reiting'] as $value) {
-                    $fullpercent += $value->count;
-                }
-                foreach ($data['statistics_reiting'] as $value) {
-                    $value->count = ($value->count * 100) / $fullpercent; //рейтинг
-                }
-            }
-            $data['reiting'] = $this->statds->EDS_error_reiting(); //библиотека
-        } catch (Exception $ex) {
-            $data['error_message'] = $ex->getMessage();
-        }
-        $this->load->view('template/header');
-        $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/operator/statistics_reiting', $data); //взависимости от авторизации
-        $this->load->view('template/footer');
-    }
-
-    public function statistics_view_operator_period() {
-        try {
-            $data = NULL;
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 3) {
-                throw new Exception('Вы не являетесь оператором. Доступ запрещен.');
-            }
-            if ($this->input->post('period_start') != '' && $this->input->post('period_end') != '') {
-                $period_start = $this->input->post('period_start');
-                $period_end = $this->input->post('period_end');
-                $data['period_start'] = $period_start;
-                $data['period_end'] = $period_end;
-
-                $data['statistics_period_self'] = $this->statistics_model->get_statistics_operator_period($period_start, $period_end); //Текущий оператор
-
-                $operators = $this->statistics_model->get_operators_enum(); //каждый оператор в отдельности
-                foreach ($operators as $key => $operator) {
-                    $data['statistics_period_operators'][$key]['name'] = $operator->username;
-                    $data['statistics_period_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
-                }
-
-                $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //все операторы
-            }
-        } catch (Exception $ex) {
-            $data['error_message'] = $ex->getMessage();
-        }
-
-        $this->load->view('template/header');
-        $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/operator/statistics_period', $data); //взависимости от авторизации
-        $this->load->view('template/footer');
-    }
-
-    public function statistics_view_operator_error_eds() { //доступен всем укого есть доступ к статистике
-        try {
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 3 && $this->session->userdata['logged_in']['UserRoleID'] != 4) {
-                throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');
+            if (!$this->session->userdata['logged_in']['Show_Statistics'] && $this->session->userdata['logged_in']['UserRoleID'] != 4) { //в каждую функцию котрола
+                throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
             }
             $data = NULL;
+
             if (is_null($this->input->post('period_start')) || is_null($this->input->post('period_end'))) {
                 $period_start = date("Y") . "-" . date("m") . "-" . date("01") . " 00:00:00";
                 $period_end = date("Y") . "-" . date("m") . "-" . date("t") . " 23:59:59";
@@ -179,14 +94,16 @@ class Statistics extends CI_Controller {
             $data['period_start'] = $period_start;
             $data['period_end'] = $period_end;
 
-            $data['statistics_period_self'] = $this->statistics_model->get_statistics_operator_period($period_start, $period_end); //Текущий оператор
-            foreach ($data['statistics_period_self'] as $daily_self) {
-                $daily_self->EDS_error_count = $this->statds->EDS_error_count($daily_self->requisites_creating_date_time . ' 00:00:00', $daily_self->requisites_creating_date_time . ' 23:59:59', $daily_self->edscount, $this->session->userdata['logged_in']['UserID']);
-            }
+            $data['reiting'] = $this->statds->EDS_error_reiting(); //библиотека
 
-            if ($this->session->userdata['logged_in']['Show_Statistics_Operators'] || $this->session->userdata['logged_in']['UserRoleID'] == 4) { //если есть доступ к стату всех операторов
+
+            if ($this->session->userdata['logged_in']['UserRoleID'] == 4 || $this->session->userdata['logged_in']['Show_Statistics_Operators'] == TRUE) { //если босс или старший     
                 $operators = $this->statistics_model->get_operators_enum(); // все операторы
+                $count_all_errors = 0; // все ошибки за переод
                 foreach ($operators as $key => $operator) {
+                    if ($this->session->userdata['logged_in']['UserID'] == $operator->id_users) {
+                        continue;
+                    }
                     $data['statistics_period_operators'][$key]['name'] = $operator->username;
                     $data['statistics_period_operators'][$key]['id_users'] = $operator->id_users;
                     $data['statistics_period_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
@@ -194,73 +111,14 @@ class Statistics extends CI_Controller {
                         $daily_operators->EDS_error_count = $this->statds->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
                     }
                 }
-
-//                $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //общий список
-//                foreach ($data['statistics_period_all'] as $daily_all) {
-//                    $daily_all->EDS_error_count = $this->EDS_error_count($daily_all->requisites_creating_date_time . ' 00:00:00', $daily_all->requisites_creating_date_time . ' 23:59:59', $daily_all->edscount);
-//                }
-            }
-        } catch (Exception $ex) {
-            $data['error_message'] = $ex->getMessage();
-        }
-
-        $this->load->view('template/header');
-        $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/operator/statistics_error_eds', $data); //взависимости от авторизации
-        $this->load->view('template/footer');
-    }
-
-    public function statistics_view_error_eds() {
-        try {
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 4) {
-                throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');
-            }
-            $data = NULL;
-
-            if (is_null($this->input->post('period_start')) || is_null($this->input->post('period_end'))) {
-                $period_start = date("Y") . "-" . date("m") . "-" . date("01") . " 00:00:00";
-                $period_end = date("Y") . "-" . date("m") . "-" . date("t") . " 23:59:59";
-            } else {
-                $period_start = $this->input->post('period_start');
-                $period_end = $this->input->post('period_end');
             }
 
-            $data['period_start'] = $period_start;
-            $data['period_end'] = $period_end;
-
-
-            $operators = $this->statistics_model->get_operators_enum(); // все операторы
-            $count_all_errors = 0; // все ошибки за переод
-            foreach ($operators as $key => $operator) {
-                if ($this->session->userdata['logged_in']['UserID'] == $operator->id_users) {
-                    continue;
-                }
-                $data['statistics_period_operators'][$key]['name'] = $operator->username;
-                $data['statistics_period_operators'][$key]['id_users'] = $operator->id_users;
-                $data['statistics_period_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
-                $data['statistics_reiting_eds_error'][$key]['name'] = $operator->username; //для рейтинга
-                $data['statistics_reiting_eds_error'][$key]['count'] = 0; //для рейтинга
-                foreach ($data['statistics_period_operators'][$key]['data'] as $daily_operators) {
-                    $daily_operators->EDS_error_count = $this->statds->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $operator->id_users);
-                    $data['statistics_reiting_eds_error'][$key]['count'] += ($daily_operators->EDS_error_count->EDS_count_error < 0) ? 0 : $daily_operators->EDS_error_count->EDS_count_error; //для рейтинга 
-                    $count_all_errors += ($daily_operators->EDS_error_count->EDS_count_error < 0) ? 0 : $daily_operators->EDS_error_count->EDS_count_error; //для рейтинга
-                }
-            }
-
-//            $data['statistics_period_all'] = $this->statistics_model->get_statistics_all_daily($period_start, $period_end); //общий список
-//            foreach ($data['statistics_period_all'] as $daily_all) {
-//                $daily_all->EDS_error_count = $this->EDS_error_count($daily_all->requisites_creating_date_time . ' 00:00:00', $daily_all->requisites_creating_date_time . ' 23:59:59', $daily_all->edscount);
-//            }
-
-            usort($data['statistics_reiting_eds_error'], function($a, $b) {//сортировка
-                return ($b['count'] - $a['count']);
-            });
-
-            if ($data['statistics_reiting_eds_error'][0]['count'] > 0) {//перепод в проценты, рейтинг
-                //$fullpercent = $data['statistics_reiting_eds_error'][0]['count'];
-                $fullpercent = $count_all_errors;
-                foreach ($data['statistics_reiting_eds_error'] as &$value) {
-                    $value['count'] = ($value['count'] * 100) / $fullpercent;
+            if ($this->session->userdata['logged_in']['UserRoleID'] == 3 && $this->session->userdata['logged_in']['Show_Statistics_Operators'] == FALSE) { //если простой оператор
+                $data['statistics_period_operators'][0]['name'] = $this->session->userdata['logged_in']['UserName'];
+                $data['statistics_period_operators'][0]['id_users'] = $this->session->userdata['logged_in']['UserID'];
+                $data['statistics_period_operators'][0]['data'] = $this->statistics_model->get_statistics_operator_daily($this->session->userdata['logged_in']['UserID'], $period_start, $period_end);
+                foreach ($data['statistics_period_operators'][0]['data'] as $daily_operators) {
+                    $daily_operators->EDS_error_count = $this->statds->EDS_error_count($daily_operators->requisites_creating_date_time . ' 00:00:00', $daily_operators->requisites_creating_date_time . ' 23:59:59', $daily_operators->edscount, $this->session->userdata['logged_in']['UserID']);
                 }
             }
         } catch (Exception $ex) {
@@ -273,7 +131,7 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_operator_error_eds_ext($period_start, $period_end, $UsersID) { // просмотр расширенной версии ошибок эцп
+    public function statistics_view_error_eds_ext($period_start, $period_end, $UsersID) { // просмотр расширенной версии ошибок эцп
         try {
             if ($this->session->userdata['logged_in']['UserRoleID'] != 3 && $this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь оператором или руководителем. Доступ запрещен.');
@@ -346,11 +204,11 @@ class Statistics extends CI_Controller {
 // for me тут показывать ЭП не вошедшие в завки нельзя, не возможно (вывсти пользователю)
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/operator/statistics_error_eds_pki_ext', $data); //взависимости от авторизации
+        $this->load->view('template/statistics/statistics_error_eds_pki_ext', $data); //взависимости от авторизации
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_operator_error_eds_pki_ext($period_start, $period_end) {
+    public function statistics_view_error_eds_pki_ext($period_start, $period_end) { //ALLL
         try {
             if ($this->session->userdata['logged_in']['Show_Statistics_Operators'] != TRUE && $this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь старшим оператором или руководителем. Доступ запрещен.');
@@ -410,13 +268,13 @@ class Statistics extends CI_Controller {
 
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/statistics/operator/statistics_error_eds_pki_ext', $data); //взависимости от авторизации
+        $this->load->view('template/statistics/statistics_error_eds_pki_ext', $data); //взависимости от авторизации
         $this->load->view('template/footer');
     }
 
     public function statistics_view_main() {
         try {
-            if ($this->session->userdata['logged_in']['UserRoleID'] != 4 && $this->session->userdata['logged_in']['UserRoleID'] != 3) {//кто ты
+            if (!$this->session->userdata['logged_in']['Show_Statistics'] && $this->session->userdata['logged_in']['UserRoleID'] != 4) {//кто ты
                 throw new Exception('Вам доступ запрещен.');
             }
 
@@ -480,8 +338,8 @@ class Statistics extends CI_Controller {
                 $data['statistics_daily_all']['totaldigits']['invoice_count'] = $invoice_count;
                 $data['statistics_daily_all']['totaldigits']['pay_sum'] = $pay_sum;
             }
-            
-            if ($this->session->userdata['logged_in']['UserRoleID'] == 3 && $this->session->userdata['logged_in']['Show_Statistics_Operators'] == FALSE ) { //если простой оператор
+
+            if ($this->session->userdata['logged_in']['UserRoleID'] == 3 && $this->session->userdata['logged_in']['Show_Statistics_Operators'] == FALSE) { //если простой оператор
                 $data['statistics_daily_operators'][0]['name'] = $this->session->userdata['logged_in']['UserName'];
                 $data['statistics_daily_operators'][0]['data'] = $this->statistics_model->get_statistics_operator_daily($this->session->userdata['logged_in']['UserID']);
                 $endscount = 0;
