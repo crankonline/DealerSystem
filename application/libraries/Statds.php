@@ -70,7 +70,7 @@ class Statds {
         $iam = new stdClass();
         $iam->id_users = $this->CI->session->userdata['logged_in']['UserID'];
         $iam->username = $this->CI->session->userdata['logged_in']['UserName'];
-        ($this->CI->session->userdata['logged_in']['UserRoleID'] == 3 ) ? array_push($operators, $iam) : NULL; //наркоман штоле?
+        //($this->CI->session->userdata['logged_in']['UserRoleID'] == 3 ) ? array_push($operators, $iam) : NULL; //наркоман штоле?
 
         $count_all_errors = 0; // все ошибки за переод
         $data = null;

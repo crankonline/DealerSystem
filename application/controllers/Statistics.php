@@ -81,7 +81,6 @@ class Statistics extends CI_Controller {
             if (!$this->session->userdata['logged_in']['Show_Statistics'] && $this->session->userdata['logged_in']['UserRoleID'] != 4) { //в каждую функцию котрола
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
             }
-            $data = NULL;
 
             if (is_null($this->input->post('period_start')) || is_null($this->input->post('period_end'))) {
                 $period_start = date("Y") . "-" . date("m") . "-" . date("01") . " 00:00:00";
@@ -90,20 +89,14 @@ class Statistics extends CI_Controller {
                 $period_start = $this->input->post('period_start');
                 $period_end = $this->input->post('period_end');
             }
-
             $data['period_start'] = $period_start;
             $data['period_end'] = $period_end;
 
-            $data['reiting'] = $this->statds->EDS_error_reiting(); //библиотека
-
-
+            $data['reiting'] = $this->statds->EDS_error_reiting(); //рейтинг
+            
             if ($this->session->userdata['logged_in']['UserRoleID'] == 4 || $this->session->userdata['logged_in']['Show_Statistics_Operators'] == TRUE) { //если босс или старший     
                 $operators = $this->statistics_model->get_operators_enum(); // все операторы
-                $count_all_errors = 0; // все ошибки за переод
                 foreach ($operators as $key => $operator) {
-                    if ($this->session->userdata['logged_in']['UserID'] == $operator->id_users) {
-                        continue;
-                    }
                     $data['statistics_period_operators'][$key]['name'] = $operator->username;
                     $data['statistics_period_operators'][$key]['id_users'] = $operator->id_users;
                     $data['statistics_period_operators'][$key]['data'] = $this->statistics_model->get_statistics_operator_daily($operator->id_users, $period_start, $period_end);
