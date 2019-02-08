@@ -84,82 +84,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </table>
         </div>
 
-        <?php if (isset($statistics_period_all)): ?>
-            <div class="well">
-                <h3><span class="glyphicon glyphicon-stats"></span> Общая статистика за указанный период </h3>
-                <table class="table">
-                    <thead>
-                        <tr><th>#</th>
-                            <th>Дата</th>
-                            <th>Кол-во ЭП <br> по счетам</th>
-                            <th>Кол-во выданных <br> ЭП по факту</th>
-                            <th>Разница <br> ЭП по факту</th>
-                            <th>РуТокен</th>
-                            <th>Кол-во заявок</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        $i = 1;
-                        $edscount = 0;
-                        $eds_count_pki_all = 0;
-                        $eds_count_error_pki = 0;
-                        $tokencount = 0;
-                        $invoice = 0;
-                        foreach ($statistics_period_all as $val):
-                            ?>
-                            <tr onclick="window.open('<?php
-                            echo base_url() . "index.php/statistics/statistics_view_operator_error_eds_pki_ext/" .
-                            $val->requisites_creating_date_time . " 00:00/" . $val->requisites_creating_date_time . " 23:59"
-                            ?>', '_blank')" 
-                                style="cursor: pointer;"
-                                <?php echo ($val->EDS_error_count->EDS_count_error_pki != 0) ? 'class="danger"' : 'class="success"' ?>
-                                >
-                                <td><?php echo $i++; ?> <span class="glyphicon glyphicon-eye-open"></span></td>
-                                <td><?php echo $val->requisites_creating_date_time; ?></td>
-                                <td><?php
-                                    echo $val->edscount;
-                                    $edscount += $val->edscount;
-                                    ?></td>
-                                <td><?php
-                                    echo $val->EDS_error_count->EDS_count_pki_all;
-                                    $eds_count_pki_all += $val->EDS_error_count->EDS_count_pki_all;
-                                    ?></td>
-                                <td> <?php
-                                    echo ($val->EDS_error_count->EDS_count_error_pki < 0) ? 'Не выдано - ' . abs($val->EDS_error_count->EDS_count_error_pki) : $val->EDS_error_count->EDS_count_error_pki;
-                                    $eds_count_error_pki += ($val->EDS_error_count->EDS_count_error_pki < 0) ? 0 : $val->EDS_error_count->EDS_count_error_pki;
-                                    ?></td>
-                                <td><?php
-                                    echo $val->tokencount;
-                                    $tokencount += $val->tokencount;
-                                    ?></td>
-                                <td><?php
-                                    echo $val->invoice_count;
-                                    $invoice += $val->invoice_count;
-                                    ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        <tr>
-                            <td><h4>Итого</h4></td>
-                            <td><strong></strong></td>
-                            <td><h4><?php echo $edscount; ?></h4></td>
-                            <td><h4><?php echo $eds_count_pki_all; ?></h4></td>
-                            <td><h4><?php echo $eds_count_error_pki; ?></h4></td>
-                            <td><h4><?php echo $tokencount; ?></h4></td>
-                            <td><h4><?php echo $invoice; ?></h4></td>
-                        </tr>
-                    </tbody>
-                </table>
-                <?php ($edscount == 0) ? $persent = 0 : $persent = abs($eds_count_error_pki * 100 / $edscount); //  $eds_count_error_pki ?>
-                <?php if ($persent > 1): ?>
-                    <div class="alert alert-danger">
-                        Разрешенная погрешность в выдаче составлятет 2 %<br>
-                        <span class="glyphicon glyphicon-warning-sign"></span> На текущий момент это <?php echo $eds_count_error_pki; ?> ЭП или <?php echo number_format($persent, 1, '.', ' '); ?> %
-                    </div>
-                <?php endif; ?>
-            </div>
-        <?php endif; ?>
-
         <?php if (isset($statistics_period_operators)): ?>
             <div class="well" ng-repeat="(key, Operators) in CapitalisticOperatorsData | orderBy:'-totaldigits.eds_error_count'">
                 <h3><span class="glyphicon glyphicon-stats"></span> Статистика за указанный период - {{Operators.name}}</h3>
@@ -209,45 +133,48 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 </button>
             </div>
         <?php endif; ?>
+        <?php if ($this->session->userdata['logged_in']['UserRoleID'] == 4): ?>
+            <button type="button" onclick="window.open('/index.php/statistics/statistics_view_error_eds_pki_ext/<?php echo $period_start . '/' . $period_end; ?>')">All EDS per month</button>
+        <?php endif; ?>
     <?php endif; ?>
 </div>
 <link href="<?php echo base_url(); ?>resources/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
 <script src="<?php echo base_url(); ?>resources/js/moment-with-locales.min.js"></script>
 <script src="<?php echo base_url(); ?>resources/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript">
-                var StatErrorEds = angular.module("StatErrorEds", []).filter('makePositive', function(){
-                return function(num){return Math.abs(num); }
-                });
-                StatErrorEds.controller("StatErrorEdsData", function($scope){
-                window.scope = $scope;
-                $scope.baseurl = "<?php echo base_url(); ?>";
-                $scope.CapitalisticOperatorsData = <?php echo isset($statistics_period_operators) ? json_encode($statistics_period_operators) : "null"; ?>;
-                $scope.newtabeds = function(Date, Userid){
-                window.open('/index.php/statistics/statistics_view_error_eds_ext/' + Date + ' 00:00/' + Date + ' 23:59/' + Userid);
-                };
-                $scope.TotalDigits = function(){
-                for (var i = 0; i < $scope.CapitalisticOperatorsData.length; i++){
-                var edscount = 0, eds_count_pki = 0, eds_error_count = 0, tokencount = 0, invoicecount = 0, index = 0;
-                for (var ii = 0; ii < $scope.CapitalisticOperatorsData[i].data.length; ii++){
-                edscount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].edscount);
-                eds_count_pki += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_pki);
-                eds_error_count += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error) < 0  ?
-                        0 : parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error);
-                tokencount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].tokencount);
-                invoicecount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].invoice_count);
-                }
-                $scope.CapitalisticOperatorsData[i].totaldigits = {'index':i, 'edscount': edscount, 'eds_count_pki': eds_count_pki, 'eds_error_count': eds_error_count, 'tokencount': tokencount, 'invoicecount': invoicecount};
-                }
-                };
-                scope.TotalDigits();
-                });
-                $(function () {
-                //Установим для виджета русскую локаль с помощью параметра language и значения ru
-                $('#datetimepicker1').datetimepicker({
-                language: 'ru',
-                });
-                $('#datetimepicker2').datetimepicker(
-                {language: 'ru'}
-                );
-                });
+        var StatErrorEds = angular.module("StatErrorEds", []).filter('makePositive', function(){
+        return function(num){return Math.abs(num); }
+        });
+        StatErrorEds.controller("StatErrorEdsData", function($scope){
+        window.scope = $scope;
+        $scope.baseurl = "<?php echo base_url(); ?>";
+        $scope.CapitalisticOperatorsData = <?php echo isset($statistics_period_operators) ? json_encode($statistics_period_operators) : "null"; ?>;
+        $scope.newtabeds = function(Date, Userid){
+        window.open('/index.php/statistics/statistics_view_error_eds_ext/' + Date + ' 00:00/' + Date + ' 23:59/' + Userid);
+        };
+        $scope.TotalDigits = function(){
+        for (var i = 0; i < $scope.CapitalisticOperatorsData.length; i++){
+        var edscount = 0, eds_count_pki = 0, eds_error_count = 0, tokencount = 0, invoicecount = 0, index = 0;
+        for (var ii = 0; ii < $scope.CapitalisticOperatorsData[i].data.length; ii++){
+        edscount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].edscount);
+        eds_count_pki += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_pki);
+        eds_error_count += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error) < 0  ?
+                0 : parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error);
+        tokencount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].tokencount);
+        invoicecount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].invoice_count);
+        }
+        $scope.CapitalisticOperatorsData[i].totaldigits = {'index':i, 'edscount': edscount, 'eds_count_pki': eds_count_pki, 'eds_error_count': eds_error_count, 'tokencount': tokencount, 'invoicecount': invoicecount};
+        }
+        };
+        scope.TotalDigits();
+        });
+        $(function () {
+        //Установим для виджета русскую локаль с помощью параметра language и значения ru
+        $('#datetimepicker1').datetimepicker({
+        language: 'ru',
+        });
+        $('#datetimepicker2').datetimepicker(
+        {language: 'ru'}
+        );
+        });
 </script>
