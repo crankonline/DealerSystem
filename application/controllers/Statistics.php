@@ -82,18 +82,18 @@ class Statistics extends CI_Controller {
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
             }
 
-            if (is_null($this->input->post('period_start')) || is_null($this->input->post('period_end'))) {
-                $period_start = date("Y") . "-" . date("m") . "-" . date("01") . " 00:00:00";
-                $period_end = date("Y") . "-" . date("m") . "-" . date("t") . " 23:59:59";
-            } else {
+            if ($this->input->post('period_start') != '' && $this->input->post('period_end') != '') { //подставляем даты по умолчанию
                 $period_start = $this->input->post('period_start');
                 $period_end = $this->input->post('period_end');
+                $data['period_start'] = $period_start;
+                $data['period_end'] = $period_end;
+            } else {
+                $period_start = NULL;
+                $period_end = NULL;
             }
-            $data['period_start'] = $period_start;
-            $data['period_end'] = $period_end;
 
-            $data['reiting'] = $this->statds->EDS_error_reiting(); //рейтинг
-            
+            $data['reiting'] = $this->statds->EDS_error_reiting($period_start, $period_end); //рейтинг
+
             if ($this->session->userdata['logged_in']['UserRoleID'] == 4 || $this->session->userdata['logged_in']['Show_Statistics_Operators'] == TRUE) { //если босс или старший     
                 $operators = $this->statistics_model->get_operators_enum(); // все операторы
                 foreach ($operators as $key => $operator) {
@@ -132,9 +132,6 @@ class Statistics extends CI_Controller {
             if (is_null($UsersID) || is_null($period_start) || is_null($period_end)) {
                 throw new Exception('Переданы не верные параметры'); //statistics_model->get_statistics_error_eds_pki_ext принемает нул
             }
-//            if ((!$this->session->usersdata['logged_in']['Show_Statistics_Operators']) || ($this->session->userdata['logged_in']['UserRoleID']!=$UsersID)){
-//                throw new Exception('Вы можете просмотривать только свои списки');
-//            } подумать
 
             $period_start = urldecode($period_start);
             $period_end = urldecode($period_end);
@@ -190,6 +187,7 @@ class Statistics extends CI_Controller {
             $data_view_push = $this->my_array_unique($data_view);
 
             $data['period_start'] = date_format(date_create($period_start), 'd.m.Y');
+            $data['period_end'] = date_format(date_create($period_end), 'd.m.Y');
             $data['eds_pki_ext'] = $data_view_push;
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();
@@ -201,13 +199,19 @@ class Statistics extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function statistics_view_error_eds_pki_ext($period_start, $period_end) { //ALLL
+    public function statistics_view_error_eds_pki_ext($period_start = NULL, $period_end = NULL) { //ALLL
         try {
             if ($this->session->userdata['logged_in']['Show_Statistics_Operators'] != TRUE && $this->session->userdata['logged_in']['UserRoleID'] != 4) {
                 throw new Exception('Вы не являетесь старшим оператором или руководителем. Доступ запрещен.');
             }
-            $period_start = urldecode($period_start);
-            $period_end = urldecode($period_end);
+
+            if (is_null($period_start) || is_null($period_end)) {
+                $period_start = date("Y") . "-" . date("m") . "-" . date("01") . " 00:00:00";
+                $period_end = date("Y") . "-" . date("m") . "-" . date("t") . " 23:59:59";
+            } else {
+                $period_start = urldecode($period_start);
+                $period_end = urldecode($period_end);
+            }
 
             $cert_list = $this->statistics_model->get_statistics_pki($period_start, $period_end);
             $data_list = $this->statistics_model->get_statistics_error_eds_pki_ext($period_start, $period_end);
@@ -254,6 +258,7 @@ class Statistics extends CI_Controller {
             }
 
             $data['period_start'] = date_format(date_create($period_start), 'd.m.Y');
+            $data['period_end'] = date_format(date_create($period_end), 'd.m.Y');
             $data['eds_pki_ext'] = $data_view;
         } catch (Exception $ex) {
             $data['error_message'] = $ex->getMessage();

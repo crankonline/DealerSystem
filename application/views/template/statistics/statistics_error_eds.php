@@ -16,10 +16,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="alert alert-info">
                 <strong>Отображена статистика за : </strong> <?php echo $period_start . ' - ' . $period_end; ?>
             </div>
+        <?php else: ?>
+            <div class="alert alert-info">
+                <strong>Отображена статистика за : </strong> текущий месяц.
+            </div>
         <?php endif; ?>
 
         <div class="jumbotron">
-            <form action="<?php echo base_url() . "index.php/statistics/statistics_view_boss_error_eds" ?>" method="post">
+            <form action="<?php echo base_url() . "index.php/statistics/statistics_view_error_eds" ?>" method="post">
                 <h3><span class="glyphicon glyphicon-user"></span> Указать период</h3>
                 <div class="col-lg-4">
                     <div class="form-group">
@@ -134,7 +138,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             </div>
         <?php endif; ?>
         <?php if ($this->session->userdata['logged_in']['UserRoleID'] == 4): ?>
-            <button type="button" onclick="window.open('/index.php/statistics/statistics_view_error_eds_pki_ext/<?php echo $period_start . '/' . $period_end; ?>')">All EDS per month</button>
+            <div class="alert alert-danger">
+               <button type="button" class="btn btn-block" onclick="window.open('/index.php/statistics/statistics_view_error_eds_pki_ext/')">Все ЭП выданные за месяц</button>
+            </div>
         <?php endif; ?>
     <?php endif; ?>
 </div>

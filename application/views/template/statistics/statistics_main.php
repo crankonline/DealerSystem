@@ -97,7 +97,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th>Кол-во ЭП <br> по счетам</th>
                             <th>РуТокен</th>
                             <th>Кол-во заявок</th>
-                            <th><span class="glyphicon glyphicon-usd"></span></th>
+                            <?php if($this->session->userdata['logged_in']['UserRoleID'] == 4) :?>
+                                <th><span class="glyphicon glyphicon-usd"></span></th>
+                            <?php endif; ?>
                         </tr>
                     </thead>
                     <tbody>
@@ -107,7 +109,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td>{{DailyData.edscount}}</td>
                             <td>{{DailyData.tokencount}}</td>
                             <td>{{DailyData.invoice_count}}</td>
-                            <td>{{DailyData.pay_sum}}</td>
+                            <?php if($this->session->userdata['logged_in']['UserRoleID'] == 4):?>
+                                <td>{{DailyData.pay_sum}}</td>
+                            <?php endif; ?>
                         </tr>
                         <tr>
                             <td><h4>Итого</h4></td>
@@ -115,7 +119,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td><h4>{{CommunismData.totaldigits.endscount}}</h4></td>
                             <td><h4>{{CommunismData.totaldigits.tokencount}}</h4></td>
                             <td><h4>{{CommunismData.totaldigits.invoice_count}}</h4></td>
-                            <td><h4>{{CommunismData.totaldigits.pay_sum| number:'2'}}</h4></td>
+                            <?php if($this->session->userdata['logged_in']['UserRoleID'] == 4):?>
+                                <td><h4>{{CommunismData.totaldigits.pay_sum| number:'2'}}</h4></td>
+                            <?php endif; ?>
                         </tr>
                     </tbody>
                 </table>
@@ -138,7 +144,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <th>Кол-во ЭП <br> по счетам</th>
                         <th>РуТокен</th>
                         <th>Кол-во заявок</th>
-                        <th><span class="glyphicon glyphicon-usd"></span><th>
+                        <?php if($this->session->userdata['logged_in']['UserRoleID'] == 4) :?>
+                            <th><span class="glyphicon glyphicon-usd"></span><th>
+                        <?php endif;?>
                     </tr>
                 </thead>
                 <tbody>     
@@ -148,7 +156,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td>{{Data.edscount}}</td>
                         <td>{{Data.tokencount}}</td>
                         <td>{{Data.invoice_count}}</td>
-                        <td>{{Data.pay_sum| number:'2'}}</td>
+                        <?php if($this->session->userdata['logged_in']['UserRoleID'] == 4) :?>
+                            <td>{{Data.pay_sum| number:'2'}}</td>
+                        <?php endif; ?>
                     </tr>
                     <tr>
                         <td><h4>Итого</h4></td>
@@ -156,7 +166,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <td><h4>{{OperatorData.totaldigits.endscount}}</h4></td>
                         <td><h4>{{OperatorData.totaldigits.tokencount}}</h4></td>
                         <td><h4>{{OperatorData.totaldigits.invoice_count}}</h4></td>
-                        <td><h4>{{OperatorData.totaldigits.pay_sum| number:' 2'}}</h4></td>
+                        <?php if($this->session->userdata['logged_in']['UserRoleID'] == 4) :?>
+                            <td><h4>{{OperatorData.totaldigits.pay_sum| number:' 2'}}</h4></td>
+                        <?php endif;?>
                     </tr>
                 </tbody>
             </table>
