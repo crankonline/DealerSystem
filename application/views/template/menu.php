@@ -14,18 +14,36 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <ul class="dropdown-menu">
                         <li> <a href="<?php echo base_url(); ?>index.php/dash/messages"><span class="glyphicon glyphicon-comment"></span> Сообщения</a></li>
                         <li> <a href="<?php echo base_url(); ?>index.php/dash/news"><span class="glyphicon glyphicon-tags"></span> Новости</a></li>
-                    </ul>
-                    
+                    </ul>    
                 </li>
-                <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'price')) ? 'class="active"' : NULL; ?>><a href="<?php echo base_url(); ?>index.php/price/price_view/"><span class="glyphicon glyphicon-usd"></span>Цены</a></li>
+                <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'price')) ? 'class="active"' : NULL; ?>>
+                    <a href="<?php echo base_url(); ?>index.php/price/price_view/"><span class="glyphicon glyphicon-usd"></span>Цены</a>
+                </li>
                 <?php if ($this->session->userdata['logged_in']['Show_Statistics']): //проверка на доступ?>
-                    <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'statistics')) ? 'class="active"' : NULL; ?>><a href="<?php echo base_url(); ?>index.php/statistics/"><span class="glyphicon glyphicon-stats"></span> Статистика</a></li>
+                    <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'statistics')) ? 'class="active"' : NULL; ?> class="dropdown">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-stats"></span> Статистика <b class="caret"></b></a>
+                        <ul class="dropdown-menu">   
+                            <li>
+                                <a href="<?php echo base_url(); ?>index.php/statistics/"><span class="glyphicon glyphicon-stats"></span> Статистика продаж</a>
+                            </li>
+                            <li>
+                                <a href="<?php echo base_url(); ?>index.php/statistics/statistics_view_error_eds"><span class="glyphicon glyphicon-certificate"></span> Выданные ЭП</a>
+                            </li>
+                            <?php if ($this->session->userdata['logged_in']['UserRoleID'] == 4 )://только для рук?>
+                            <li>
+                                <a href="<?php echo base_url(); ?>index.php/statistics/statistics_view_cash_history"><span class="glyphicon glyphicon-usd"></span> История оплат</a>
+                            </li>
+                            <?php endif;?>
+                        </ul>
+                    </li>
                 <?php endif; ?>
                 <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'invoice')) ? 'class="active"' : NULL; ?> class="dropdown" style="width: 192px;">
                     <a href="" class="dropdown-toggle" data-toggle="dropdown"><span class="glyphicon glyphicon-list-alt"></span> Счета на оплату <b class="caret"></b></a>
                     <ul class="dropdown-menu">
                         <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE): ?>
-                            <li><a href="<?php echo base_url(); ?>index.php/invoice/invoice_create_view/"><span class="glyphicon glyphicon-file"></span> Создать счет на оплату</a></li>
+                            <li>
+                                <a href="<?php echo base_url(); ?>index.php/invoice/invoice_create_view/"><span class="glyphicon glyphicon-file"></span> Создать счет на оплату</a>
+                            </li>
                         <?php endif; ?>
                         <li class="divider"></li>
                         <li><a href="<?php echo base_url(); ?>index.php/invoice/invoice_list_view/pay"><span class="glyphicon glyphicon-list"></span> Оплаченные</a></li>
@@ -38,14 +56,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <ul class="dropdown-menu" style="width: 172px;">
                         <li><a href="<?php echo base_url(); ?>index.php/requisites/requisites_list_view/"><span class="glyphicon glyphicon-list"></span> Заполненные</a></li>
                         <li><a href="<?php echo base_url(); ?>index.php/invoice/invoice_list_view/wait"><span class="glyphicon glyphicon-list"></span> <span class="badge pull-right"><?php echo $this->invoice_model->menu_invoice_pay_count(); ?></span>Ожидающие</a></li>
-<!--                        <li><a href="<?php // echo base_url();   ?>index.php/requisites/requisites_list_view/nondone"><span class="glyphicon glyphicon-certificate"></span> Для ЕНОТ</a></li>
-                        <li><a href="<?php //echo base_url();   ?>index.php/requisites/requisites_list_view/nondone"><span class="glyphicon glyphicon-certificate"></span> Для Соц.фонд</a></li>
-                        <li><a href="<?php //echo base_url();   ?>index.php/requisites/requisites_list_view/nondone"><span class="glyphicon glyphicon-certificate"></span> Для стороних систем</a></li>-->
-                        <!--                        <li class="divider"></li>
-                                                <li class="dropdown-header">Архив</li>
-                                                <li><a href="#"><span class="glyphicon glyphicon-calendar"></span> Январь 2017</a></li>
-                                                <li><a href="#"><span class="glyphicon glyphicon-calendar"></span> Февраль 2017</a></li>
-                                                <li><a href="#"><span class="glyphicon glyphicon-calendar"></span> Март 2017</a></li>-->
                     </ul>
                 </li>
                 <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'pki/')) ? 'class="active"' : NULL; ?>>
