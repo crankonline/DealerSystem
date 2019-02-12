@@ -139,7 +139,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <?php endif; ?>
         <?php if ($this->session->userdata['logged_in']['UserRoleID'] == 4): ?>
             <div class="alert alert-danger">
-               <button type="button" class="btn btn-block" onclick="window.open('/index.php/statistics/statistics_view_error_eds_pki_ext/')">Все ЭП выданные за месяц</button>
+                <button type="button" class="btn btn-block" onclick="window.open('/index.php/statistics/statistics_view_error_eds_pki_ext/')">Все ЭП выданные за месяц</button>
             </div>
         <?php endif; ?>
     <?php endif; ?>
@@ -148,39 +148,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <script src="<?php echo base_url(); ?>resources/js/moment-with-locales.min.js"></script>
 <script src="<?php echo base_url(); ?>resources/js/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript">
-        var StatErrorEds = angular.module("StatErrorEds", []).filter('makePositive', function(){
-        return function(num){return Math.abs(num); }
-        });
-        StatErrorEds.controller("StatErrorEdsData", function($scope){
-        window.scope = $scope;
-        $scope.baseurl = "<?php echo base_url(); ?>";
-        $scope.CapitalisticOperatorsData = <?php echo isset($statistics_period_operators) ? json_encode($statistics_period_operators) : "null"; ?>;
-        $scope.newtabeds = function(Date, Userid){
-        window.open('/index.php/statistics/statistics_view_error_eds_ext/' + Date + ' 00:00/' + Date + ' 23:59/' + Userid);
-        };
-        $scope.TotalDigits = function(){
-        for (var i = 0; i < $scope.CapitalisticOperatorsData.length; i++){
-        var edscount = 0, eds_count_pki = 0, eds_error_count = 0, tokencount = 0, invoicecount = 0, index = 0;
-        for (var ii = 0; ii < $scope.CapitalisticOperatorsData[i].data.length; ii++){
-        edscount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].edscount);
-        eds_count_pki += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_pki);
-        eds_error_count += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error) < 0  ?
-                0 : parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error);
-        tokencount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].tokencount);
-        invoicecount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].invoice_count);
-        }
-        $scope.CapitalisticOperatorsData[i].totaldigits = {'index':i, 'edscount': edscount, 'eds_count_pki': eds_count_pki, 'eds_error_count': eds_error_count, 'tokencount': tokencount, 'invoicecount': invoicecount};
-        }
-        };
-        scope.TotalDigits();
-        });
-        $(function () {
-        //Установим для виджета русскую локаль с помощью параметра language и значения ru
-        $('#datetimepicker1').datetimepicker({
-        language: 'ru',
-        });
-        $('#datetimepicker2').datetimepicker(
-        {language: 'ru'}
-        );
-        });
+            var StatErrorEds = angular.module("StatErrorEds", []).filter('makePositive', function(){
+            return function(num){return Math.abs(num); }
+            });
+            StatErrorEds.controller("StatErrorEdsData", function($scope){
+            window.scope = $scope;
+            $scope.baseurl = "<?php echo base_url(); ?>";
+            $scope.CapitalisticOperatorsData = <?php echo isset($statistics_period_operators) ? json_encode($statistics_period_operators) : "null"; ?>;
+            $scope.newtabeds = function(Date, Userid){
+            window.open('/index.php/statistics/statistics_view_error_eds_ext/' + Date + ' 00:00/' + Date + ' 23:59/' + Userid);
+            };
+            $scope.TotalDigits = function(){
+            for (var i = 0; i < $scope.CapitalisticOperatorsData.length; i++){
+            var edscount = 0, eds_count_pki = 0, eds_error_count = 0, tokencount = 0, invoicecount = 0, index = 0;
+            for (var ii = 0; ii < $scope.CapitalisticOperatorsData[i].data.length; ii++){
+            edscount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].edscount);
+            eds_count_pki += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_pki);
+            eds_error_count += parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error) < 0  ?
+                    0 : parseInt($scope.CapitalisticOperatorsData[i].data[ii].EDS_error_count.EDS_count_error);
+            tokencount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].tokencount);
+            invoicecount += parseInt($scope.CapitalisticOperatorsData[i].data[ii].invoice_count);
+            }
+            $scope.CapitalisticOperatorsData[i].totaldigits = {'index':i, 'edscount': edscount, 'eds_count_pki': eds_count_pki, 'eds_error_count': eds_error_count, 'tokencount': tokencount, 'invoicecount': invoicecount};
+            }
+            };
+            scope.TotalDigits();
+            });
+            $(function () {
+            //Установим для виджета русскую локаль с помощью параметра language и значения ru
+            $('#datetimepicker1').datetimepicker({
+            language: 'ru',
+                    format: 'YYYY-MM-DD HH:mm'
+            });
+            $('#datetimepicker2').datetimepicker(
+            {language: 'ru',
+                    format: 'YYYY-MM-DD HH:mm'}
+            );
+            });
 </script>
