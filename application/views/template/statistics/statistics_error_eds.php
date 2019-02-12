@@ -178,11 +178,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             //Установим для виджета русскую локаль с помощью параметра language и значения ru
             $('#datetimepicker1').datetimepicker({
             language: 'ru',
-                    format: 'YYYY-MM-DD HH:mm'
+                    format: 'YYYY-MM-DD'
             });
             $('#datetimepicker2').datetimepicker(
             {language: 'ru',
-                    format: 'YYYY-MM-DD HH:mm'}
+                    format: 'YYYY-MM-DD'}
             );
             });
 </script>
