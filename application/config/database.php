@@ -76,9 +76,9 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => '192.168.1.7',
+    'hostname' => '172.16.4.8',
     'username' => 'postgres',
-    'password' => 'f,shdfkr',
+    'password' => '1qaz2WSX$$',
     'database' => 'DealerSystemDTG',
     'dbdriver' => 'postgre',
     'dbprefix' => '',
@@ -98,9 +98,9 @@ $db['default'] = array(
 
 $db['pki'] = array(
     'dsn' => '',
-    'hostname' => '172.16.1.15',
-    'username' => 'pki',
-    'password' => 'Vg3P4c5ZltLwFUqWZ0cI',
+    'hostname' => '172.16.4.8',
+    'username' => 'root',
+    'password' => '1qaz2WSX$$',
     'database' => 'PkiApi',
     'dbdriver' => 'mysqli',
     'dbprefix' => '',

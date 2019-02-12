@@ -13,7 +13,7 @@ class Statistics_model extends CI_Model { //модель сосзда на вс�
                         select("CONCAT (users.surname, ' ',users.\"name\",' ',users.patronymic_name) AS UserName")->
                         from('"Dealer_data".users')->
                         where('users.role_id', 3)->
-                        where('id_users !=', $this->session->userdata['logged_in']['UserID'])->//что бы не показывать себя
+                        //where('id_users !=', $this->session->userdata['logged_in']['UserID'])->//что бы не показывать себя
                         order_by('id_users')->get()->result();
     }
 

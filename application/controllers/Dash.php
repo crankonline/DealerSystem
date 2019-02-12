@@ -6,10 +6,9 @@ class Dash extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6 
-
+        
         $this->load->model('invoice_model'); //в меню есть запросы
         $this->load->model('messages_model');
         $this->load->library('pagination');
@@ -21,10 +20,11 @@ class Dash extends CI_Controller {
     //private $per_page_ad = 1;
     //private $status_ad = '1';
 
-    private function pagination_gen($per_page) {
-        $config['base_url'] = base_url() . 'index.php/dash/main_view/';
+    private function pagination_gen($per_page, $Count = null) {
+        ($Count == NULL) ? $config['base_url'] = base_url() . 'index.php/dash/messages/' : 
+            $config['base_url'] = base_url() . 'index.php/dash/news/' ;
         $config['per_page'] = $per_page;
-        $config['num_links'] = 10;
+        $config['num_links'] = 9;
         $config['num_tag_open'] = '<li>';
         $config['num_tag_close'] = '</li>';
         $config['cur_tag_open'] = '<li class="active"><a href="#">';
@@ -39,16 +39,17 @@ class Dash extends CI_Controller {
         $config['last_tag_close'] = '</li>';
         $config['first_tag_open'] = '<li>';
         $config['first_tag_close'] = '</li>';
-        $config['total_rows'] = $this->messages_model->record_count();
+        ($Count == NULL) ? $config['total_rows'] = $this->messages_model->record_count() :
+            $config['total_rows'] = $Count;
         $this->pagination->initialize($config);
         return $this->pagination->create_links();
     }
 
     public function index() {
-        redirect(base_url() . 'index.php/dash/main_view/'); //потомучто индекс нехочет с сегментами url работать
+        redirect(base_url() . 'index.php/dash/news/'); //потомучто индекс нехочет с сегментами url работать
     }
 
-    public function main_view() {
+    public function messages() {
         try {
             $data['pagination_message'] = $this->pagination_gen($this->per_page_messages);
             //$data['pagination_ad'] = $this->pagination_gen($this->status_ad, $this->per_page_ad);
@@ -59,7 +60,7 @@ class Dash extends CI_Controller {
         }
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/simple/main', $data); //в зависимости от авторизации (может и не надо)
+        $this->load->view('template/simple/messages', $data); //в зависимости от авторизации (может и не надо)
         $this->load->view('template/footer');
     }
 
@@ -67,10 +68,27 @@ class Dash extends CI_Controller {
         try {
             $message = nl2br($this->input->post('message'));
             (!empty($message)) ? $this->messages_model->create_message($message) : NULL; //empty не фурычит
-            redirect(base_url() . 'index.php/dash/');
+            redirect(base_url() . 'index.php/dash/messages/');
         } catch (Exception $ex) {
             show_error($ex->getMessage(), 500, 'Ошибка при сохранении поста'); //на прод не работает
         }
+    }
+    
+    public function news(){
+         try {
+            $Json = json_decode(file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset='.$this->uri->segment(3)));
+            $data['messages'] = $Json->data;
+            $data['pagination_message'] = $this->pagination_gen($this->per_page_messages, $Json->count);
+            //var_dump($Json);die;
+            
+        } catch (Exception $ex) {
+            $data['errormessage'] = $ex->getTraceAsString;
+        }
+
+        $this->load->view('template/header');
+        $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
+        $this->load->view('template/simple/news', $data); //взависимости от авторизации
+        $this->load->view('template/footer');
     }
 
 }

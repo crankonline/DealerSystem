@@ -8,14 +8,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Oh snap!</strong> <?php echo $error_message; ?>
         </div>
     <?php else: ?>
-        <?php
-        if ($this->session->userdata['logged_in']['UserRoleID'] == 3) {
-            $this->load->view('template/statistics/operator/statistics_menu'); //меню оператора
-        }
-        if ($this->session->userdata['logged_in']['UserRoleID'] == 4) {
-            $this->load->view('template/statistics/boss/statistics_menu'); //меню оператора
-        }
-        ?>
     <div class="alert alert-warning">
         <h4><span class="glyphicon glyphicon-info-sign"></span> Как правильно читать эту таблицу:</h4>
         <p> <b class="alert-info"><span class="glyphicon glyphicon-certificate"></span> ЭЛЕКТРОННАЯ ПОДПИСЬ</b> - Блок таблицы ЭП</p>
@@ -24,7 +16,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <p> <b class="alert-danger"><span class="glyphicon glyphicon-question-sign"></span> нет заявки</b> - У выданной Электроннной Подписи отсутсвует оплата и заполенная заявка</p>
     </div>
         <div class="well">
-            <h3><span class="glyphicon glyphicon-list"></span> Список регистраций и выдачи ЭП за <?php echo $period_start; ?></h3>
+            <h3><span class="glyphicon glyphicon-list"></span> Список регистраций и выдачи ЭП за <?php echo $period_start . " - " . $period_end; ?></h3>
             <table class="table">
                 <thead>
                     <tr>

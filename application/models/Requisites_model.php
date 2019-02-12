@@ -10,7 +10,7 @@ class Requisites_model extends CI_Model {
     private function requisites_client() {
         (ENVIRONMENT == 'production') ?
                         $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl' : //prod
-                        $wsdl = 'http://api-dev.dostek.ev/RequisitesData.php?wsdl'; //dev
+                        $wsdl = 'http://api.dostek.test/RequisitesData.php?wsdl'; //dev
 
         $user = array(
             'soap_version' => SOAP_1_1,
@@ -28,7 +28,7 @@ class Requisites_model extends CI_Model {
     private function reference_client() {
         (ENVIRONMENT == 'production') ?
                         $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl' : //prod
-                        $wsdl = 'http://api-dev.dostek.ev/RequisitesMeta.php?wsdl'; //dev
+                        $wsdl = 'http://api.dostek.test/RequisitesMeta.php?wsdl'; //dev
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -272,8 +272,8 @@ class Requisites_model extends CI_Model {
             }
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
-            log_message('error', json_encode($json));
             log_message('error', $message);
+	    log_message('error', json_encode($json));
             throw new Exception($message);
         }
         try {
@@ -288,7 +288,7 @@ class Requisites_model extends CI_Model {
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
             log_message('error', $message);
-            log_message('error', json_encode($json));
+	    log_message('error', json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;
@@ -416,7 +416,7 @@ class Requisites_model extends CI_Model {
     public function get_invoice_data_by_id($id_invoice) {
         return $this->db->select('invoice.inn')->
                         select('invoice.invoice_serial_number')->
-                        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3 OR inventory_id =5)),\'0\') AS eds_count')->
+                        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3 OR inventory_id =5 OR inventory_id =6)),\'0\') AS eds_count')->
                         from('"Dealer_data".invoice')->
                         where(array('id_invoice' => $id_invoice))->get()->row();
     }
