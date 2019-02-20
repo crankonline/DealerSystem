@@ -145,6 +145,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th>Использования памяти сессией</th>
                             <th>{memory_usage}</th>
                         </tr>
+                        <tr>
+                            <th>Версия</th>
+                            <th><?php echo ENVIRONMENT ?></th>
+                        </tr>
                     </thead>
              </table>
          </div>
