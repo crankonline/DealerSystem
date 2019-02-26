@@ -4,3 +4,7 @@ downloads/
 uploads/
 nbproject/
 application/config/config\.php
+
+application/config/database\.php
+
+index\.php
