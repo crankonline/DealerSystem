@@ -30,7 +30,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 echo "</div>";
             }
             ?>
-            <h2 class="form-signin-heading" align="center">Форма авторизации</h2>
+            <h2 class="form-signin-heading" align="center">Форма авторизации!!!</h2>
             
             <button class="btn btn-lg btn-primary btn-block" 
                     type="button"
