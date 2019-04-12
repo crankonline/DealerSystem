@@ -43,7 +43,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     class="glyphicon glyphicon-eye-open"></span> Просмотр формы заявки
                             </button>
                         <?php endif; ?>
-                        <?php if ($invoice_data[0]->pay_date_time == NULL): //проверка на существование оплат, если оплаты нет можно удалять (взаимоисключаемое условие с пред`идущим)?> 
+                        <?php if ($invoice_data[0]->pay_date_time == NULL || $invoice_data[0]->pay_sum == 0.00) : //проверка на существование оплат, если оплаты нет можно удалять (взаимоисключаемое условие с пред`идущим)?> 
                             <button onclick="window.location.href = '<?php echo base_url() . "index.php/invoice/invoice_delete/" . $invoice_data[0]->invoice_serial_number ?>'" type="button" class="btn btn-danger"><span
                                     class = "glyphicon glyphicon-trash"></span> Удалить счет на оплату
                             </button>
