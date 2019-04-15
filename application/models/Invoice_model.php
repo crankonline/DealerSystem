@@ -94,6 +94,7 @@ class Invoice_model extends CI_Model {
 
     public function get_invoice_all_v2($limit, $offset) {
         $this->db->
+                select('invoice.delete_marker')->
                 select('invoice.invoice_serial_number')->
                 select('invoice.inn')->
                 select('invoice.company_name')->
@@ -117,6 +118,7 @@ class Invoice_model extends CI_Model {
 
     public function get_invoice_search_v2($search) {
         $this->db->
+                select('invoice.delete_marker')->
                 select('invoice.invoice_serial_number')->
                 select('invoice.inn')->
                 select('invoice.company_name')->

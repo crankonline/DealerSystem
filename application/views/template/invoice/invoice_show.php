@@ -47,6 +47,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     class = "glyphicon glyphicon-trash"></span> Удалить счет на оплату
                             </button>
                         <?php endif; ?>
+                        <?php if ($invoice_data[0]->delete_marker == "t"):?>
+                            <span class="label label-danger">Счет на оплату был удален</span>
+                        <?php endif;?>
                     </div>
                 </div>
                 <p></p>
