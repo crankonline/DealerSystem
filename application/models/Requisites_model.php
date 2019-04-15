@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model {
 
-    private $ApiRequestSubscriberToken_SF = '337663544b22bbb86a236a090a36d82eeed942121142b6252e31329d1f61c6ad'; //SF
+    //private $ApiRequestSubscriberToken_SF = '337663544b22bbb86a236a090a36d82eeed942121142b6252e31329d1f61c6ad'; //SF
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
     private function requisites_client() {
@@ -65,7 +65,7 @@ class Requisites_model extends CI_Model {
     }
 
     private function sf_inninfo() {
-        $wsdl = 'http://10.10.0.6:8040/PayerInfoService?wsdl';
+        $wsdl = 'http://eleed.sf.kg:8041/PayerInfoService?wsdl';
         $options = [
             'trace' => TRUE,
             'exceptions' => TRUE,
@@ -240,14 +240,14 @@ class Requisites_model extends CI_Model {
     }
 
     public function get_requisites_by_inn($inn) {
-        try { // если нет CФ, лезть в ЕНОТ
+        try { 
             $token_DTG = $this->ApiRequestSubscriberToken_DTG;
-            $token_SF = $this->ApiRequestSubscriberToken_SF;
+            //$token_SF = $this->ApiRequestSubscriberToken_SF;
             $client = $this->requisites_client();
-            $result = $client->getByInn($token_SF, $inn);
-            if (is_null($result)) {
+            //$result = $client->getByInn($token_SF, $inn);
+            //if (is_null($result)) {
                 $result = $client->getByInn($token_DTG, $inn);
-            }
+            //}
             return $result;
         } catch (Exception $ex) {
             $message = 'Запрос в службу реквизитов -> ' . $ex->getMessage();
@@ -258,24 +258,24 @@ class Requisites_model extends CI_Model {
 
     public function requisites_saver($json) {
         $token_DTG = $this->ApiRequestSubscriberToken_DTG;
-        $token_SF = $this->ApiRequestSubscriberToken_SF;
+        //$token_SF = $this->ApiRequestSubscriberToken_SF;
         $client = $this->requisites_client();
         //var_dump(json_encode($json,JSON_UNESCAPED_UNICODE));
-        try {
-            $result_sf = $client->getByInn($token_SF, $json->common->inn);
-            if (is_null($result_sf)) { //sf
-                $uid_SF = $client->register($token_SF, $json);
-                $result_sf = $client->getByUid($token_SF, $uid_SF);
-            } else {
-                $client->update($token_SF, $result_sf->uid, $json);
-                //$result_sf = $client->getByUid($token_SF, $result_sf->uid);
-            }
-        } catch (Exception $ex) {
-            $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
-            log_message('error', $message);
-	    log_message('error', json_encode($json));
-            throw new Exception($message);
-        }
+//        try {
+//            $result_sf = $client->getByInn($token_SF, $json->common->inn);
+//            if (is_null($result_sf)) { //sf
+//                $uid_SF = $client->register($token_SF, $json);
+//                $result_sf = $client->getByUid($token_SF, $uid_SF);
+//            } else {
+//                $client->update($token_SF, $result_sf->uid, $json);
+//                //$result_sf = $client->getByUid($token_SF, $result_sf->uid);
+//            }
+//        } catch (Exception $ex) {
+//            $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
+//            log_message('error', $message);
+//	    log_message('error', json_encode($json));
+//            throw new Exception($message);
+//        }
         try {
             $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
             if (is_null($result_dtg)) { //DTG

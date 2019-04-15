@@ -110,7 +110,6 @@ class Invoice extends CI_Controller {
             }
             ($reference == 'inn') ? $this->invoice_model->invoice_update(array('inn' => $this->input->post('inn')), $this->input->post('invoice_serial_number')) : NULL; //?? php 7.0
             ($reference == 'company_name') ? $this->invoice_model->invoice_update(array('company_name' => $this->input->post('company_name')), $this->input->post('invoice_serial_number')) : NULL; //?? php 7.0
-            //($reference == 'pay_sum') ? $this->invoice_model->invoice_update(array('pay_sum' => str_replace(',', '.', $this->input->post('pay_sum')), 'pay_date_time' => date('Y-m-d H:i:s')), $this->input->post('invoice_serial_number')) : NULL; //?? php 7.0
             ($reference == 'pay_sum') ? $this->invoice_model->invoice_pay(array('pay_sum' => str_replace(',', '.', $this->input->post('pay_sum')), 'invoice_serial_number' => $this->input->post('invoice_serial_number'))) : NULL;
             ($reference == 'user') ? $this->invoice_model->invoice_update(array('users_id' => $this->input->post('user')), $this->input->post('invoice_serial_number')) : NULL; //?? php 7.0
 
