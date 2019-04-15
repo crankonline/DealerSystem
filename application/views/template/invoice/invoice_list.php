@@ -78,6 +78,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <?php if ($invoice_item->pay_sum >= $invoice_item->total_sum && $invoice_item->id_requisites != 0): ?>
                             class="info"
                         <?php endif; ?>
+                        <?php if ($invoice_item->delete_marker == "t"): ?>
+                            class="danger"
+                        <?php endif; ?>
                         >
                         <td><?php echo $i++; ?></td>
                         <td><?php echo $invoice_item->invoice_serial_number ?></td>
