@@ -4,3 +4,7 @@
 /nbproject/
 /application/cache/
 application/config/config\.php
+
+\.idea/
+
+index\.php
