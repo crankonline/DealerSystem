@@ -8,3 +8,5 @@ application/config/config\.php
 \.idea/
 
 index\.php
+
+application/config/database\.php
