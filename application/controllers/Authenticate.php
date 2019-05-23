@@ -97,7 +97,8 @@ class Authenticate extends CI_Controller {
 
     public function index() {
         empty($this->session->userdata['logged_in']) ?
-                        $this->load->view('template/authenticate/main') :
+                        //$this->load->view('template/authenticate/main') :
+                        redirect (base_url(). 'index.php/authenticate/auth_login'):
                         redirect(base_url() . 'index.php/dash/');
     }
 
@@ -147,7 +148,8 @@ class Authenticate extends CI_Controller {
         $data = array(
             'error_message' => 'Выход осуществлен'
         );
-        $this->load->view('template/authenticate/main', $data);
+        //$this->load->view('template/authenticate/main', $data);
+        redirect (base_url(). 'index.php/authenticate/auth_login');
     }
 
 }
