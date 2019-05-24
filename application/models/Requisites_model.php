@@ -51,7 +51,9 @@ class Requisites_model extends CI_Model {
 //    }
 
     private function pki_dtg_client() {
-        $wsdl = 'http://pkiservice.dostek.kg/pkiservice.php?wsdl';
+        (ENVIRONMENT == 'production') ?
+            $wsdl = 'http://pkiservice.dostek.kg/pkiservice.php?wsdl' : //prod
+            $wsdl = 'http://pkiservice.dostek.test/pkiservice.php?wsdl';//dev
         $options = [
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
