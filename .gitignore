@@ -9,4 +9,9 @@ application/config/config\.php
 
 index\.php
 
-application/config/database\.php
+
+vendor/
+
+composer\.lock
+
+application/\.env

@@ -9,6 +9,7 @@ class Dash extends CI_Controller {
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6 
         
+        \Sentry\init(['dsn' => getenv('SENTRY_DSN')]);
         $this->load->model('invoice_model'); //в меню есть запросы
         $this->load->model('messages_model');
         $this->load->library('pagination');
@@ -56,6 +57,7 @@ class Dash extends CI_Controller {
             $data['messages'] = $this->messages_model->get_messages($this->per_page_messages, $this->uri->segment(3));
             //$data['ad'] = $this->messages_model->get_messages($this->status_ad, $this->per_page_ad, $this->uri->segment(3));
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');
@@ -70,6 +72,7 @@ class Dash extends CI_Controller {
             (!empty($message)) ? $this->messages_model->create_message($message) : NULL; //empty не фурычит
             redirect(base_url() . 'index.php/dash/messages/');
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             show_error($ex->getMessage(), 500, 'Ошибка при сохранении поста'); //на прод не работает
         }
     }
@@ -82,6 +85,7 @@ class Dash extends CI_Controller {
             //var_dump($Json);die;
             
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['errormessage'] = $ex->getTraceAsString;
         }
 
