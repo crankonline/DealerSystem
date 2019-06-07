@@ -10,6 +10,7 @@ class Price extends CI_Controller {
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6 
 
+        \Sentry\init(['dsn' => getenv('SENTRY_DSN')]);
         $this->load->model('price_model');
         $this->load->model('invoice_model');
     }
@@ -17,8 +18,9 @@ class Price extends CI_Controller {
     public function price_view() {
         try {
             $data['price_data'] = $this->price_model->get_price();
-        } catch (Exception $exc) {
-            $data['error_message']= $exc->getMessage();
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            $data['error_message']= $ex->getMessage();
         }
 
         

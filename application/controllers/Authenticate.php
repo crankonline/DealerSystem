@@ -7,6 +7,7 @@ class Authenticate extends CI_Controller {
     public function __construct() {
         parent::__construct();
         
+        \Sentry\init(['dsn' => getenv('SENTRY_DSN')]);
         $this->load->model('authenticate_model');
     }
 
@@ -48,6 +49,7 @@ class Authenticate extends CI_Controller {
             $this->session->set_userdata('logged_in', $session_data);
             redirect(base_url() . 'index.php/dash/');
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
             $this->load->view('template/authenticate/main', $data); // если что то пошло не так -> на авторизацию
         }
@@ -67,6 +69,7 @@ class Authenticate extends CI_Controller {
             $this->session->set_userdata('logged_in', $session_data);
             redirect(base_url() . 'index.php/dash/');
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
             $this->load->view('template/authenticate/main', $data); // если что то пошло не так -> на авторизацию
         }

@@ -4,13 +4,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model {
 
-    //private $ApiRequestSubscriberToken_SF = '337663544b22bbb86a236a090a36d82eeed942121142b6252e31329d1f61c6ad'; //SF
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
 
     private function requisites_client() {
         (ENVIRONMENT == 'production') ?
-                        $wsdl = 'http://api.dostek.kg/RequisitesData.php?wsdl' : //prod
-                        $wsdl = 'http://api.dostek.test/RequisitesData.php?wsdl'; //dev
+                        $wsdl = getenv('SOAP_REQUISITES_PROD') : //prod
+                        $wsdl = getenv('SOAP_REQUISITES_DEV'); //dev
 
         $user = array(
             'soap_version' => SOAP_1_1,
@@ -27,8 +26,8 @@ class Requisites_model extends CI_Model {
 
     private function reference_client() {
         (ENVIRONMENT == 'production') ?
-                        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl' : //prod
-                        $wsdl = 'http://api.dostek.test/RequisitesMeta.php?wsdl'; //dev
+                        $wsdl = getenv('SOAP_REQUISITES_META_PROD') : //prod
+                        $wsdl = getenv('SOAP_REQUISITES_META_DEV'); //dev
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -36,24 +35,10 @@ class Requisites_model extends CI_Model {
         return new SoapClient($wsdl, $user);
     }
 
-//    private function pki_ubr_client() {
-//        $wsdl = 'http://pkiservice.ubr.kg/pkiservice.php?wsdl';
-//        $options = [
-//            'soap_version' => SOAP_1_1,
-//            'exceptions' => true,
-//            'trace' => 1,
-//            'cache_wsdl' => WSDL_CACHE_NONE,
-//            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-//            'connection_timeout' => 10
-//        ];
-//
-//        return new SoapClient($wsdl, $options);
-//    }
-
     private function pki_dtg_client() {
         (ENVIRONMENT == 'production') ?
-            $wsdl = 'http://pkiservice.dostek.kg/pkiservice.php?wsdl' : //prod
-            $wsdl = 'http://pkiservice.dostek.test/pkiservice.php?wsdl';//dev
+                        $wsdl = getenv('SOAP_PKI_PROD') : //prod
+                        $wsdl = getenv('SOAP_PKI_DEV'); //dev
         $options = [
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -62,7 +47,6 @@ class Requisites_model extends CI_Model {
             'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
             'connection_timeout' => 10
         ];
-
         return new SoapClient($wsdl, $options);
     }
 
@@ -74,6 +58,20 @@ class Requisites_model extends CI_Model {
             'connection_timeout' => 10
         ];
         return new SoapClient($wsdl, $options);
+    }
+
+    private function soap_1c_client() {
+        ini_set("soap.wsdl_cache_enabled", "0");
+        (ENVIRONMENT == 'production') ?
+                        $wsdl = getenv('SOAP_1C_PROD') : //prod
+                        $wsdl = getenv('SOAP_1C_DEV'); //dev
+
+        $user = array(
+            'login' => 'sochi',
+            'password' => 'ufvguygbvjvbugjsb6546fg964b96',
+            "trace" => 1, "exception" => 0
+        );
+        return new SoapClient($wsdl, $user);
     }
 
     private function mu_info($inn) {
@@ -242,14 +240,10 @@ class Requisites_model extends CI_Model {
     }
 
     public function get_requisites_by_inn($inn) {
-        try { 
+        try {
             $token_DTG = $this->ApiRequestSubscriberToken_DTG;
-            //$token_SF = $this->ApiRequestSubscriberToken_SF;
             $client = $this->requisites_client();
-            //$result = $client->getByInn($token_SF, $inn);
-            //if (is_null($result)) {
-                $result = $client->getByInn($token_DTG, $inn);
-            //}
+            $result = $client->getByInn($token_DTG, $inn);
             return $result;
         } catch (Exception $ex) {
             $message = 'Запрос в службу реквизитов -> ' . $ex->getMessage();
@@ -260,24 +254,7 @@ class Requisites_model extends CI_Model {
 
     public function requisites_saver($json) {
         $token_DTG = $this->ApiRequestSubscriberToken_DTG;
-        //$token_SF = $this->ApiRequestSubscriberToken_SF;
         $client = $this->requisites_client();
-        //var_dump(json_encode($json,JSON_UNESCAPED_UNICODE));
-//        try {
-//            $result_sf = $client->getByInn($token_SF, $json->common->inn);
-//            if (is_null($result_sf)) { //sf
-//                $uid_SF = $client->register($token_SF, $json);
-//                $result_sf = $client->getByUid($token_SF, $uid_SF);
-//            } else {
-//                $client->update($token_SF, $result_sf->uid, $json);
-//                //$result_sf = $client->getByUid($token_SF, $result_sf->uid);
-//            }
-//        } catch (Exception $ex) {
-//            $message = 'Ошибка при сохранении в службу реквизитов SF -> ' . $ex->getMessage();
-//            log_message('error', $message);
-//	    log_message('error', json_encode($json));
-//            throw new Exception($message);
-//        }
         try {
             $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
             if (is_null($result_dtg)) { //DTG
@@ -290,33 +267,10 @@ class Requisites_model extends CI_Model {
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
             log_message('error', $message);
-	    log_message('error', json_encode($json));
+            log_message('error', json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;
-    }
-
-    /*
-     * http://1c.dostek.kg:8080/TEST_BASE/ws/ENOT/?wsdl
-
-      логин: enot
-      пароль:  dhfkueleif948594kgerg345kgg0e4j34
-
-      метод GetNumberSF()
-     */
-
-    private function soap_1c_client() {
-        ini_set("soap.wsdl_cache_enabled", "0");
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = 'http://1c.dostek.kg:8080/dtb/ws/SOCHI/?wsdl' : //prod
-                        $wsdl = 'http://1c.dostek.kg:8080/TEST_BASE/ws/SOCHI/?wsdl'; //dev
-
-        $user = array(
-            'login' => 'sochi',
-            'password' => 'ufvguygbvjvbugjsb6546fg964b96',
-            "trace" => 1, "exception" => 0
-        );
-        return new SoapClient($wsdl, $user);
     }
 
     public function create_pay_invoice($invoice_Serial_number) {
@@ -426,11 +380,7 @@ class Requisites_model extends CI_Model {
     public function get_certificates($serachWord) {
         try {
             $client_dtg = $this->pki_dtg_client();
-//            $result = $client_ubr->search($serachWord);
-//            if (is_null($result)) {
-            //$client_dtg = $this->pki_dtg_client();
             $result = $client_dtg->search($serachWord);
-            //}
             return $result;
         } catch (Exception $ex) {
             $message = 'Запрос в службу PKI -> ' . $ex->getMessage();

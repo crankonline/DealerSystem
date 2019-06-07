@@ -7,7 +7,8 @@ class Soapserv extends CI_Controller {
     function __construct() {
         parent::__construct();
 
-        $this->load->library("Nusoap_library"); //load the library here
+        \Sentry\init(['dsn' => getenv('SENTRY_DSN')]);
+        //$this->load->library("Nusoap_library"); //load the library here
         $this->nusoap_server = new soap_server();
         $this->nusoap_server->soap_defencoding = 'UTF-8';
         $this->nusoap_server->decode_utf8 = false;
@@ -148,8 +149,9 @@ class Soapserv extends CI_Controller {
                 } else {
                     return false;
                 }
-            } catch (Exception $e) {
-                log_message('error', "getInvoice Exception -> " . $e->getMessage());
+            } catch (Exception $ex) {
+                \Sentry\captureException($ex);
+                log_message('error', "getInvoice Exception -> " . $ex->getMessage());
             } finally {
                 
             }
@@ -167,8 +169,9 @@ class Soapserv extends CI_Controller {
                 $data = $CI->soap_model->get_invoice_serial_soap();
                 //print_r($data);
                 return $data;
-            } catch (Exception $e) {
-                log_message('error', "getInvoices Exception -> " . $e->getMessage());
+            } catch (Exception $ex) {
+                \Sentry\captureException($ex);
+                log_message('error', "getInvoices Exception -> " . $ex->getMessage());
             } finally {
                 
             }
@@ -181,8 +184,9 @@ class Soapserv extends CI_Controller {
                 $data = $CI->soap_model->get_invoices_by_date($dateN, $dateK);
 //                print_r($data);
                 return $data;
-            } catch (Exception $e) {
-                log_message('error', "getInvoicesByDate Exception -> " . $e->getMessage());
+            } catch (Exception $ex) {
+                \Sentry\captureException($ex);
+                log_message('error', "getInvoicesByDate Exception -> " . $ex->getMessage());
             } finally {
                 
             }
@@ -196,8 +200,9 @@ class Soapserv extends CI_Controller {
                 $data = $CI->soap_model->get_invoices_by_create_date($dateN, $dateK);
                 //print_r($data);
                 return $data;
-            } catch (Exception $e) {
-                log_message('error', "getInvoicesByCreateDate Exception -> " . $e->getMessage());
+            } catch (Exception $ex) {
+                \Sentry\captureException($ex);
+                log_message('error', "getInvoicesByCreateDate Exception -> " . $ex->getMessage());
             } finally {
                 
             }
@@ -211,8 +216,9 @@ class Soapserv extends CI_Controller {
                 $data = $CI->soap_model->get_invoices_by_pay_date($dateN, $dateK);
                 //print_r($data);
                 return $data;
-            } catch (Exception $e) {
-                log_message('error', "getInvoicesByPayDate Exception -> " . $e->getMessage());
+            } catch (Exception $ex) {
+                \Sentry\captureException($ex);
+                log_message('error', "getInvoicesByPayDate Exception -> " . $ex->getMessage());
             } finally {
                 
             }
@@ -225,8 +231,9 @@ class Soapserv extends CI_Controller {
                 $data = $CI->soap_model->get_invoices_by_pay_date($dateN, $dateK);
                 //print_r($data);
                 return $data;
-            } catch (Exception $e) {
-                log_message('error', "getInvoicesByRequisitesDate Exception -> " . $e->getMessage());
+            } catch (Exception $ex) {
+                \Sentry\captureException($ex);
+                log_message('error', "getInvoicesByRequisitesDate Exception -> " . $ex->getMessage());
             } finally {
                 
             }
@@ -241,7 +248,7 @@ class Soapserv extends CI_Controller {
     public function test() {
         try {
             $wsdl = base_url() . 'index.php/soapserv?wsdl';
-            $this->load->library("Nusoap_library"); //load the library here
+            // $this->load->library("Nusoap_library"); //load the library here
 
             $client = new nusoap_client($wsdl, 'wsdl');
 
@@ -250,8 +257,9 @@ class Soapserv extends CI_Controller {
 
             $res2 = $client->call('getInvoices');
             var_dump($res2);
-        } catch (Exception $e) {
-            log_message('error', "test Exception -> " . $e->getMessage());
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', "test Exception -> " . $ex->getMessage());
         }
     }
 
