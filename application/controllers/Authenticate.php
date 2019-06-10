@@ -7,7 +7,6 @@ class Authenticate extends CI_Controller {
     public function __construct() {
         parent::__construct();
         
-        \Sentry\init(['dsn' => getenv('SENTRY_DSN')]);
         $this->load->model('authenticate_model');
     }
 
@@ -142,7 +141,6 @@ class Authenticate extends CI_Controller {
         } else {
             $data['error_message'] = "У вас нет доступа к данной функции";
             log_message('error', $data['error_message'].": " . $this->input->ip_address());
-            \Sentry\captureException($data['error_message'].": " . $this->input->ip_address());
             $this->load->view("template/authenticate/main", $data);
         }
     }

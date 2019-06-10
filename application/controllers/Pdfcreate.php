@@ -14,7 +14,8 @@ class Pdfcreate extends CI_Controller {
 
         $this->pdf = new \Mpdf\Mpdf([
             'mode' => 'utf-8',
-            'format' => 'A4-P']);
+            'format' => 'A4-P',
+            'default_font_size' => 10]);
         
         $this->load->model('pdfrender_model');
 

@@ -7,7 +7,6 @@ class Soapserv extends CI_Controller {
     function __construct() {
         parent::__construct();
 
-        \Sentry\init(['dsn' => getenv('SENTRY_DSN')]);
         //$this->load->library("Nusoap_library"); //load the library here
         $this->nusoap_server = new soap_server();
         $this->nusoap_server->soap_defencoding = 'UTF-8';
