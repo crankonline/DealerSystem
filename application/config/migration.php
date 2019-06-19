@@ -69,7 +69,11 @@ $config['migration_auto_latest'] = FALSE;
 | be upgraded / downgraded to.
 |
 */
+<<<<<<< HEAD
 $config['migration_version'] = 002;
+=======
+$config['migration_version'] = 003;
+>>>>>>> cf54664... Merge branch 'feature/migrate_&_old_fixes' into Development
 
 /*
 |--------------------------------------------------------------------------
