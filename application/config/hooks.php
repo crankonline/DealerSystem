@@ -13,5 +13,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $hook['pre_system'] = function() {
     $dotenv = Dotenv\Dotenv::create(APPPATH);    
     $dotenv->load();
+    //надо потестить прелоад на конф и енв
 };
 
