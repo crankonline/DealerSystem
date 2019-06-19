@@ -20,6 +20,7 @@ class Pki extends CI_Controller {
                             (($data['certificates'] = $this->requisites_model->get_certificates($searchWord)) && ($data['searchWord'] = $searchWord)) :
                             $data = NULL; //Наркоман чтоли?
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');

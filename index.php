@@ -34,8 +34,10 @@
  * @link	https://codeigniter.com
  * @since	Version 1.0.0
  * @filesource
- */
-
+ */ 
+require_once 'vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::create('application'.DIRECTORY_SEPARATOR);    
+$dotenv->load();
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -53,7 +55,7 @@
  *
  * NOTE: If you change these, also change the error_reporting() code below
  */
-	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : 'development');
+	define('ENVIRONMENT', isset($_SERVER['CI_ENV']) ? $_SERVER['CI_ENV'] : getenv('ENV'));
 
 /*
  *---------------------------------------------------------------
@@ -304,7 +306,6 @@ switch (ENVIRONMENT)
 	}
 
 	define('VIEWPATH', $view_folder.DIRECTORY_SEPARATOR);
-
 /*
  * --------------------------------------------------------------------
  * LOAD THE BOOTSTRAP FILE

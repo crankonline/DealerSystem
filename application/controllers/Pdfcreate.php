@@ -12,6 +12,11 @@ class Pdfcreate extends CI_Controller {
         parent::__construct();
         header("Content-type: text/html");
 
+        $this->pdf = new \Mpdf\Mpdf([
+            'mode' => 'utf-8',
+            'format' => 'A4-P',
+            'default_font_size' => 10]);
+        
         $this->load->model('pdfrender_model');
 
         $this->load->model('invoice_model');
@@ -50,11 +55,11 @@ class Pdfcreate extends CI_Controller {
             if (file_exists($pdfFilePath) == FALSE) {
                 ini_set('memory_limit','32M'); // boost the memory limit if it's low ;)
                 $html = $this->load->view('pdf/pdf_index', $data, true); // render the view into HTML
-                $this->load->library('pdf');
-                $pdf = $this->pdf->load();
+                //$this->load->library('pdf');
+                //$pdf = $this->pdf->load();
                 //$pdf->SetFooter($_SERVER['HTTP_HOST'].'|{PAGENO}|'.date(DATE_RFC822)); // Add a footer for good measure ;)
-                $pdf->WriteHTML($html); // write the HTML into the PDF
-                $pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                $this->pdf->WriteHTML($html); // write the HTML into the PDF
+                $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
             }
 
             redirect("/downloads/$filename.pdf");
@@ -180,15 +185,15 @@ class Pdfcreate extends CI_Controller {
                 if (file_exists($pdfFilePath) == FALSE) {
                     ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                     $html = $this->load->view('pdf/pay_invoice_l_1', $data, true); // render the view into HTML
-                    $this->load->library('pdf');
-                    $pdf = $this->pdf->load();
+                    //$this->load->library('pdf');
+                    //$pdf = $this->pdf->load();
 
-                    $pdf->SetDisplayMode('fullwidth');
-                    $pdf->SetDisplayMode(50);
+                    $this->pdf->SetDisplayMode('fullwidth');
+                    $this->pdf->SetDisplayMode(50);
 
                     //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
-                    $pdf->WriteHTML($html); // write the HTML into the PDF
-                    $pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                    $this->pdf->WriteHTML($html); // write the HTML into the PDF
+                    $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
                 }
 
                 redirect("/downloads/$filename.pdf");
@@ -208,11 +213,11 @@ class Pdfcreate extends CI_Controller {
                 if (file_exists($pdfFilePath) == FALSE) {
                     ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                     $html = $this->load->view('pdf/pay_invoice_l_1_v2', $data, true); // render the view into HTML
-                    $this->load->library('pdf');
-                    $pdf = $this->pdf->load();
+                   // $this->load->library('pdf');
+                    //$pdf = $this->pdf->load();
                     //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
-                    $pdf->WriteHTML($html); // write the HTML into the PDF
-                    $pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                    $this->pdf->WriteHTML($html); // write the HTML into the PDF
+                    $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
                 }
 
                 redirect("/downloads/$filename.pdf");
@@ -296,11 +301,11 @@ class Pdfcreate extends CI_Controller {
             if (file_exists($pdfFilePath) == FALSE) {
                 ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                 $html = $this->load->view($data['data'][0]->template, $data, true); // render the view into HTML
-                $this->load->library('pdf');
-                $pdf = $this->pdf->load();
+               // $this->load->library('pdf');
+                //$pdf = $this->pdf->load();
                 //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
-                $pdf->WriteHTML($html); // write the HTML into the PDF
-                $pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                $this->pdf->WriteHTML($html); // write the HTML into the PDF
+                $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
             }
 
             redirect("/downloads/$filename.pdf");

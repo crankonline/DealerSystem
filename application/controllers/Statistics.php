@@ -70,6 +70,7 @@ class Statistics extends CI_Controller {
             }
             $this->statistics_view_main();
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             show_error($ex->getMessage(), 404, 'Произошла Ошибка');
         }
 //        Проверка доступа и
@@ -115,6 +116,7 @@ class Statistics extends CI_Controller {
                 }
             }
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
 
@@ -190,6 +192,7 @@ class Statistics extends CI_Controller {
             $data['period_end'] = date_format(date_create($period_end), 'd.m.Y');
             $data['eds_pki_ext'] = $data_view_push;
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
 // for me тут показывать ЭП не вошедшие в завки нельзя, не возможно (вывсти пользователю)
@@ -261,6 +264,7 @@ class Statistics extends CI_Controller {
             $data['period_end'] = date_format(date_create($period_end), 'd.m.Y');
             $data['eds_pki_ext'] = $data_view;
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
 
@@ -359,6 +363,7 @@ class Statistics extends CI_Controller {
                 });
             }
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getTraceAsString(); //
         }
         $this->load->view('template/header');
@@ -372,6 +377,7 @@ class Statistics extends CI_Controller {
             $data['pay_history'] = $this->statistics_model->get_statistics_boss_cash_history($this->per_page, $this->uri->segment(3), $this->input->post('search_field'));
             $data['pagination'] = $this->pagination_gen();
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getTraceAsString(); //
         }
 

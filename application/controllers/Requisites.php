@@ -350,6 +350,7 @@ class Requisites extends CI_Controller {
                 echo json_encode($this->requisites_model->get_reference_by_id(array('reference' => $request->reference, 'id' => $request->id)));
             }
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             http_response_code(500); //на все справочники
             echo $ex->getMessage();
         }
@@ -385,6 +386,7 @@ class Requisites extends CI_Controller {
             }
             echo '<p>Отправка сканированных изображений физических лиц - УСПЕХ</p>';
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             http_response_code(500); //на все справочники
             echo $ex->getMessage();
         }
@@ -420,6 +422,7 @@ class Requisites extends CI_Controller {
             }
             echo '<p>Отправка сканированных изображений юридического лица - УСПЕХ</p>';
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             http_response_code(500); //на все справочники
             echo $ex->getMessage();
         }
@@ -477,6 +480,7 @@ class Requisites extends CI_Controller {
             echo json_encode($response_to_angular);
             exit(1);
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             http_response_code(500); //на все справочники
             echo $ex->getMessage();
         }
@@ -490,6 +494,7 @@ class Requisites extends CI_Controller {
             $data['requisites_data'] = $RequisitesData;
             $data['pagination'] = $this->pagination_gen();
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
 
@@ -540,8 +545,9 @@ class Requisites extends CI_Controller {
             $data['files'] = $this->read_files($RequisitesData->invoice_serial_number);
             //$data['files']->Representatives = $this->getImges('uploads/' . $RequisitesData->invoice_serial_number . '/', 'Representatives');
             //var_dump($data['files']);
-        } catch (Exception $error_message) {
-            $data['error_message'] = $error_message->getMessage();
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            $data['error_message'] = $ex->getMessage();
         }
 
         $this->load->view('template/header');
@@ -596,6 +602,7 @@ class Requisites extends CI_Controller {
             }
             //var_dump(json_encode($requisites));
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');

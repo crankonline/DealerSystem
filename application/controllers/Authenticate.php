@@ -48,6 +48,7 @@ class Authenticate extends CI_Controller {
             $this->session->set_userdata('logged_in', $session_data);
             redirect(base_url() . 'index.php/dash/');
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
             $this->load->view('template/authenticate/main', $data); // если что то пошло не так -> на авторизацию
         }
@@ -67,6 +68,7 @@ class Authenticate extends CI_Controller {
             $this->session->set_userdata('logged_in', $session_data);
             redirect(base_url() . 'index.php/dash/');
         } catch (Exception $ex) {
+            \Sentry\captureException($ex);
             $data['error_message'] = $ex->getMessage();
             $this->load->view('template/authenticate/main', $data); // если что то пошло не так -> на авторизацию
         }
@@ -91,13 +93,15 @@ class Authenticate extends CI_Controller {
             $data = array(
                 'error_message' => 'Неверный логин или пароль'
             );
-            $this->load->view('template/authenticate/main', $data);
+            //$this->load->view('template/authenticate/main', $data);
+            $this->load->view('template/authenticate/authenticate_login', $data);
         }
     }
 
     public function index() {
         empty($this->session->userdata['logged_in']) ?
-                        $this->load->view('template/authenticate/main') :
+                        //$this->load->view('template/authenticate/main') :
+                        redirect (base_url(). 'index.php/authenticate/auth_login'):
                         redirect(base_url() . 'index.php/dash/');
     }
 
@@ -147,7 +151,9 @@ class Authenticate extends CI_Controller {
         $data = array(
             'error_message' => 'Выход осуществлен'
         );
-        $this->load->view('template/authenticate/main', $data);
+        //$this->load->view('template/authenticate/main', $data);
+        //redirect (base_url(). 'index.php/authenticate/auth_login');
+        $this->load->view('template/authenticate/authenticate_login', $data);
     }
 
 }

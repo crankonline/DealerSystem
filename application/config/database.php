@@ -76,11 +76,11 @@ $query_builder = TRUE;
 
 $db['default'] = array(
     'dsn' => '',
-    'hostname' => '172.16.4.8',
-    'username' => 'postgres',
-    'password' => '1qaz2WSX$$',
-    'database' => 'DealerSystemDTG',
-    'dbdriver' => 'postgre',
+    'hostname' => getenv('APP_DB_HOST'),
+    'username' => getenv('APP_DB_USERNAME'),
+    'password' => getenv('APP_DB_PASSWORD'),
+    'database' => getenv('APP_DB_NAME'),
+    'dbdriver' => getenv('APP_DB_DRIVER'),
     'dbprefix' => '',
     'pconnect' => FALSE,
     'db_debug' => (ENVIRONMENT !== 'production'),
@@ -98,11 +98,11 @@ $db['default'] = array(
 
 $db['pki'] = array(
     'dsn' => '',
-    'hostname' => '172.16.4.8',
-    'username' => 'root',
-    'password' => '1qaz2WSX$$',
-    'database' => 'PkiApi',
-    'dbdriver' => 'mysqli',
+    'hostname' => getenv('PKI_DB_HOST'),
+    'username' => getenv('PKI_DB_USERNAME'),
+    'password' => getenv('PKI_DB_PASSWORD'),
+    'database' => getenv('PKI_DB_NAME'),
+    'dbdriver' => getenv('PKI_DB_DRIVER'),
     'dbprefix' => '',
     'pconnect' => FALSE,
     'db_debug' => (ENVIRONMENT !== 'production'),

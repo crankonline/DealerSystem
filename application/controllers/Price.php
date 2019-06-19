@@ -17,8 +17,9 @@ class Price extends CI_Controller {
     public function price_view() {
         try {
             $data['price_data'] = $this->price_model->get_price();
-        } catch (Exception $exc) {
-            $data['error_message']= $exc->getMessage();
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            $data['error_message']= $ex->getMessage();
         }
 
         
