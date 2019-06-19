@@ -7,8 +7,8 @@ class Migration_Add_field_ci_sessions extends CI_Migration {
     public function up() {
         $field = array(
             'cur_timestamp' => array(
-                'type' => 'TEXT',
-                //'default' => 'NOW()',
+                'type' => 'TIMESTAMP',
+                'default' => 'NOW()',
                 'null' => TRUE
             )
         );
