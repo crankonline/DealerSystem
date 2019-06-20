@@ -218,10 +218,11 @@ class Pdfcreate extends CI_Controller {
                     //$pdf = $this->pdf->load();
                     //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
                     $this->pdf->WriteHTML($html); // write the HTML into the PDF
-                    $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                    //$this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                    $this->pdf->Output();
                 }
 
-                redirect("/downloads/$filename.pdf");
+                //redirect("/downloads/$filename.pdf");
             }
         } else {
             echo "no print";
