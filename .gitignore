@@ -15,3 +15,5 @@ vendor/
 composer\.lock
 
 application/\.env
+
+composer\.phar
