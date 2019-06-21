@@ -51,7 +51,7 @@ class Requisites_model extends CI_Model {
     }
 
     private function sf_inninfo() {
-        $wsdl = 'http://eleed.sf.kg:8041/PayerInfoService?wsdl';
+        $wsdl = getenv('ELEED');
         $options = [
             'trace' => TRUE,
             'exceptions' => TRUE,
@@ -75,7 +75,7 @@ class Requisites_model extends CI_Model {
     }
 
     private function mu_info($inn) {
-        $URL_MJ = 'http://register.minjust.gov.kg/register/';
+        $URL_MJ = getenv('MINJUST');
 
         $type = 'tin';
         $value = $inn;
