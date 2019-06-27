@@ -21,6 +21,7 @@ class Pki extends CI_Controller {
                             $data = NULL; //Наркоман чтоли?
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');

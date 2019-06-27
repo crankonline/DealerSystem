@@ -56,6 +56,7 @@ class Invoice extends CI_Controller {
             $data['invoice_data'] = $InvoiceData;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');
@@ -72,6 +73,7 @@ class Invoice extends CI_Controller {
             $data['price_data'] = $this->price_model->get_price();
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
 
@@ -95,6 +97,7 @@ class Invoice extends CI_Controller {
             $data['message'] = $message;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');
@@ -131,6 +134,7 @@ class Invoice extends CI_Controller {
             redirect(base_url() . "index.php/invoice/invoice_show_view/". $this->invoice_model->invoice_create($this->input->post()));
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             show_error($ex->getMessage(), 500, $heading = 'Произошла ошибка'); // не гружу вьюху т.к. данный метод ее не предусматривает
         }
     }
@@ -144,6 +148,7 @@ class Invoice extends CI_Controller {
             redirect(base_url() . 'index.php/invoice/invoice_list_view/');
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             show_error($ex->getMessage(), 500, $heading = 'Произошла ошибка'); // не гружу вьюху т.к. данный метод ее не прудусматривает
         }
     }
@@ -155,6 +160,7 @@ class Invoice extends CI_Controller {
         }
         catch(Exception $ex){
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             http_response_code(500);//???
             echo $ex->getMessage();
         }

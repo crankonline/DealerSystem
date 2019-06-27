@@ -57,6 +57,7 @@ class Dash extends CI_Controller {
             //$data['ad'] = $this->messages_model->get_messages($this->status_ad, $this->per_page_ad, $this->uri->segment(3));
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
         $this->load->view('template/header');
@@ -72,6 +73,7 @@ class Dash extends CI_Controller {
             redirect(base_url() . 'index.php/dash/messages/');
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             show_error($ex->getMessage(), 500, 'Ошибка при сохранении поста'); //на прод не работает
         }
     }
@@ -85,6 +87,7 @@ class Dash extends CI_Controller {
             
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['errormessage'] = $ex->getTraceAsString;
         }
 

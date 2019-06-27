@@ -23,7 +23,8 @@ class Account extends CI_Controller {
             }
             $data['user_session_data'] = $this->session->userdata['logged_in'];
         } catch (Exception $ex) {
-             \Sentry\captureException($ex);
+            \Sentry\captureException($ex);
+            log_message('error',$ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
 
