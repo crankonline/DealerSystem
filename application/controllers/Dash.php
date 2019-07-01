@@ -88,7 +88,7 @@ class Dash extends CI_Controller
     {
         try {  
             $content = file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=');  
-            if (!$config){
+            if (!$content){
                 throw new Exception('Failed to connect news service: HTTP request failed!');
             }
             $Json = json_decode(file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=' . $this->uri->segment(3)));
