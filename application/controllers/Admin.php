@@ -28,10 +28,10 @@ class Admin extends CI_Controller {
             $data['error_message'] = $ex->getMessage();
         }
 
-        $this->load->view('admin/header');
-        $this->load->view('admin/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
+        $this->load->view('template/header');
+        $this->load->view('admin/admin_menu', $this->session->userdata['logged_in']); //взависимости от авторизации
         $this->load->view('admin/users', $data); //в зависимости от авторизации (может и не надо)
-        $this->load->view('admin/footer');
+        $this->load->view('template/footer');
     }
     
     public function get_privileges(){

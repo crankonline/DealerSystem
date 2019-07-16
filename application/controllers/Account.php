@@ -7,7 +7,8 @@ class Account extends CI_Controller {
     public function __construct() {
         parent::__construct();
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
-        isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6 
+        isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6
+        !$this->session->userdata['logged_in']['UserRoleID'] == 1 ?: redirect('/admin/users'); //Админам тут делать нечего
 
         $this->load->model('invoice_model'); //в меню есть запросы
         $this->load->model('account_model');
