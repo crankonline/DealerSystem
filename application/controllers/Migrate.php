@@ -14,6 +14,7 @@ class Migrate extends CI_Controller {
             \Sentry\captureException($ex);
             log_message('error', $ex);
             echo($ex);
+            die;
         }
     }
 

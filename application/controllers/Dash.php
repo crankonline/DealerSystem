@@ -10,7 +10,7 @@ class Dash extends CI_Controller
         parent::__construct();
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6
-        !$this->session->userdata['logged_in']['UserRoleID'] == 1 ?: redirect('/admin/users'); //Админам тут делать нечего
+        $this->session->userdata['logged_in']['UserRoleID'] == 1 ? redirect('/admin/users') : null; //Админам тут делать нечего
 
         $this->load->model('invoice_model'); //в меню есть запросы
         $this->load->model('messages_model');
@@ -87,9 +87,9 @@ class Dash extends CI_Controller
 
     public function news()
     {
-        try {  
-            $content = file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=');  
-            if (!$content){
+        try {
+            $content = file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=');
+            if (!$content) {
                 throw new Exception('Failed to connect news service: HTTP request failed!');
             }
             $Json = json_decode(file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=' . $this->uri->segment(3)));
