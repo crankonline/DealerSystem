@@ -30,7 +30,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <?php if (isset($messages)): ?>
             <div class="page-header"><h2><span class="glyphicon glyphicon-tags"></span> Новости</h2></div>
             <?php foreach ($messages as $message): ?>
-                <div class="well">
+        <div class="well">
                     <h3 align="left"> <?php echo $message->CaptionRu; ?></h3>
                     <img src="<?php echo $message->Illustration; ?>" style = "width: 25%; height:25%" class="leftimg"> <!--верстка-->
                     <?php echo $message->ContentRu; ?>
@@ -43,6 +43,5 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <?php echo $pagination_message; ?>
             </ul>
         <?php endif; ?>
-
     <?php endif; ?>
 </div>
