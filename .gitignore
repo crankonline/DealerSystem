@@ -17,3 +17,10 @@ composer\.lock
 application/\.env
 
 composer\.phar
+.vscode/launch.json
+
+docker-compose\.yml
+
+phpdocker/
+
+xdebug-access\.log

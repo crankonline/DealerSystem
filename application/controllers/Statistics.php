@@ -9,6 +9,7 @@ class Statistics extends CI_Controller {
 
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6 
+        !$this->session->userdata['logged_in']['UserRoleID'] == 1 ?: redirect('/admin/users'); //Админам тут делать нечего
 
         $this->load->model('statistics_model');
         $this->load->model('invoice_model');
@@ -71,6 +72,7 @@ class Statistics extends CI_Controller {
             $this->statistics_view_main();
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             show_error($ex->getMessage(), 404, 'Произошла Ошибка');
         }
 //        Проверка доступа и
@@ -117,6 +119,7 @@ class Statistics extends CI_Controller {
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
 
@@ -193,6 +196,7 @@ class Statistics extends CI_Controller {
             $data['eds_pki_ext'] = $data_view_push;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
 // for me тут показывать ЭП не вошедшие в завки нельзя, не возможно (вывсти пользователю)
@@ -265,6 +269,7 @@ class Statistics extends CI_Controller {
             $data['eds_pki_ext'] = $data_view;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
 
@@ -364,6 +369,7 @@ class Statistics extends CI_Controller {
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getTraceAsString(); //
         }
         $this->load->view('template/header');
@@ -378,6 +384,7 @@ class Statistics extends CI_Controller {
             $data['pagination'] = $this->pagination_gen();
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getTraceAsString(); //
         }
 

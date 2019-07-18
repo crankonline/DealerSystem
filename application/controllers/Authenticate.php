@@ -49,6 +49,7 @@ class Authenticate extends CI_Controller {
             redirect(base_url() . 'index.php/dash/');
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
             $this->load->view('template/authenticate/main', $data); // если что то пошло не так -> на авторизацию
         }
@@ -69,6 +70,7 @@ class Authenticate extends CI_Controller {
             redirect(base_url() . 'index.php/dash/');
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
             $this->load->view('template/authenticate/main', $data); // если что то пошло не так -> на авторизацию
         }
@@ -87,7 +89,10 @@ class Authenticate extends CI_Controller {
 
                 $session_data = $this->create_session_data($result);
                 $this->session->set_userdata('logged_in', $session_data);
-                redirect(base_url() . 'index.php/dash/');
+                $this->session->userdata['logged_in']['UserRoleID'] == '1' ? 
+                        redirect(base_url('index.php/admin/')): 
+                    redirect(base_url('index.php/dash/'));
+                //redirect(base_url() . 'index.php/dash/');
             }
         } else { // если не нашли редирект на авторизацию
             $data = array(
@@ -122,6 +127,7 @@ class Authenticate extends CI_Controller {
             "172.16.3.5", 
             "127.0.0.1",    //Я
             "10.0.100.5",   //Я VPN
+            "172.25.0.1",   //Я Docker Mac
             "172.16.3.6",   //Джон
             "172.16.3.11",  //Вика
             "172.16.3.10",  //Женя
@@ -141,6 +147,7 @@ class Authenticate extends CI_Controller {
         } else {
             $data['error_message'] = "У вас нет доступа к данной функции";
             log_message('error', $data['error_message'].": " . $this->input->ip_address());
+            \Sentry\captureMessage($data['error_message'].": " . $this->input->ip_address());
             $this->load->view("template/authenticate/main", $data);
         }
     }
