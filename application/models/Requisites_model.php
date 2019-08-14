@@ -274,30 +274,20 @@ class Requisites_model extends CI_Model {
     }
 
     public function create_pay_invoice($invoice_Serial_number) {
-        try {
-            $array = ['_id' => $invoice_Serial_number];
-            $client = $this->soap_1c_client();
-            $result = $client->GetNumberSF($array);
-            if ($result == null) {
-                $message = "Запрос в службу 1С -> Номера электронных счетов фактур закончились";
-                log_message('error', $message);
-                throw new exception($message);
-            }
-            $exp_res = explode("^", $result->return);
-            $serial = $exp_res[0];
-            $number = $exp_res[1];
-            $data = array('serial' => $serial,
-                'number' => $number);
-
-            $this->db->insert('"Dealer_data".pay_invoice', $data);
-        } catch (Exception $ex) {
-            log_message('error', $message);
-            throw new Exception('Запрос в службу 1C  -> ' . $ex->getMessage());
+        $array = ['_id' => $invoice_Serial_number];
+        $client = $this->soap_1c_client();
+        $result = $client->GetNumberSF($array);
+        if ($result == null) {
+            throw new Exception("Запрос в службу 1С -> Номера электронных счетов фактур закончились");
         }
+        $exp_res = explode("^", $result->return);
+        $serial = $exp_res[0];
+        $number = $exp_res[1];
+        $data = array('serial' => $serial,
+            'number' => $number);
 
-        return $this->db->select('id_pay_invoice')
-                        ->from('"Dealer_data".pay_invoice')
-                        ->where('number', $number)->get()->row()->id_pay_invoice;
+        $this->db->insert('"Dealer_data".pay_invoice', $data);
+        return $this->db->insert_id();
     }
 
     public function get_requisites_all($limit, $offset) {
