@@ -278,9 +278,7 @@ class Requisites_model extends CI_Model {
         $client = $this->soap_1c_client();
         $result = $client->GetNumberSF($array);
         if ($result == null) {
-            $message = "Запрос в службу 1С -> Номера электронных счетов фактур закончились";
-            log_message('error', $message);
-            throw new Exception($message);
+            throw new Exception("Запрос в службу 1С -> Номера электронных счетов фактур закончились");
         }
         $exp_res = explode("^", $result->return);
         $serial = $exp_res[0];
