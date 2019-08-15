@@ -33,7 +33,7 @@ class Migration_Add_ci_sessions extends CI_Migration {
     }
 
     public function down() {
-        $this->dbforge->drop_table('"Dealer_data".ci_sessions');
+        //$this->dbforge->drop_table('"Dealer_data".ci_sessions');
     }
 
 }
