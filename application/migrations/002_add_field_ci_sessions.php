@@ -16,7 +16,7 @@ class Migration_Add_field_ci_sessions extends CI_Migration {
     }
 
     public function down() {
-        $this->dbforge->drop_column('"Dealer_data".ci_sessions', 'cur_timestamp');
+        //$this->dbforge->drop_column('"Dealer_data".ci_sessions', 'cur_timestamp');
     }
 
 }
