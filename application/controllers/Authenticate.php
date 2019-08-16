@@ -173,59 +173,62 @@ class Authenticate extends CI_Controller {
 
             $this->session->set_userdata('logged_in', array('Show_Operator' => true, 'UserDistributorID' => 1));
             $InvoiceData = $this->invoice_model->get_invoice($InvoiceSerialNumber);
-            if (empty($InvoiceData)) {
-                echo json_encode(null);
-            }
-            //var_dump($InvoiceData);
-            //die;
+            if (!empty($InvoiceData)) {
+                $sales = array();
+                foreach ($InvoiceData as $ItemInvoce) {
+                    array_push($sales, array(
+                        'name' => $ItemInvoce->inventory_name,
+                        'count' => $ItemInvoce->count));
+                }
 
-            $sales = array();
-            foreach ($InvoiceData as $ItemInvoce) {
-                array_push($sales, array(
-                    'name' => $ItemInvoce->inventory_name,
-                    'count' => $ItemInvoce->count));
-            }
-
-            $statuses = array();
-            if ($InvoiceData[0]->pay_sum >= $InvoiceData[0]->total_sum) {
-                array_push($statuses, array(
-                    'id' => 1,
-                    'name' => 'Оплачено',
-                    'date' => $InvoiceData[0]->pay_date_time,
-                    'status' => true
-                ));
-            } else {
-                array_push($statuses, array(
-                    'id' => 1,
-                    'name' => 'Ожидает оплаты',
-                    'date' => null,
-                    'status' => false
-                ));
-            }
-            if ($InvoiceData[0]->requisites_invoice_id) {
-                array_push($statuses, array(
-                    'id' => 2,
-                    'name' => 'Данные обработаны',
-                    'date' => $InvoiceData[0]->requisites_creating_date_time,
-                    'status' => true
-                ));
-            } else {
-                array_push($statuses, array(
-                    'id' => 2,
-                    'name' => 'Ожидает обработку данных',
-                    'date' => null,
-                    'status' => false
-                ));
-            }
-            $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
-            if ($certificates) {
-                if (strtotime($InvoiceData[0]->pay_date_time) >= strtotime($certificates[0]->DateStart)) {
+                $statuses = array();
+                if ($InvoiceData[0]->pay_sum >= $InvoiceData[0]->total_sum) {
                     array_push($statuses, array(
-                        'id' => 3,
+                        'id' => 1,
+                        'name' => 'Оплачено',
+                        'date' => $InvoiceData[0]->pay_date_time,
+                        'status' => true
+                    ));
+                } else {
+                    array_push($statuses, array(
+                        'id' => 1,
+                        'name' => 'Ожидает оплаты',
+                        'date' => null,
+                        'status' => false
+                    ));
+                }
+                if ($InvoiceData[0]->requisites_invoice_id) {
+                    array_push($statuses, array(
+                        'id' => 2,
                         'name' => 'Данные обработаны',
                         'date' => $InvoiceData[0]->requisites_creating_date_time,
                         'status' => true
                     ));
+                } else {
+                    array_push($statuses, array(
+                        'id' => 2,
+                        'name' => 'Ожидает обработку данных',
+                        'date' => null,
+                        'status' => false
+                    ));
+                }
+                $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
+                if ($certificates) {
+                    if (strtotime($InvoiceData[0]->pay_date_time) >= strtotime($certificates[0]->DateStart)) {
+                        array_push($statuses, array(
+                            'id' => 3,
+                            'name' => 'ЭП изготовлено',
+                            'date' => $InvoiceData[0]->requisites_creating_date_time,
+                            'status' => true
+                        ));
+                    } else {
+                        array_push($statuses, array(
+                            'id' => 3,
+                            'name' => 'Ожидает выдачу ЭП',
+                            'date' => null,
+                            'status' => false
+                        ));
+                    }
                 } else {
                     array_push($statuses, array(
                         'id' => 3,
@@ -234,21 +237,16 @@ class Authenticate extends CI_Controller {
                         'status' => false
                     ));
                 }
-            } else {
-                array_push($statuses, array(
-                    'id' => 3,
-                    'name' => 'Ожидает выдачу ЭП',
-                    'date' => null,
-                    'status' => false
-                ));
-            }
 
-            $data = array(
-                'name' => $InvoiceData[0]->company_name,
-                'sales' => $sales,
-                'statuses' => $statuses,
-            );
-            echo json_encode($data);
+                $data = array(
+                    'name' => $InvoiceData[0]->company_name,
+                    'sales' => $sales,
+                    'statuses' => $statuses,
+                );
+                echo json_encode($data);
+            } else {
+                echo json_encode(null);
+            }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
