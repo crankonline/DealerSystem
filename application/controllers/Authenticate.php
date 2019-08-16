@@ -249,8 +249,6 @@ class Authenticate extends CI_Controller {
                     'statuses' => $statuses,
                 );
                 echo json_encode($data);
-            } else {
-                echo json_encode('');
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
