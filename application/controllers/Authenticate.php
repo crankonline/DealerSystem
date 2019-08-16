@@ -6,7 +6,7 @@ class Authenticate extends CI_Controller {
 
     public function __construct() {
         parent::__construct();
-        
+
         $this->load->model('authenticate_model');
     }
 
@@ -89,9 +89,9 @@ class Authenticate extends CI_Controller {
 
                 $session_data = $this->create_session_data($result);
                 $this->session->set_userdata('logged_in', $session_data);
-                $this->session->userdata['logged_in']['UserRoleID'] == '1' ? 
-                        redirect(base_url('index.php/admin/')): 
-                    redirect(base_url('index.php/dash/'));
+                $this->session->userdata['logged_in']['UserRoleID'] == '1' ?
+                                redirect(base_url('index.php/admin/')) :
+                                redirect(base_url('index.php/dash/'));
                 //redirect(base_url() . 'index.php/dash/');
             }
         } else { // если не нашли редирект на авторизацию
@@ -106,7 +106,7 @@ class Authenticate extends CI_Controller {
     public function index() {
         empty($this->session->userdata['logged_in']) ?
                         //$this->load->view('template/authenticate/main') :
-                        redirect (base_url(). 'index.php/authenticate/auth_login'):
+                        redirect(base_url() . 'index.php/authenticate/auth_login') :
                         redirect(base_url() . 'index.php/dash/');
     }
 
@@ -119,22 +119,22 @@ class Authenticate extends CI_Controller {
     }
 
     public function auth_login() {
-         !empty($this->session->userdata['logged_in']) ?
+        !empty($this->session->userdata['logged_in']) ?
                         redirect(base_url() . 'index.php/dash/') :
                         NULL;
-        
+
         $allovedIp = array(
-            "172.16.3.5", 
-            "127.0.0.1",    //Я
-            "10.0.100.5",   //Я VPN
-            "172.25.0.1",   //Я Docker Mac
-            "172.16.3.6",   //Джон
-            "172.16.3.11",  //Вика
-            "172.16.3.10",  //Женя
+            "172.16.3.5",
+            "127.0.0.1", //Я
+            "10.0.100.5", //Я VPN
+            "172.25.0.1", //Я Docker Mac
+            "172.16.3.6", //Джон
+            "172.16.3.11", //Вика
+            "172.16.3.10", //Женя
             "192.168.1.16", //Артем
             "192.168.1.28", //Сахиб
             "192.168.1.17", //Бектур
-            "172.16.2.11",  //прокси
+            "172.16.2.11", //прокси
             "11.0.0.6",
             "11.0.0.10",
             "11.0.0.11",
@@ -146,8 +146,8 @@ class Authenticate extends CI_Controller {
             $this->load->view('template/authenticate/authenticate_login');
         } else {
             $data['error_message'] = "У вас нет доступа к данной функции";
-            log_message('error', $data['error_message'].": " . $this->input->ip_address());
-            \Sentry\captureMessage($data['error_message'].": " . $this->input->ip_address());
+            log_message('error', $data['error_message'] . ": " . $this->input->ip_address());
+            \Sentry\captureMessage($data['error_message'] . ": " . $this->input->ip_address());
             $this->load->view("template/authenticate/main", $data);
         }
     }
@@ -161,6 +161,99 @@ class Authenticate extends CI_Controller {
         //$this->load->view('template/authenticate/main', $data);
         //redirect (base_url(). 'index.php/authenticate/auth_login');
         $this->load->view('template/authenticate/authenticate_login', $data);
+    }
+
+    public function get_pay_invoice_status($token, $InvoiceSerialNumber) {
+        try {
+            if ($token != "q") {
+                throw new Exception("Authentticate fault");
+            }
+            $this->load->model('invoice_model');
+            $this->load->model('requisites_model');
+
+            $this->session->set_userdata('logged_in', array('Show_Operator' => true, 'UserDistributorID' => 1));
+            $InvoiceData = $this->invoice_model->get_invoice($InvoiceSerialNumber);
+            if (empty($InvoiceData)) {
+                echo json_encode(null);
+            }
+            //var_dump($InvoiceData);
+            //die;
+
+            $sales = array();
+            foreach ($InvoiceData as $ItemInvoce) {
+                array_push($sales, array(
+                    'name' => $ItemInvoce->inventory_name,
+                    'count' => $ItemInvoce->count));
+            }
+
+            $statuses = array();
+            if ($InvoiceData[0]->pay_sum >= $InvoiceData[0]->total_sum) {
+                array_push($statuses, array(
+                    'id' => 1,
+                    'name' => 'Оплачено',
+                    'date' => $InvoiceData[0]->pay_date_time,
+                    'status' => true
+                ));
+            } else {
+                array_push($statuses, array(
+                    'id' => 1,
+                    'name' => 'Ожидает оплаты',
+                    'date' => null,
+                    'status' => false
+                ));
+            }
+            if ($InvoiceData[0]->requisites_invoice_id) {
+                array_push($statuses, array(
+                    'id' => 2,
+                    'name' => 'Данные обработаны',
+                    'date' => $InvoiceData[0]->requisites_creating_date_time,
+                    'status' => true
+                ));
+            } else {
+                array_push($statuses, array(
+                    'id' => 2,
+                    'name' => 'Ожидает обработку данных',
+                    'date' => null,
+                    'status' => false
+                ));
+            }
+            $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
+            if ($certificates) {
+                if (strtotime($InvoiceData[0]->pay_date_time) >= strtotime($certificates[0]->DateStart)) {
+                    array_push($statuses, array(
+                        'id' => 3,
+                        'name' => 'Данные обработаны',
+                        'date' => $InvoiceData[0]->requisites_creating_date_time,
+                        'status' => true
+                    ));
+                } else {
+                    array_push($statuses, array(
+                        'id' => 3,
+                        'name' => 'Ожидает выдачу ЭП',
+                        'date' => null,
+                        'status' => false
+                    ));
+                }
+            } else {
+                array_push($statuses, array(
+                    'id' => 3,
+                    'name' => 'Ожидает выдачу ЭП',
+                    'date' => null,
+                    'status' => false
+                ));
+            }
+
+            $data = array(
+                'name' => $InvoiceData[0]->company_name,
+                'sales' => $sales,
+                'statuses' => $statuses,
+            );
+            echo json_encode($data);
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            echo "Повторите запрос позднее";
+        }
     }
 
 }
