@@ -173,7 +173,6 @@ class Authenticate extends CI_Controller {
 
             $this->session->set_userdata('logged_in', array('Show_Operator' => true, 'UserDistributorID' => 1));
             $InvoiceData = $this->invoice_model->get_invoice($InvoiceSerialNumber);
-            var_dump($InvoiceData);
 
             if (!empty($InvoiceData)) {
                 $sales = array();
@@ -251,7 +250,7 @@ class Authenticate extends CI_Controller {
                 );
                 echo json_encode($data);
             } else {
-                echo json_encode(null);
+                echo json_encode('');
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
