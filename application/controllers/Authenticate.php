@@ -218,7 +218,7 @@ class Authenticate extends CI_Controller {
                         array_push($statuses, array(
                             'id' => 3,
                             'name' => 'ЭП изготовлено',
-                            'date' => $InvoiceData[0]->requisites_creating_date_time,
+                            'date' => $certificates[0]->DateStart,
                             'status' => true
                         ));
                     } else {
