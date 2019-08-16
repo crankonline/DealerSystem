@@ -214,7 +214,7 @@ class Authenticate extends CI_Controller {
                 }
                 $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
                 if ($certificates) {
-                    if (strtotime($InvoiceData[0]->pay_date_time) >= strtotime($certificates[0]->DateStart)) {
+                    if (strtotime($InvoiceData[0]->pay_date_time) <= strtotime($certificates[0]->DateStart)) {
                         array_push($statuses, array(
                             'id' => 3,
                             'name' => 'ЭП изготовлено',
