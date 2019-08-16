@@ -165,7 +165,7 @@ class Authenticate extends CI_Controller {
 
     public function get_pay_invoice_status($token, $InvoiceSerialNumber) {
         try {
-            if ($token != "q") {
+            if (base64_decode($token) !=  "SepperSecretTokenKey2") {
                 throw new Exception("Authentticate fault");
             }
             $this->load->model('invoice_model');
