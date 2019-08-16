@@ -165,7 +165,7 @@ class Authenticate extends CI_Controller {
 
     public function get_pay_invoice_status($token, $InvoiceSerialNumber) {
         try {
-            if (base64_decode($token) !=  "SepperSecretTokenKey2") {
+            if (base64_decode($token) != "SepperSecretTokenKey2") {
                 throw new Exception("Authentticate fault");
             }
             $this->load->model('invoice_model');
@@ -173,6 +173,8 @@ class Authenticate extends CI_Controller {
 
             $this->session->set_userdata('logged_in', array('Show_Operator' => true, 'UserDistributorID' => 1));
             $InvoiceData = $this->invoice_model->get_invoice($InvoiceSerialNumber);
+            var_dump($InvoiceData);
+
             if (!empty($InvoiceData)) {
                 $sales = array();
                 foreach ($InvoiceData as $ItemInvoce) {
@@ -212,15 +214,26 @@ class Authenticate extends CI_Controller {
                         'status' => false
                     ));
                 }
-                $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
-                if ($certificates) {
-                    if (strtotime($InvoiceData[0]->pay_date_time) <= strtotime($certificates[0]->DateStart)) {
-                        array_push($statuses, array(
-                            'id' => 3,
-                            'name' => 'ЭП изготовлено',
-                            'date' => $certificates[0]->DateStart,
-                            'status' => true
-                        ));
+                if (array_search('Электронная подпись', array_column($sales, 'name')) ||
+                        array_search('Электронная подпись (по тендеру)', array_column($sales, 'name')) ||
+                        array_search('Электронная подпись для бюджетных орг-й', array_column($sales, 'name'))) {
+                    $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
+                    if ($certificates) {
+                        if (strtotime($InvoiceData[0]->pay_date_time) <= strtotime($certificates[0]->DateStart)) {
+                            array_push($statuses, array(
+                                'id' => 3,
+                                'name' => 'ЭП изготовлено',
+                                'date' => $certificates[0]->DateStart,
+                                'status' => true
+                            ));
+                        } else {
+                            array_push($statuses, array(
+                                'id' => 3,
+                                'name' => 'Ожидает изготовление ЭП',
+                                'date' => null,
+                                'status' => false
+                            ));
+                        }
                     } else {
                         array_push($statuses, array(
                             'id' => 3,
@@ -229,13 +242,6 @@ class Authenticate extends CI_Controller {
                             'status' => false
                         ));
                     }
-                } else {
-                    array_push($statuses, array(
-                        'id' => 3,
-                        'name' => 'Ожидает выдачу ЭП',
-                        'date' => null,
-                        'status' => false
-                    ));
                 }
 
                 $data = array(
