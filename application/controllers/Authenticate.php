@@ -217,7 +217,7 @@ class Authenticate extends CI_Controller {
                     if (strtotime($InvoiceData[0]->pay_date_time) >= strtotime($certificates[0]->DateStart)) {
                         array_push($statuses, array(
                             'id' => 3,
-                            'name' => 'Данные обработаны',
+                            'name' => 'ЭП изготовлено',
                             'date' => $InvoiceData[0]->requisites_creating_date_time,
                             'status' => true
                         ));
