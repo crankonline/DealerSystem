@@ -211,10 +211,10 @@ class Authenticate extends CI_Controller {
                         'date' => null,
                         'status' => false
                     ));
-                }              
+                }
                 if (array_search('Электронная подпись', array_column($sales, 'name')) !== false ||
                         array_search('Электронная подпись (по тендеру)', array_column($sales, 'name')) !== false ||
-                        array_search('Электронная подпись для бюджетных орг-й', array_column($sales, 'name')) !== false) {                    
+                        array_search('Электронная подпись для бюджетных орг-й', array_column($sales, 'name')) !== false) {
                     $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
                     if ($certificates) {
                         if (strtotime($InvoiceData[0]->pay_date_time) <= strtotime($certificates[0]->DateStart)) {
