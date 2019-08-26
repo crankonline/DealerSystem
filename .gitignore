@@ -15,3 +15,13 @@ vendor/
 composer\.lock
 
 application/\.env
+
+\.vscode/
+
+composer\.phar
+
+docker-compose\.yml
+
+phpdocker/
+
+xdebug-access\.log
