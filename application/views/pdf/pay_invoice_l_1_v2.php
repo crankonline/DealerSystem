@@ -336,7 +336,7 @@
             <td colspan="3" class="center"><?php echo number_format(($Record->price_count / $Record->count) / 1.12, 2, '.', ''); ?></td>
             <td colspan="4" class="center"><?php echo number_format($Record->price_count / 1.12, 2, '.', ''); ?></td>
             <td colspan="2" class="center">12</td>
-            <td colspan="4" class="center"><?php echo number_format($Record->pay_sum * 12 / 112, 2, '.', ''); ?></td>
+            <td colspan="4" class="center"><?php echo number_format(($Record->price_count / $Record->count)  * 12 / 112, 2, '.', ''); ?></td>
             <td colspan="2" class="center">0</td>
             <td colspan="4" class="center">0</td>
             <td colspan="5" class="center"><?php echo number_format($Record->price_count, 2, '.', ''); ?></td>
