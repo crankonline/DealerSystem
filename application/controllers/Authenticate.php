@@ -119,7 +119,8 @@ class Authenticate extends CI_Controller {
                         NULL;
         
         $allovedIp = array(
-            "172.16.3.5", 
+            "172.16.3.5",
+            "172.25.0.1",
             "127.0.0.1",    //Я
             "10.0.100.5",   //Я VPN
             "172.16.3.6",   //Джон
