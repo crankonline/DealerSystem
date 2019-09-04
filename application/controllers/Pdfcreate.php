@@ -222,7 +222,7 @@ class Pdfcreate extends CI_Controller {
                     $this->pdf->Output();
                 }
 
-                //redirect("/downloads/$filename.pdf");
+               // redirect("/downloads/$filename.pdf");
             }
         } else {
             echo "no print";

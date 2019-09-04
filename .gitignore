@@ -16,8 +16,14 @@ composer\.lock
 
 application/\.env
 
+<<<<<<< HEAD
 composer\.phar
 .vscode/launch.json
+=======
+\.vscode/
+
+composer\.phar
+>>>>>>> 1.4.4
 
 docker-compose\.yml
 
