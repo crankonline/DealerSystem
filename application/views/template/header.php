@@ -30,7 +30,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <style id="holderjs-style" type="text/css"></style>
         <script src="<?php echo base_url(); ?>resources/js/jquery-1.11.1.min.js"></script>
         <script src="<?php echo base_url(); ?>resources/js/angular.min.js"></script>
-        <script src="<?php echo base_url(); ?>resources/js/ng-file-upload.min.js"></script>
     </head>
 
     <body role="document">

@@ -143,9 +143,9 @@ class Requisites extends CI_Controller {
 
         //fix
         $js_upd_dec->common->mainActivity = $gked->id;
-        is_null($js_upd_dec->common->capitalForm) ? : $js_upd_dec->common->capitalForm = $js_upd_dec->common->capitalForm->id;
+        is_null($js_upd_dec->common->capitalForm) ?: $js_upd_dec->common->capitalForm = $js_upd_dec->common->capitalForm->id;
         $js_upd_dec->common->legalForm = $js_upd_dec->common->legalForm->id;
-        is_null($js_upd_dec->common->managementForm) ? : $js_upd_dec->common->managementForm = $js_upd_dec->common->managementForm->id;
+        is_null($js_upd_dec->common->managementForm) ?: $js_upd_dec->common->managementForm = $js_upd_dec->common->managementForm->id;
         $js_upd_dec->common->civilLegalStatus = $js_upd_dec->common->civilLegalStatus->id;
         $js_upd_dec->common->chiefBasis = $js_upd_dec->common->chiefBasis->id;
         $js_upd_dec->common->juristicAddress->settlement = $js_upd_dec->common->juristicAddress->settlement->id;
@@ -295,7 +295,7 @@ class Requisites extends CI_Controller {
         //приведение к виду для запроса в соап
 
         foreach ($rep_merge as $rep_merge_value) {
-           if($rep_merge_value->deviceSerial != null) {
+            if ($rep_merge_value->deviceSerial != null) {
                 $rep_merge_value->edsUsageModel = 1;
             } else {
                 $rep_merge_value->edsUsageModel = 2;
@@ -319,9 +319,9 @@ class Requisites extends CI_Controller {
 
         //fix
         $js_upd_dec->common->mainActivity = $gked->id;
-        is_null($js_upd_dec->common->capitalForm) ? : $js_upd_dec->common->capitalForm = $js_upd_dec->common->capitalForm->id;
+        is_null($js_upd_dec->common->capitalForm) ?: $js_upd_dec->common->capitalForm = $js_upd_dec->common->capitalForm->id;
         $js_upd_dec->common->legalForm = $js_upd_dec->common->legalForm->id;
-        is_null($js_upd_dec->common->managementForm) ? : $js_upd_dec->common->managementForm = $js_upd_dec->common->managementForm->id;
+        is_null($js_upd_dec->common->managementForm) ?: $js_upd_dec->common->managementForm = $js_upd_dec->common->managementForm->id;
         $js_upd_dec->common->civilLegalStatus = $js_upd_dec->common->civilLegalStatus->id;
         $js_upd_dec->common->chiefBasis = $js_upd_dec->common->chiefBasis->id;
         $js_upd_dec->common->juristicAddress->settlement = $js_upd_dec->common->juristicAddress->settlement->id;
@@ -577,13 +577,13 @@ class Requisites extends CI_Controller {
             $requisites = $this->requisites_model->get_requisites_by_inn($data['invoice_data']->inn); //поиск в реквизитах
             if (!is_null($requisites)) {
                 $data['requisites_json'] = $requisites;
-                $data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
+                //$data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
             } else {
-                $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ
+                $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ 
+                $mu_data = $this->requisites_model->get_mu_reference($data['invoice_data']->inn); //поиск в МЮ
                 if (is_array($sf_inninfo)) {
                     foreach ($sf_inninfo as $value) {
-                        //var_dump($value);die;
                         if ($value->PayerState == 'Действующие') {
                             $value->PayerName = htmlspecialchars($value->PayerName);
                             $sf_data = $value;
@@ -594,16 +594,18 @@ class Requisites extends CI_Controller {
                 }
                 $requisites = new stdClass();
                 $requisites->common = new stdClass();
-                $requisites->common->okpo = $sf_data->OKPO;
-                $requisites->common->rnsf = $sf_data->PayerId;
-                $requisites->common->name = $sf_data->PayerName;
-                $data['requisites_json'] = $requisites;
-
-                $mu_data = $this->requisites_model->get_mu_reference($data['invoice_data']->inn); //поиск в МЮ
+                $requisites->common->inn = $data['invoice_data']->inn;
+                $requisites->common->okpo = isset($sf_data->OKPO) ? $sf_data->OKPO : $mu_data[0][5];
+                $requisites->common->rnsf = isset($sf_data->PayerId) ? $sf_data->PayerId : "";
+                $requisites->common->name = isset($sf_data->PayerName) ? $sf_data->PayerName : "";
                 $requisites->common->rnmj = $mu_data[0][2];
                 $requisites->common->fullName = $mu_data[0][1];
+                $requisites->common->mainActivity = new stdClass();
+                $requisites->common->bank = new stdClass();
+                $requisites->common->juristicAddress = new stdClass();
+                $requisites->common->representatives = new stdClass();
+                
                 $data['requisites_json'] = $requisites; // переделать  нахрен!!!
-
                 $data['message'] = "Это новая организация, внимательно внесите данные!!!";
             }
             //var_dump(json_encode($requisites));
@@ -618,41 +620,44 @@ class Requisites extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-
-    private function json_register_format($json){
+    private function json_register_format($json) {
         $json_register = new stdClass();
 
         $juristicAddress = [
-            isset($json->common->juristicAddress->settlement->district->region->name) ? $json->common->juristicAddress->settlement->district->region->name :"",
+            isset($json->common->juristicAddress->settlement->district->region->name) ? $json->common->juristicAddress->settlement->district->region->name : "",
             isset($json->common->juristicAddress->settlement->district->name) ? $json->common->juristicAddress->settlement->district->name : "",
-            isset($json->common->juristicAddress->settlement->name) ? $json->common->juristicAddress->settlement->name :"",
+            isset($json->common->juristicAddress->settlement->name) ? $json->common->juristicAddress->settlement->name : "",
             isset($json->common->juristicAddress->street) ? $json->common->juristicAddress->street : "",
             isset($json->common->juristicAddress->building) ? $json->common->juristicAddress->building : "",
             isset($json->common->juristicAddress->apartment) ? $json->common->juristicAddress->building : ""
         ];
         $juristicAddressChecked = [];
-        foreach($juristicAddress as $item) {
-            if($item == "") { continue; }
+        foreach ($juristicAddress as $item) {
+            if ($item == "") {
+                continue;
+            }
             $juristicAddressChecked[] = $item;
         }
-        $juristicAddressText =  implode(', ', $juristicAddressChecked);
+        $juristicAddressText = implode(', ', $juristicAddressChecked);
 
 
 
         $physicalAddress = [
-            isset($json->common->physicalAddress->settlement->district->region->name) ? $json->common->physicalAddress->settlement->district->region->name :"",
+            isset($json->common->physicalAddress->settlement->district->region->name) ? $json->common->physicalAddress->settlement->district->region->name : "",
             isset($json->common->physicalAddress->settlement->district->name) ? $json->common->physicalAddress->settlement->district->name : "",
-            isset($json->common->physicalAddress->settlement->name) ? $json->common->physicalAddress->settlement->name :"",
+            isset($json->common->physicalAddress->settlement->name) ? $json->common->physicalAddress->settlement->name : "",
             isset($json->common->physicalAddress->street) ? $json->common->physicalAddress->street : "",
             isset($json->common->physicalAddress->building) ? $json->common->physicalAddress->building : "",
             isset($json->common->physicalAddress->apartment) ? $json->common->physicalAddress->building : ""
         ];
         $physicalAddressChecked = [];
-        foreach($physicalAddress as $item) {
-            if($item == "") { continue; }
+        foreach ($physicalAddress as $item) {
+            if ($item == "") {
+                continue;
+            }
             $physicalAddressChecked[] = $item;
         }
-        $physicalAddressText =  implode(', ', $physicalAddressChecked);
+        $physicalAddressText = implode(', ', $physicalAddressChecked);
 
 
         $leader = "";
@@ -663,56 +668,55 @@ class Requisites extends CI_Controller {
         $accountantpasport = "";
         $accountantphone = "";
         foreach ($json->common->representatives as $key => $rep) {
-            foreach($rep->roles as $role){
-                if($role->id ==1) {
-                    $leader = (string)$rep->person->surname . " "
-                        . (string)$rep->person->name . " "
-                        . (string)$rep->person->middleName;
+            foreach ($rep->roles as $role) {
+                if ($role->id == 1) {
+                    $leader = (string) $rep->person->surname . " "
+                            . (string) $rep->person->name . " "
+                            . (string) $rep->person->middleName;
                     $t = $rep->person->passport->series;
-                    $leaderpasport = (string)$rep->person->passport->series . ", "
-                        . (string)$rep->person->passport->number . ", "
-                        . (string)$rep->person->passport->issuingAuthority . ", "
-                        . (string)$rep->person->passport->issuingDate;
+                    $leaderpasport = (string) $rep->person->passport->series . ", "
+                            . (string) $rep->person->passport->number . ", "
+                            . (string) $rep->person->passport->issuingAuthority . ", "
+                            . (string) $rep->person->passport->issuingDate;
                     $leadertelephone = $rep->phone;
                     $leaderposition = $rep->position->name;
                 }
 
-                if($role->id ==2) {
-                    $accountant = (string)$rep->person->surname . " "
-                        . (string)$rep->person->name . " "
-                        . (string)$rep->person->middleName;
-                    $accountantpasport = (string)$rep->person->passport->series . ", "
-                        . (string)$rep->person->passport->number . ", "
-                        . (string)$rep->person->passport->issuingAuthority . ", "
-                        . (string)$rep->person->passport->issuingDate;
+                if ($role->id == 2) {
+                    $accountant = (string) $rep->person->surname . " "
+                            . (string) $rep->person->name . " "
+                            . (string) $rep->person->middleName;
+                    $accountantpasport = (string) $rep->person->passport->series . ", "
+                            . (string) $rep->person->passport->number . ", "
+                            . (string) $rep->person->passport->issuingAuthority . ", "
+                            . (string) $rep->person->passport->issuingDate;
                     $accountantphone = $rep->phone;
                 }
             }
-
-
         }
 
-        $json_register->uid  = $json->uid;
+        $json_register->uid = $json->uid;
         $json_register->form = $json->common->legalForm->shortName ?: $json->common->legalForm->name;
         $json_register->name = $json->common->name;
-        $json_register->inn  = $json->common->inn;
-        $json_register->gns  = $json->sti ? $json->sti->regionDefault->id : null;
+        $json_register->inn = $json->common->inn;
+        $json_register->gns = $json->sti ? $json->sti->regionDefault->id : null;
         $json_register->okpo = $json->common->okpo;
-        $json_register->urAdres  = $juristicAddressText;
-        $json_register->fAdres  = $physicalAddressText;
+        $json_register->urAdres = $juristicAddressText;
+        $json_register->fAdres = $physicalAddressText;
         is_null($json->common->bank) ? $json_register->bank = "" : $json_register->bank = $json->common->bank->name;
         is_null($json->common->bank) ? $json_register->bik = "" : $json_register->bik = $json->common->bank->id;
-        $json_register->rs   = $json->common->bankAccount;
-        $json_register->leader  = $leader;
-        $json_register->leaderpasport  = $leaderpasport;
-        $json_register->position  = $leaderposition;
-        $json_register->leadertelephone  = $leadertelephone;
-        $json_register->leadermail  = $json->common->eMail;
-        $json_register->accountant  = $accountant;
-        $json_register->accountantpasport  = $accountantpasport;
-        $json_register->accountantmail  = $json->common->eMail;
-        $json_register->accountantphone  = $accountantphone;
+        $json_register->rs = $json->common->bankAccount;
+        $json_register->leader = $leader;
+        $json_register->leaderpasport = $leaderpasport;
+        $json_register->position = $leaderposition;
+        $json_register->leadertelephone = $leadertelephone;
+        $json_register->leadermail = $json->common->eMail;
+        $json_register->accountant = $accountant;
+        $json_register->accountantpasport = $accountantpasport;
+        $json_register->accountantmail = $json->common->eMail;
+        $json_register->accountantphone = $accountantphone;
 
         return $json_register;
     }
+
 }
