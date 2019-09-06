@@ -279,7 +279,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                            class="form-control"  
                                            placeholder="Квартира" 
                                            maxlength="4" 
-                                           required=""
                                            ng-model="Data.common.juristicAddress.apartment">
                                 </td>
                             </tr>
@@ -366,7 +365,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <span class="glyphicon glyphicon-picture"></span> Сканированные изображения юридического лица
                         </h3>
                     </div>
-                    <table class="table">
+                    <table class="table" ng-hide="true">
                         <tbody>
                             <tr class="danger" ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
                                 <td colspan="2" align="center">Свидетельство о государственной регистрации Министерсва Юстиции</td>
@@ -405,7 +404,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 <div class="panel panel-success">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <span class="glyphicon glyphicon-certificate"></span> Реквизиты сотрудника компании - №{{key + 1}}
+                            <span class="left glyphicon glyphicon-certificate"></span> №{{key + 1}} Реквизиты сотрудника компании - {{Data.common.representatives[key].position.name}}
+                            <button type="button" class="right btn btn-danger" ng-click="RemoveRepresentative(key)"><span class="glyphicon glyphicon-minus"></span> Удалить</button>
                         </h3>      
                     </div>
                     <div class="panel-body">
@@ -503,7 +503,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </table>
 
                         <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-picture"></span> Сканированные изображения паспорта</h3></div>
-                        <table class="table">
+                        <table class="table" ng-hide="true">
                             <tbody>
                                 <tr class="success">
                                     <td colspan="2" align="center">Паспорт физического лица</td>
@@ -534,6 +534,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
+            <div class=""><button type="button" class="btn btn-warning" ng-click="addNewRepresentative()"><span class="glyphicon glyphicon-plus"></span> Добавить сотрудника</button></td></div>
             <div class="alert alert-success" ng-hide="!resultupload">
     <!--            <strong>Well done! </strong> {{resultupload}}-->
                 <p ng-bind-html ="ResUpload"></p>
@@ -577,7 +578,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     window.scope = $scope;
                     /*Load default reference*/
                     $scope.requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''"); ?>;
-                    $scope.count = $scope.requisites_json.common.representatives.length;
+                    $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
                     $scope.passport_side_1 = [];
                     $scope.passport_side_2 = [];
                     $scope.passport_copy = [];
@@ -836,6 +837,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     $scope.Data.common.juristicAddress.settlement = $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
                                 });
                     };
+                    $scope.addNewRepresentative = function(){
+                        $scope.count++;
+                        $scope.Data.common.representatives.push({position: $scope.Positions[0]});
+                    }
+                    $scope.RemoveRepresentative = function (key){
+                        $scope.Data.common.representatives.splice(key, 1);
+                        $scope.count--;
+                    }
                     $scope.Upload = function () {
                         $scope.errorMsg = null;
                         $scope.resultupload = null;
