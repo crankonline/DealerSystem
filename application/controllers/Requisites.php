@@ -603,7 +603,7 @@ class Requisites extends CI_Controller {
                 $requisites->common->mainActivity = new stdClass();
                 $requisites->common->bank = new stdClass();
                 $requisites->common->juristicAddress = new stdClass();
-                $requisites->common->representatives = new stdClass();
+                $requisites->common->representatives = array();
                 
                 $data['requisites_json'] = $requisites; // переделать  нахрен!!!
                 $data['message'] = "Это новая организация, внимательно внесите данные!!!";
