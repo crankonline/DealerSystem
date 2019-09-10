@@ -26,10 +26,10 @@ class Authenticate_model extends CI_Model {
         $client = $this->api_cloud();
         return $client->authenticateToken($this->ApiRequestSubscriberToken, $cms);
     }
-    
-    public function check_cert_cloud($inn,$pin) { //пока не юзаем т.к. ограниченное кол-во лицензий
+
+    public function check_cert_cloud($inn, $pin) { //пока не юзаем т.к. ограниченное кол-во лицензий
         $client = $this->api_cloud();
-        return $client->authenticateCloud($this->ApiRequestSubscriberToken, $inn,'Бухгалтер', strtoupper(sha1($pin)));
+        return $client->authenticateCloud($this->ApiRequestSubscriberToken, $inn, 'Бухгалтер', strtoupper(sha1($pin)));
     }
 
     public function chek_cert_for_user($cert_number) {
@@ -59,7 +59,7 @@ class Authenticate_model extends CI_Model {
         }
     }
 
-    public function read_user_information_cert($token_number,$cert_number) {
+    public function read_user_information_cert($token_number, $cert_number) {
         $sql = <<<SQL
                 SELECT
 CONCAT (users.surname, ' ',users."name",' ',users.patronymic_name) AS UserName,
@@ -83,11 +83,11 @@ INNER JOIN "Dealer_data".distributor ON "Dealer_data".users.distributor_id = "De
 WHERE
 "Dealer_data".users.token_number like ? AND "Dealer_data".users.cert_number = ?
 SQL;
-        $result = $this->db->query($sql, array('%' . $token_number . '%',$cert_number));
+        $result = $this->db->query($sql, array('%' . $token_number . '%', $cert_number));
         return $result->row();
     }
-    
-        public function read_user_information_cert_only($cert_number) {
+
+    public function read_user_information_cert_only($cert_number) {
         $sql = <<<SQL
                 SELECT
 CONCAT (users.surname, ' ',users."name",' ',users.patronymic_name) AS UserName,
@@ -116,12 +116,14 @@ SQL;
     }
 
     public function login($data) {
-        $condition = "user_login ='" . $data['UserLogin'] . "' AND user_password='" . $data['UserPassword'] . "'";
-        $this->db->select('*');
-        $this->db->from('"Dealer_data".users');
-        $this->db->where($condition);
-        $this->db->limit(1);
-        $query = $this->db->get();
+        $sql = <<<SQL
+SELECT * 
+FROM "Dealer_data".users
+WHERE 
+"Dealer_data".users.user_login = ? AND "Dealer_data".users.user_password = ?
+LIMIT 1
+SQL;
+        $query = $this->db->query($sql, array($data['UserLogin'], $data['UserPassword']));      
         if ($query->num_rows() == 1) {
             return true;
         } else {
