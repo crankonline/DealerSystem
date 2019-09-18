@@ -90,7 +90,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                            maxlength="9" 
                                            required="" 
                                            ng-model="Data.common.mainActivity.gked" 
-                                           ng-change="CheckGked()" gked-mask></td>
+                                           ng-change="CheckGked()" 
+                                           gked-mask></td>
                             </tr>
                             <tr>
                                 <td>Вид деятельности</td>
@@ -446,7 +447,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </tr>
                                 <tr>
                                     <td>Дата выдачи</td>
-                                    <td><input type="text" class="form-control"  placeholder="ДД.ММ.ГГГГ" maxlength="10" required="" gked-mask
+                                    <td><input type="text" 
+                                               class="form-control"  
+                                               placeholder="ДД.ММ.ГГГГ" 
+                                               maxlength="10" 
+                                               required="" 
+                                               gked-mask
                                                ng-model="Data.common.representatives[key].person.passport.issuingDate"></td>
                                 </tr>
                                 <tr class="success">
@@ -485,7 +491,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                  ng-options="option.name disable when option.id === null for option in Roles track by option.id">
                                         </select>-->
                                         <p ng-repeat="role in Roles">
-                                            <input type="checkbox" data-checklist-model="Data.common.representatives[key].roles" data-checklist-value="role"> {{role.name}}
+                                            <input type="checkbox" 
+                                                   data-checklist-model="Data.common.representatives[key].roles" 
+                                                   data-checklist-value="role">
+                                            {{role.name}}
                                         </p>
                                     </td>
                                 </tr>
@@ -508,19 +517,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                    ng-value="edsUsageModel"
                                                    value ="{{edsUsageModel.id}}"
                                                    ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3"
-                                                   ng-checked="edsUsageModel.id == Data.common.representatives[key].edsUsageModel.id">
+                                                   ng-checked="edsUsageModel.id == Data.common.representatives[key].edsUsageModel.id"
+                                                   >
                                             {{edsUsageModel.name}}
                                         </p>
                                         <input type="text" 
                                                class="form-control"  
                                                placeholder="Номер токена" 
                                                minlength="10" 
-                                               maxlength="10" 
-                                               required="" 
+                                               maxlength="10"
                                                numbers-only 
+                                               required="" 
                                                ng-model="Data.common.representatives[key].deviceSerial"
-                                               ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3"
-                                               ng-hide="Data.common.representatives[key].edsUsageModel.id == 2 || (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)">
+                                               ng-disabled = "Data.common.representatives[key].edsUsageModel.id == 2 || (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)">
                                     </td>
                                 </tr>
                             </tbody>
@@ -558,7 +567,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </div>
                 </div>
             </div>
-            <div class=""><button type="button" class="btn btn-warning" ng-click="addNewRepresentative()"><span class="glyphicon glyphicon-plus"></span> Добавить сотрудника</button></td></div>
+            <div ng-show="toggle">
+                <button type="button" class="btn btn-warning" ng-click="addNewRepresentative()">
+                    <span class="glyphicon glyphicon-plus"></span> Добавить сотрудника
+                </button>
+            </div>
             <div class="alert alert-success" ng-hide="!resultupload">
     <!--            <strong>Well done! </strong> {{resultupload}}-->
                 <p ng-bind-html ="ResUpload"></p>
@@ -577,7 +590,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     <span class="sr-only">{{progressphy}}%</span>
                 </div>
             </div>
-            <div align="center" ng-show="toggle"><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Создать заявку</button></div>
+            <div align="center" ng-show="toggle">
+                <button type="submit" class="btn btn-success">
+                    <span class="glyphicon glyphicon-save"></span> Создать заявку
+                </button>
+            </div>
         </form>
     <?php endif; ?>
 </div>
@@ -609,19 +626,19 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 $scope.Data = $scope.requisites_json;
 
                                 $scope.toggle = true;
-                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonCapitalForms', id: ''}).
+                                $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {reference: 'getCommonCapitalForms', id: ''}).
                                         then(function (response) {
                                             $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                             mObjNode('Data.common.capitalForm', $scope);
-                                            var defaultId = <?php echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''"; ?>;
+                                            var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id; <?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''"; ?>;
                                             //console.log($scope.CapitalForms.findIndex(x => x.id === defaultId));
                                             $scope.Data.common.capitalForm = $scope.CapitalForms[$scope.CapitalForms.findIndex(x => x.id === defaultId)];
                                         });
-                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonManagementForms', id: ''}).
+                                $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {reference: 'getCommonManagementForms', id: ''}).
                                         then(function (response) {
                                             $scope.ManagementForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                             mObjNode('Data.common.managementForm', $scope);
-                                            var defaultId = <?php echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''"; ?>;
+                                            var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;  <?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''"; ?>;
                                             $scope.Data.common.managementForm = $scope.ManagementForms[$scope.ManagementForms.findIndex(x => x.id === defaultId)];
                                         });
                                 $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonOwnershipForms', id: ''}).//загрузка спр. ФОРМА СОБСТВЕННОСТИ
@@ -633,8 +650,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[0];
                                             $scope.LegalForms = [{id: '', name: 'Cначала выберите форму собственности'}];
                                             $scope.Data.common.legalForm = $scope.LegalForms[0];
+                                            //console.log(angular.isUndefined($scope.Data.common.legalForm.ownershipForm));
                                             var defaultId = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ? $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
-                                            $scope.Data.common.legalForm.ownershipForm = $scope.OwnershipForms[$scope.OwnershipForms.findIndex(x => x.id === defaultId)]; //знач. по умолчанию
+                                             $scope.Data.common.legalForm.ownershipForm = $scope.OwnershipForms[$scope.OwnershipForms.findIndex(x => x.id === defaultId)]; //знач. по умолчанию
                                             if (defaultId !== '') {//прогружаем соотвественную Организационно-правоваю форму
                                                 $scope.loadLegalForm();
                                             }
@@ -729,10 +747,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         //console.log($scope.OwnershipForms[i],id);
                                         if ($scope.OwnershipForms[i].id === id)
                                             return $scope.OwnershipForms[i];
-                                    }
-
+                                    }   
                                     return {id: id};
-                                }
+                                };
 
                                 $scope.loadCivilLegalStatuses = function () {
                                     var tmp = $scope.Data.common.legalForm.ownershipForm;
@@ -865,11 +882,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 $scope.addNewRepresentative = function () {
                                     $scope.count++;
                                     $scope.Data.common.representatives.push({position: $scope.Positions[0]});
-                                }
+                                };
                                 $scope.RemoveRepresentative = function (key) {
                                     $scope.Data.common.representatives.splice(key, 1);
                                     $scope.count--;
-                                }
+                                };
                                 $scope.Upload = function () {
                                     $scope.errorMsg = null;
                                     $scope.resultupload = null;
@@ -895,12 +912,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
                                             $scope.Data.common.representatives[i].deviceSerial = null;
                                             $scope.Data.common.representatives[i].edsUsageModel = null;
-                                        }
-                                        ;
+                                        };
                                         if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
                                             $scope.Data.common.representatives[i].deviceSerial = null;
-                                        }
-                                        ;
+                                        };
                                     }
                                     /* end checks */
 
@@ -914,8 +929,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_create', {
                                         invoice_id: $scope.invoice_id,
                                         invoice_serial_number: $scope.invoice_serial_number,
-                                        json: $scope.Data,
-                                        json_original: $scope.json_original
+                                        json: $scope.Data
+                                        //json_original: $scope.json_original
                                     }).
                                             then(function (responce) {
                                                 //console.log(responce);
