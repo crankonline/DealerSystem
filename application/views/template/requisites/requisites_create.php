@@ -486,14 +486,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr>
                                     <td>Роль в системе</td>
                                     <td>
-    <!--                                    <select  class="form-control" required 
-                                                 ng-model="Data.common.representatives[key].roles" 
-                                                 ng-options="option.name disable when option.id === null for option in Roles track by option.id">
-                                        </select>-->
                                         <p ng-repeat="role in Roles">
                                             <input type="checkbox" 
                                                    data-checklist-model="Data.common.representatives[key].roles" 
-                                                   data-checklist-value="role">
+                                                   data-checklist-value="role"
+                                                   ng-disabled="(role.id == 1 && !role_1 && !checked) || (role.id == 2 && !role_2 && !checked) || (role.id == 3 && !role_3 && !checked)"
+                                                   ng-click="Checked_role(role)">
                                             {{role.name}}
                                         </p>
                                     </td>
@@ -506,19 +504,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr ng-hide = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3">
                                     <td>Носитель ЭП</td>
                                     <td>
-    <!--                                    <input type="text" class="form-control"  placeholder="Номер токена" minlength="10" maxlength="10" required="" numbers-only 
-                                            ng-model="Data.common.representatives[key].deviceSerial">-->
-    <!--                                        <p ng-repeat="edsUsageModel in edsUsageModels">
-                                            <input type="checkbox" data-checklist-model="Data.common.representatives[key].edsUsageModel" data-checklist-value="edsUsageModel"> {{edsUsageModel.name}}
-                                        </p>-->
                                         <p data-ng-repeat="edsUsageModel in edsUsageModels">
                                             <input type="radio" 
                                                    ng-model="Data.common.representatives[key].edsUsageModel" 
                                                    ng-value="edsUsageModel"
                                                    value ="{{edsUsageModel.id}}"
                                                    ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3"
-                                                   ng-checked="edsUsageModel.id == Data.common.representatives[key].edsUsageModel.id"
-                                                   >
+                                                   ng-checked="edsUsageModel.id == Data.common.representatives[key].edsUsageModel.id">
                                             {{edsUsageModel.name}}
                                         </p>
                                         <input type="text" 
@@ -630,7 +622,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         then(function (response) {
                                             $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                             mObjNode('Data.common.capitalForm', $scope);
-                                            var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id; <?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''"; ?>;
+                                            var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id;
+<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";      ?>;
                                             //console.log($scope.CapitalForms.findIndex(x => x.id === defaultId));
                                             $scope.Data.common.capitalForm = $scope.CapitalForms[$scope.CapitalForms.findIndex(x => x.id === defaultId)];
                                         });
@@ -638,7 +631,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         then(function (response) {
                                             $scope.ManagementForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                             mObjNode('Data.common.managementForm', $scope);
-                                            var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;  <?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''"; ?>;
+                                            var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;
+<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";      ?>;
                                             $scope.Data.common.managementForm = $scope.ManagementForms[$scope.ManagementForms.findIndex(x => x.id === defaultId)];
                                         });
                                 $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonOwnershipForms', id: ''}).//загрузка спр. ФОРМА СОБСТВЕННОСТИ
@@ -652,7 +646,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             $scope.Data.common.legalForm = $scope.LegalForms[0];
                                             //console.log(angular.isUndefined($scope.Data.common.legalForm.ownershipForm));
                                             var defaultId = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ? $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
-                                             $scope.Data.common.legalForm.ownershipForm = $scope.OwnershipForms[$scope.OwnershipForms.findIndex(x => x.id === defaultId)]; //знач. по умолчанию
+                                            $scope.Data.common.legalForm.ownershipForm = $scope.OwnershipForms[$scope.OwnershipForms.findIndex(x => x.id === defaultId)]; //знач. по умолчанию
                                             if (defaultId !== '') {//прогружаем соотвественную Организационно-правоваю форму
                                                 $scope.loadLegalForm();
                                             }
@@ -721,6 +715,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     {id: 2, name: "Использование ЭЦП из облачного хранилища"},
                                     {id: 1, name: "Использование ЭЦП на РУТОКЕН"}
                                 ];
+                                //$scope.role_1 = true; $scope.role_2 = true; $scope.role_3 = true;
                                 /*End load default reference*/
 
                                 $scope.loadLegalForm = function () { //загрузка спр. Организационно-правовая форма
@@ -747,7 +742,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         //console.log($scope.OwnershipForms[i],id);
                                         if ($scope.OwnershipForms[i].id === id)
                                             return $scope.OwnershipForms[i];
-                                    }   
+                                    }
                                     return {id: id};
                                 };
 
@@ -838,7 +833,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     {id: '', name: 'Выберите район'},
                                                     {id: 'none', name: 'Областного подчинения'}].concat(response.data);
                                                 //if ($scope.currentjuristicregion.id !== '') {
-                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                 ?>;
+                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                      ?>;
                                                 //$scope.currentjuristicdistrict = $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id === defaultId)];
                                                 //  $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict.id);
                                                 //} else
@@ -887,6 +882,41 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     $scope.Data.common.representatives.splice(key, 1);
                                     $scope.count--;
                                 };
+
+                                $scope.Checked_role = function (role = false) {
+                                    if (role === false) {
+                                        //default params for roles
+                                        $scope.role_1 = true;
+                                        $scope.role_2 = true;
+                                        $scope.role_3 = true;
+                                        for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
+                                            for (var ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
+                                                ($scope.Data.common.representatives[i].roles[ii].id == 1) ? $scope.role_1 = false : null;
+                                                ($scope.Data.common.representatives[i].roles[ii].id == 2) ? $scope.role_2 = false : null;
+                                                ($scope.Data.common.representatives[i].roles[ii].id == 3) ? $scope.role_3 = false : null;
+                                            }
+                                        }
+                                        console.log('Default: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
+
+                                    } else {
+                                        //user changes
+                                        if (role.id == 1) {
+                                            $scope.role_1 = ($scope.role_1 === false) ? true : false;
+                                            //console.log('ruk = ' + $scope.role_1);
+                                        }
+                                        if (role.id == 2) {
+                                            $scope.role_2 = ($scope.role_2 === false) ? true : false;
+                                            //console.log('buh = ' + $scope.role_2);
+                                        }
+                                        if (role.id == 3) {
+                                            $scope.role_3 = ($scope.role_3 === false) ? true : false;
+                                            //console.log('rep = ' + $scope.role_3);
+                                        }
+                                        console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
+                                    }
+                                };
+                                $scope.Checked_role();
+
                                 $scope.Upload = function () {
                                     $scope.errorMsg = null;
                                     $scope.resultupload = null;
@@ -912,10 +942,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
                                             $scope.Data.common.representatives[i].deviceSerial = null;
                                             $scope.Data.common.representatives[i].edsUsageModel = null;
-                                        };
-                                        if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
-                                            $scope.Data.common.representatives[i].deviceSerial = null;
-                                        };
+                                        }
+                                        ;
+                                        if ($scope.Data.common.representatives[i].edsUsageModel != null) {
+                                            if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
+                                                $scope.Data.common.representatives[i].deviceSerial = null;
+                                            }
+                                        }
+                                        ;
                                     }
                                     /* end checks */
 
@@ -930,7 +964,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         invoice_id: $scope.invoice_id,
                                         invoice_serial_number: $scope.invoice_serial_number,
                                         json: $scope.Data
-                                        //json_original: $scope.json_original
+                                                //json_original: $scope.json_original
                                     }).
                                             then(function (responce) {
                                                 //console.log(responce);
@@ -940,7 +974,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 //console.log(responce);
 
                                                 Upload.upload({
-                                                    url: '<?php echo base_url(); ?>index.php/requisites/requisites_juridical_file_upload/' + $scope.invoice_serial_number,
+                                                    url: '<?php echo base_url(); ?>index.php/requisites/requisites_juridical_file_upload/' + $scope.Data.common.inn,
                                                     data: {
                                                         mu_file_kg: $scope.mu_file_kg,
                                                         mu_file_ru: $scope.mu_file_ru,
@@ -962,7 +996,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 });
                                                 for (var i = 0; i < $scope.count; i++) {
                                                     Upload.upload({
-                                                        url: '<?php echo base_url(); ?>index.php/requisites/requisites_representatives_file_upload/' + $scope.invoice_serial_number + '/' + $scope.Data.common.representatives[i].deviceSerial,
+                                                        url: '<?php echo base_url(); ?>index.php/requisites/requisites_representatives_file_upload/' + $scope.Data.common.representatives[i].person.passport.series + $scope.Data.common.representatives[i].person.passport.number,
                                                         data: {
                                                             passport_side_1: $scope.passport_side_1[i],
                                                             passport_side_2: $scope.passport_side_2[i],

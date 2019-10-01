@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+var_dump($files);
 ?>
 <div class="container theme-showcase" role="main" ng-app="RequisitesForm" ng-controller="RequisitesFormData">
 
