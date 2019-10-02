@@ -896,7 +896,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                 ($scope.Data.common.representatives[i].roles[ii].id == 3) ? $scope.role_3 = false : null;
                                             }
                                         }
-                                        console.log('Default: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
+                                        //console.log('Default: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
 
                                     } else {
                                         //user changes
@@ -912,7 +912,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             $scope.role_3 = ($scope.role_3 === false) ? true : false;
                                             //console.log('rep = ' + $scope.role_3);
                                         }
-                                        console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
+                                        //console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
                                     }
                                 };
                                 $scope.Checked_role();

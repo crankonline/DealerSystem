@@ -1,9 +1,5 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
-echo"<pre>";
-print_r($requisites_data->json->common->files);
-echo"</pre>";
-var_dump($requisites_data->json->common->representatives);
 ?>
 <div class="container theme-showcase" role="main" ng-app="RequisitesForm" ng-controller="RequisitesFormData">
 
