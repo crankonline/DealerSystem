@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model {
 
-    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
+    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; 
 
     private function requisites_client() {
         $wsdl = (ENVIRONMENT == 'production') ?
@@ -68,8 +68,8 @@ class Requisites_model extends CI_Model {
                     getenv('SOAP_1C_DEV'); //dev
 
             $user = array(
-                'login' => 'sochi',
-                'password' => 'ufvguygbvjvbugjsb6546fg964b96',
+                'login' => getenv('1C_LOGIN'),
+                'password' => getenv('1C_PASSWORD'),
                 'trace' => 1,
                 'exceptions' => TRUE,
                 'connection_timeout' => 5
