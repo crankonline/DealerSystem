@@ -4,12 +4,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model {
 
-    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
+    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; 
 
     private function requisites_client() {
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_REQUISITES_PROD') : //prod
-                        $wsdl = getenv('SOAP_REQUISITES_DEV'); //dev
+        $wsdl = (ENVIRONMENT == 'production') ?
+                getenv('SOAP_REQUISITES_PROD') : //prod
+                getenv('SOAP_REQUISITES_DEV'); //dev
 
         $user = array(
             'soap_version' => SOAP_1_1,
@@ -17,7 +17,7 @@ class Requisites_model extends CI_Model {
             'trace' => 1,
             'cache_wsdl' => WSDL_CACHE_NONE,
             'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 10,
+            'connection_timeout' => 5,
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
         );
@@ -25,9 +25,9 @@ class Requisites_model extends CI_Model {
     }
 
     private function reference_client() {
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_REQUISITES_META_PROD') : //prod
-                        $wsdl = getenv('SOAP_REQUISITES_META_DEV'); //dev
+        $wsdl = (ENVIRONMENT == 'production') ?
+                getenv('SOAP_REQUISITES_META_PROD') : //prod
+                getenv('SOAP_REQUISITES_META_DEV'); //dev
         $user = array(
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -36,9 +36,9 @@ class Requisites_model extends CI_Model {
     }
 
     private function pki_dtg_client() {
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_PKI_PROD') : //prod
-                        $wsdl = getenv('SOAP_PKI_DEV'); //dev
+        $wsdl = (ENVIRONMENT == 'production') ?
+                getenv('SOAP_PKI_PROD') : //prod
+                getenv('SOAP_PKI_DEV'); //dev
         $options = [
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -55,23 +55,29 @@ class Requisites_model extends CI_Model {
         $options = [
             'trace' => TRUE,
             'exceptions' => TRUE,
-            'connection_timeout' => 10
+            'connection_timeout' => 5
         ];
         return new SoapClient($wsdl, $options);
     }
 
     private function soap_1c_client() {
-        ini_set("soap.wsdl_cache_enabled", "0");
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_1C_PROD') : //prod
-                        $wsdl = getenv('SOAP_1C_DEV'); //dev
+        try {
+            ini_set("soap.wsdl_cache_enabled", "0");
+            $wsdl = (ENVIRONMENT == 'production') ?
+                    getenv('SOAP_1C_PROD') : //prod
+                    getenv('SOAP_1C_DEV'); //dev
 
-        $user = array(
-            'login' => 'sochi',
-            'password' => 'ufvguygbvjvbugjsb6546fg964b96',
-            "trace" => 1, "exception" => 0
-        );
-        return new SoapClient($wsdl, $user);
+            $user = array(
+                'login' => getenv('1C_LOGIN'),
+                'password' => getenv('1C_PASSWORD'),
+                'trace' => 1,
+                'exceptions' => TRUE,
+                'connection_timeout' => 5
+            );
+            return new SoapClient($wsdl, $user);
+        } catch (SoapFault $e) {
+            throw new Exception('Запрос в службу 1С -> ' . $e->getMessage());
+        }
     }
 
     private function mu_info($inn) {
@@ -174,9 +180,9 @@ class Requisites_model extends CI_Model {
                 return $result; //[0][2]; //только номер минюста
             }
         } catch (Exception $ex) {
-            $message = 'Запрос в службу министерсва юстиции -> ' . $ex->getMessage();
-            log_message('error', $message);
-            throw new Exception($message);
+            log_message('error', 'Запрос в службу министерсва юстиции -> ' . $ex->getMessage());
+            \Sentry\captureException($ex);
+            return null;
         }
     }
 
@@ -189,10 +195,10 @@ class Requisites_model extends CI_Model {
             } else {
                 return $result->PayerInfo;
             }
-        } catch (Exception $ex) {
-            $message = 'Запрос в службу социального фонда -> ' . $ex->getMessage();
-            log_message('error', $message);
-            throw new Exception($message);
+        } catch (SoapFault $ex) {
+            log_message('error', 'Запрос в службу социального фонда -> ' . $ex->getMessage());
+            \Sentry\captureException($ex);
+            return[];
         }
     }
 
@@ -240,16 +246,10 @@ class Requisites_model extends CI_Model {
     }
 
     public function get_requisites_by_inn($inn) {
-        try {
-            $token_DTG = $this->ApiRequestSubscriberToken_DTG;
-            $client = $this->requisites_client();
-            $result = $client->getByInn($token_DTG, $inn);
-            return $result;
-        } catch (Exception $ex) {
-            $message = 'Запрос в службу реквизитов -> ' . $ex->getMessage();
-            log_message('error', $message);
-            throw new Exception($message);
-        }
+        $token_DTG = $this->ApiRequestSubscriberToken_DTG;
+        $client = $this->requisites_client();
+        return $client->getByInn($token_DTG, $inn);
+        //Exceptions has catched by calling function (that faster)
     }
 
     public function requisites_saver($json) {
@@ -258,16 +258,15 @@ class Requisites_model extends CI_Model {
         try {
             $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
             if (is_null($result_dtg)) { //DTG
-                $uid_ENOT = $client->register($token_DTG, $json);
-                $result_dtg = $client->getByUid($token_DTG, $uid_ENOT);
+                $uid_DTG = $client->register($token_DTG, $json);
+                $result_dtg = $client->getByUid($token_DTG, $uid_DTG);
             } else {
                 $client->update($token_DTG, $result_dtg->uid, $json);
                 $result_dtg = $client->getByUid($token_DTG, $result_dtg->uid);
             }
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
-            log_message('error', $message);
-            log_message('error', json_encode($json));
+            log_message('error', $ex->getMessage(). PHP_EOL . json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;
@@ -374,7 +373,6 @@ class Requisites_model extends CI_Model {
             return $result;
         } catch (Exception $ex) {
             $message = 'Запрос в службу PKI -> ' . $ex->getMessage();
-            log_message('error', $message);
             throw new Exception($message);
         }
     }
@@ -382,13 +380,11 @@ class Requisites_model extends CI_Model {
     public function register_client_to1c($json_register) {
         try {
             $parameters = new \stdClass();
-
             $parameters->data = json_encode($json_register, JSON_UNESCAPED_UNICODE);
             $client = $this->soap_1c_client();
             $client->registration($parameters);
         } catch (Exception $ex) {
             $message = 'Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage();
-            log_message('error', $message);
             throw new Exception($message);
         }
     }
