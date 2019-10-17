@@ -18,10 +18,8 @@ class Pdfcreate extends CI_Controller {
             'default_font_size' => 10]);
         
         $this->load->model('pdfrender_model');
-
         $this->load->model('invoice_model');
         $this->load->model('price_model');
-
         $this->load->model('requisites_model');
 
     }
@@ -157,22 +155,8 @@ class Pdfcreate extends CI_Controller {
             'template' => $data['data']->template
         );
         $data['pay_invoice_version'] = $pay_invoice_version;
-        //</editor-fold>
-
-
-
-//        echo "<pre>";
-//        print_r($data);
-//        echo "</pre><br/><br/><br/><br/><br/><br/>";
-//        echo "<pre>";
-//        print_r($data['data_invoice']);
-//        echo "</pre><br/><br/><br/><br/><br/><br/>";
-//        exit(0);
 
         if($data['data']->json_version_id == '1') {
-//            echo "print old sf";
-
-
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1', $data);
             } else {
@@ -190,58 +174,28 @@ class Pdfcreate extends CI_Controller {
 
                     $this->pdf->SetDisplayMode('fullwidth');
                     $this->pdf->SetDisplayMode(50);
-
-                    //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
-                    $this->pdf->WriteHTML($html); // write the HTML into the PDF
-                    //$this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                    $this->pdf->WriteHTML($html); // write the HTML into the PDF                   
                     $this->pdf->Output();
                 }
-
-                //redirect("/downloads/$filename.pdf");
             }
         }
         else if ($data['data']->json_version_id == '2') {
-//            echo "print new sf";
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1_v2', $data);
             } else {
-
                 $filename = time();
-
                 $pdfFilePath = FCPATH . "downloads/$filename.pdf";
                 $data['page_title'] = 'Pay Invoice'; // pass data to the view
-
-                if (file_exists($pdfFilePath) == FALSE) {
-                    ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
-                    $html = $this->load->view('pdf/pay_invoice_l_1_v2', $data, true); // render the view into HTML
-                   // $this->load->library('pdf');
-                    //$pdf = $this->pdf->load();
-                    //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
+                if (file_exists($pdfFilePath) == FALSE) {                  
+                    $html = $this->load->view('pdf/pay_invoice_l_1_v2', $data, true); // render the view into HTML                
                     $this->pdf->WriteHTML($html); // write the HTML into the PDF
-                    //$this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
+                    
                     $this->pdf->Output();
                 }
-
-               // redirect("/downloads/$filename.pdf");
             }
         } else {
             echo "no print";
         }
-
-
-
-
-
-
-//        echo "<pre>";
-//        //var_dump($this->_ci_cached_vars);
-//        print_r( $data );
-//        echo "</pre>";
-//        //die();
-
-
-
-
     }
 
 
@@ -285,74 +239,13 @@ class Pdfcreate extends CI_Controller {
 
 
         if ($view != FALSE) {
-
-//            echo "<pre>";
-//            ////var_dump($this->_ci_cached_vars);
-//            print_r( $view );
-//            print_r( $data );
-//            echo "</pre>";
-//            //die;
-
             $this->load->view($data['data'][0]->template, $data);
         } else {
-
-            $filename = time();
-
-            $pdfFilePath = FCPATH . "downloads/$filename.pdf";
-
-            if (file_exists($pdfFilePath) == FALSE) {
-                ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                 $html = $this->load->view($data['data'][0]->template, $data, true); // render the view into HTML
-               // $this->load->library('pdf');
-                //$pdf = $this->pdf->load();
-                //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
                 $this->pdf->WriteHTML($html); // write the HTML into the PDF
-                //$this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
                 $this->pdf->Output();
-            }
-
-            //redirect("/downloads/$filename.pdf");
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Возвращает сохраненную пдф из папки downloads
      * работает через прописанный роут config/routes.php
@@ -366,7 +259,6 @@ class Pdfcreate extends CI_Controller {
 //        $data = file_get_contents( $file );
         readfile($file);
     }
-
 
     /**
      * Превращает числовае значение в прописное текстовое
