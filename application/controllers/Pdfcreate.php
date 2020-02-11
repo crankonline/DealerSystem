@@ -190,7 +190,23 @@ class Pdfcreate extends CI_Controller {
                     $this->pdf->Output();
                 }
             }
-        } else {
+
+        }else if ($data['data']->json_version_id == '3') {
+            if ($view != FALSE) {
+                $this->load->view('pdf/pay_invoice_l_1_v2', $data);
+            } else {
+                $filename = time();
+                $pdfFilePath = FCPATH . "downloads/$filename.pdf";
+                $data['page_title'] = 'Pay Invoice'; // pass data to the view
+                if (file_exists($pdfFilePath) == FALSE) {
+                    $html = $this->load->view('pdf/pay_invoice_l_1_v2', $data, true); // render the view into HTML                
+                    $this->pdf->WriteHTML($html); // write the HTML into the PDF
+
+                    $this->pdf->Output();
+                }
+            }
+        }
+         else {
             echo "no print";
         }
     }
