@@ -122,26 +122,7 @@ class Authenticate extends CI_Controller {
         !empty($this->session->userdata['logged_in']) ?
                         redirect(base_url() . 'index.php/dash/') :
                         NULL;
-
-        $allovedIp = array(
-            "172.16.3.5",
-            "172.25.0.1",
-            "127.0.0.1",    //Я
-            "10.0.100.5",   //Я VPN
-            "172.18.0.1",   //Я Docker
-            "172.16.3.6",   //Джон
-            "172.16.3.8",  //Земфира
-            "172.16.3.10",  //Женя
-            "192.168.1.16", //Артем
-            "192.168.1.28", //Сахиб
-            "192.168.1.17", //Бектур
-            "172.16.2.11", //прокси
-            "11.0.0.6",
-            "11.0.0.10",
-            "11.0.0.11",
-            "11.0.0.12",
-            "11.0.0.13"
-        );
+        $allovedIp = explode(',', getenv('IP_AUTH'));
         $ip = $this->input->ip_address();
         if (in_array($ip, $allovedIp)) {
             $this->load->view('template/authenticate/authenticate_login');
