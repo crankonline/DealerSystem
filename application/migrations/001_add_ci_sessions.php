@@ -29,11 +29,11 @@ class Migration_Add_ci_sessions extends CI_Migration {
                 )
         );
 
-        $this->dbforge->create_table('"Dealer_data".ci_sessions');
+        $this->dbforge->create_table('"Dealer_data".ci_sessions', TRUE);
     }
 
     public function down() {
-        //$this->dbforge->drop_table('"Dealer_data".ci_sessions');
+        $this->dbforge->drop_table('"Dealer_data".ci_sessions', TRUE);
     }
 
 }
