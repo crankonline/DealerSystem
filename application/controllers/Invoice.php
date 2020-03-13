@@ -154,10 +154,13 @@ class Invoice extends CI_Controller {
         }
     }
 
-    public function invoice_price_reference (){
+    public function invoice_reference(){
         try {
-                $data = $this->price_model->get_price();
-                echo json_encode($data);
+            $postdata = file_get_contents("php://input");
+            $request = json_decode($postdata);
+            $request->reference == 'price' ? $result = $this->price_model->get_price() : NULL;
+            $request->reference == 'inn' ? $result = $this->invoice_model->get_invoice_by_inn($request->id) : NULL;
+            echo json_encode($result);
         }
         catch(Exception $ex){
             \Sentry\captureException($ex);

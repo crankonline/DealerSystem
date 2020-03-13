@@ -45,7 +45,7 @@ class Requisites_model extends CI_Model {
             'trace' => 1,
             'cache_wsdl' => WSDL_CACHE_NONE,
             'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 10
+            'connection_timeout' => 5
         ];
         return new SoapClient($wsdl, $options);
     }

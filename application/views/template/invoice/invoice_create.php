@@ -12,6 +12,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Памятка: </strong>Внимательно заполните поля ИНН, НАИМЕНОВАНИЕ КОМПАНИИ и ТОВАРОНО МЕТЕРИАЛЬНЫХ ЦЕННОСТЕЙ!!!
         </div>
         <form action="<?php echo base_url(); ?>index.php/invoice/invoice_create_save/" method="post">
+        <div ng-controller="IvoiceController">  
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-file"></span> Основные реквизиты</h3>
@@ -30,7 +31,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                        required="" 
                                        minlength="14" 
                                        maxlength="14"
-                                       ng-model="val">
+                                       ng-model="Inn"
+                                       ng-change="searchInn()">
                             </div>
                         </div>
                     </div>
@@ -45,13 +47,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                        placeholder="Наименование компании" 
                                        required="" 
                                        minlength="5" 
-                                       maxlength="100">
+                                       maxlength="100"
+                                       ng-model="company_name">
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div ng-controller="IvoiceController">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> Пречисление товарно материальных ценностей</h3>
@@ -120,7 +122,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
     app.controller('IvoiceController', ['$scope', '$http', '$window', 'orderByFilter', function ($scope, $http, $window, orderBy) {
             window.scope = $scope;
 
-            $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_price_reference', {}).
+            //$scope.inn = '1';
+            //$scope.company_name = '1';
+            $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {reference: 'price'}).
                     then(function (response) {
                         $scope.InventoryName = [{id_inventory: '0', inventory_name: 'Выберите значение', price: '0.00'}].concat(response.data);
                         $scope.dataInventory = $scope.InventoryName[$scope.InventoryName.findIndex(x => x.id_inventory == 0)];
@@ -208,6 +212,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 });}//добавляем в массив удаленный улемент с соблючдением порядкового номера (наркомания просто)            
                 $scope.inventory_row.splice(z, 1);
                 $scope.calculate();
+            };
+            $scope.searchInn = function() {
+                if($scope.Inn.length == 14) {
+                    $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {reference: 'inn', id: $scope.Inn}).
+                    then(function (response) {                       
+                        $scope.company_name = response.data.company_name;
+                    });
+                }
             };
         }]);
 

@@ -206,8 +206,6 @@ class Requisites extends CI_Controller {
         $map->sti = new stdClass();
         $map->nsc = new stdClass();
 
-        // http_response_code(500); //на все справочники
-        // var_dump($req->common->representatives[0]->roles);die;
         $map->common->mainActivity = $req->common->mainActivity->id;
         is_null($req->common->capitalForm) ?: $map->common->capitalForm = $req->common->capitalForm->id;
         $map->common->legalForm = $req->common->legalForm->id;
