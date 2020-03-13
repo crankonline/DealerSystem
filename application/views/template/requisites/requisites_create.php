@@ -496,6 +496,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         </p>
                                     </td>
                                 </tr>
+                                <tr ng-hide="role_1">
+                                    <td>Основание занимаемой должности</td>
+                                    <td>
+                                        <select class="form-control"
+                                                require
+                                                ng-model="Data.common.chiefBasis"
+                                                ng-options = "option.name disable when option.id === null for option in ChiefBasises track by option.id">
+                                        </select>
+                                    </td>
+                                </tr>
                                 <tr>
                                     <td>Рабочий телефон</td>
                                     <td><input type="text" class="form-control"  placeholder="до 20 символов" maxlength="20" required="" numbers-only 
@@ -766,6 +776,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonActivityByGked', id: $scope.Data.common.mainActivity.gked}).
                                                 then(function (response) {
                                                     $scope.Data.common.mainActivity.name = response.data.name;
+                                                    $scope.Data.common.mainActivity.id = response.data.id;
+                                                    $scope.Data.common.mainActivity.activity = response.data.activity;
+                                                    $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
                                                 }, function (response) {
                                                     $scope.Data.common.mainActivity.name = response.data;
                                                 });
