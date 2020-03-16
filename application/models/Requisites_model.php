@@ -171,6 +171,23 @@ class Requisites_model extends CI_Model {
         }
     }
 
+    private function media_service_push() {
+        $url = getenv('MEDIA_SERVER');
+        $fields = [
+            'image' => new \CurlFile('index.jpeg', 'image/png', 'index.jpeg'),
+            'service' => '1'
+        ];
+        $ch = curl_init($url);
+        curl_setopt ( $ch, CURLOPT_POST, 1);
+        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt ( $ch, CURLOPT_HEADER, 1);
+        curl_setopt ( $ch, CURLINFO_HEADER_OUT, 1);
+        curl_setopt ( $ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
+        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1);
+        return curl_exec($ch);
+    }
+
     public function get_mu_reference($inn) {
         try {
             $result = $this->mu_info($inn);
@@ -399,5 +416,27 @@ class Requisites_model extends CI_Model {
                                 where('id_users', $UserID) : NULL;
         return $this->db->get()->result();
     }
+
+//    public function save_file_to_server($id_req, $file_type, $file_owner, $rep_id = NULL,$data) {
+//        try{
+//            $file_ident = $this->media_service_push();
+//            $data = array(
+//                array(
+//                    'requisites_id' => $id_req,
+//                    'filetype_id' => $file_type,
+//                    'representative_ident' => $file_ident                   
+//                )
+//            );
+//            $file_owner == 1 ? array_push($data, array(
+//                'representative_ident' => $rep_id
+//            )) : NULL;
+//            $file_owner == 1 ? $this->db->insert_batch('"Dealer_data".juridical', $data) :
+//                $this->db->insert_batch('"Dealer_data".files_representatives', $data);
+//        } catch (Exception $ex) {
+//            $message = 'При сохранении файла возникла ошибька -> ' . $ex->getMessage();
+//            throw new Exception($message);
+//
+//        }
+//    }
 
 }

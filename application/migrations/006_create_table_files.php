@@ -78,7 +78,43 @@ class Migration_Create_table_files extends CI_Migration
         $this->dbforge->add_field('PRIMARY KEY (id_files)');
         $this->dbforge->add_field('FOREIGN KEY (requisites_id) REFERENCES "Dealer_data".requisites(id_requisites)');
         $this->dbforge->add_field('FOREIGN KEY (filetype_id) REFERENCES "Dealer_data".files_type(id_file_type)');
-        $this->dbforge->create_table('Dealer_data.files', true);
+        $this->dbforge->create_table('Dealer_data.files_juridical', true);
+
+        $this->dbforge->add_field(
+            array(
+                'id_files' => array(
+                    'type' => 'INT',
+                    'constraint' => 5,
+                    'unsigned' => true,
+                    'auto_increment' => true,
+                ),
+                'requisites_id' => array(
+                    'type' => 'INT',
+                    'null' => false,
+                ),
+                'filetype_id' => array(
+                    'type' => 'INT',
+                    'null' => false,
+                ),
+                'representative_ident' => array(
+                    'type' => 'text',
+                    'null' => false,
+                ),
+                'file_ident' => array(
+                    'type' => 'TEXT',
+                    'null' => false,
+                ),
+                'timestamp' => array(
+                    'type' => 'TIMESTAMP',
+                    'default' => 'NOW()',
+                    'null' => false,
+                ),
+            )
+        );
+        $this->dbforge->add_field('PRIMARY KEY (id_files)');
+        $this->dbforge->add_field('FOREIGN KEY (requisites_id) REFERENCES "Dealer_data".requisites(id_requisites)');
+        $this->dbforge->add_field('FOREIGN KEY (filetype_id) REFERENCES "Dealer_data".files_type(id_file_type)');
+        $this->dbforge->create_table('Dealer_data.files_representatives', true);
 
         $data = array(
             array(
@@ -122,7 +158,8 @@ class Migration_Create_table_files extends CI_Migration
 
     public function down()
     {
-        $this->dbforge->drop_table('"Dealer_data".files');
+        $this->dbforge->drop_table('"Dealer_data".files_representatives');
+        $this->dbforge->drop_table('"Dealer_data".files_juridical');
         $this->dbforge->drop_table('"Dealer_data".files_type');
         $this->dbforge->drop_table('"Dealer_data".files_owner');
     }
