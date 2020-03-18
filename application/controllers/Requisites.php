@@ -375,29 +375,29 @@ class Requisites extends CI_Controller {
 
     public function requisites_create() {
         try {
-            $postdata = file_get_contents("php://input");
-            $request = json_decode($postdata);
-            //var_dump($request);die;
-            /* Begin create file struc */
-            $structure = './uploads/' . '/Juridical/' . $request->json->common->inn;
-            if (!is_dir($structure)) {
-                if (!mkdir($structure, 0777, TRUE)) {
-                    throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Juridical');
-                }
-            }
-            if (isset($request->json->common->representatives)) {
-                foreach ($request->json->common->representatives as $representatives) {
-                    $structure = './uploads/' .
-                            '/Representatives/' .
-                            $representatives->person->passport->series .
-                            $representatives->person->passport->number;
-                    if (!is_dir($structure)) {
-                        if (!mkdir($structure, 0777, TRUE)) {
-                            throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Representatives');
-                        }
-                    }
-                }
-            }
+             $postdata = file_get_contents("php://input");
+             $request = json_decode($postdata);
+             //var_dump($request);die;
+             /* Begin create file struc */
+             $structure = './uploads/' . '/Juridical/' . $request->json->common->inn;
+             if (!is_dir($structure)) {
+                 if (!mkdir($structure, 0777, TRUE)) {
+                     throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Juridical');
+                 }
+             }
+             if (isset($request->json->common->representatives)) {
+                 foreach ($request->json->common->representatives as $representatives) {
+                     $structure = './uploads/' .
+                             '/Representatives/' .
+                             $representatives->person->passport->series .
+                             $representatives->person->passport->number;
+                     if (!is_dir($structure)) {
+                         if (!mkdir($structure, 0777, TRUE)) {
+                             throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Representatives');
+                         }
+                     }
+                 }
+             }
             /* ----------------------- */
 
             $result_api_json = $this->requisites_model->requisites_saver($this->remap_to_save_format($request->json)); //------------INsertAPI
@@ -513,6 +513,12 @@ class Requisites extends CI_Controller {
                 foreach ($requisites->common->representatives as &$rep) {//prepare date format
                     $rep->person->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $rep->person->passport->issuingDate)->format('d.m.Y');
                 }
+                
+                $requisites->common->files = $this->read_files_v3('Juridical', $requisites->common->inn);
+                foreach ($requisites->common->representatives as &$rep) {
+                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
+                }
+                
                 $data['requisites_json'] = $requisites;
                 //$data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";

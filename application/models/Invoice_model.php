@@ -83,6 +83,16 @@ class Invoice_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    public function get_invoice_by_inn($inn){
+        $this->db->select("inn")->
+                select("company_name")->
+                from('"Dealer_data".invoice')->
+                where('inn', $inn)->
+                order_by('creating_date_time', 'DESC')->
+                limit(1);
+        return $this->db->get()->row();
+    }
+
     public function record_count() {
         $this->db->join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left')->
                 join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left');

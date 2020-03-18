@@ -341,7 +341,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </tr>
                                 <tr>
                                     <?php
-                                    echo(!empty($person->files['front'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['front']) . '" width="500" ></td>' :
+                                        echo(!empty($person->files['front'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['front']) . '" width="500" ></td>' :
                                             '<td align="center">Документ отсутсвует<td>'
                                     ?>
                                 </tr>
@@ -350,7 +350,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </tr>
                                 <tr>
                                     <?php
-                                    echo(isset($files->Representatives->{$person->deviceSerial}[1])) ? '<td align="center"> <img class="thumbnail" src="' . base_url() . 'uploads/' . $requisites_data->invoice_serial_number . '/Representatives/' . $person->deviceSerial . '/passport_side_2.jpg" width="500" ></td>' :
+                                        echo(!empty($person->files['back'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['back']) . '" width="500" ></td>' :
                                             '<td align="center">Документ отсутсвует<td>'
                                     ?>
                                 </tr>
@@ -359,7 +359,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 </tr>
                                 <tr>
                                     <?php
-                                    echo(isset($files->Representatives->{$person->deviceSerial}[2])) ? '<td align="center"> <img class="thumbnail" src="' . base_url() . 'uploads/' . $requisites_data->invoice_serial_number . '/Representatives/' . $person->deviceSerial . '/passport_copy.jpg" width="500" ></td>' :
+                                        echo(!empty($person->files['copy'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['copy']) . '" width="500" ></td>' :
                                             '<td align="center">Документ отсутсвует<td>'
                                     ?>
                                 </tr>
