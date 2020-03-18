@@ -513,6 +513,12 @@ class Requisites extends CI_Controller {
                 foreach ($requisites->common->representatives as &$rep) {//prepare date format
                     $rep->person->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $rep->person->passport->issuingDate)->format('d.m.Y');
                 }
+                
+                $requisites->common->files = $this->read_files_v3('Juridical', $requisites->common->inn);
+                foreach ($requisites->common->representatives as &$rep) {
+                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
+                }
+                
                 $data['requisites_json'] = $requisites;
                 //$data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
