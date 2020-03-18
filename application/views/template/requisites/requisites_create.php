@@ -48,8 +48,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td>Рег. номер Социального Фонда</td>
                                 <td><input type="text" 
                                            class="form-control" 
-                                           placeholder="7-12 цифр" 
-                                           minlength="7" maxlength="12" 
+                                           placeholder="12 цифр" 
+                                           minlength="12" maxlength="12" 
                                            required="" 
                                            numbers-only 
                                            ng-model="Data.common.rnsf">
