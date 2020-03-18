@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model {
 
-    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; 
+    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
 
     private function requisites_client() {
         $wsdl = (ENVIRONMENT == 'production') ?
@@ -178,13 +178,13 @@ class Requisites_model extends CI_Model {
             'service' => '1'
         ];
         $ch = curl_init($url);
-        curl_setopt ( $ch, CURLOPT_POST, 1);
-        curl_setopt ( $ch, CURLOPT_POSTFIELDS, $fields);
-        curl_setopt ( $ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt ( $ch, CURLOPT_HEADER, 1);
-        curl_setopt ( $ch, CURLINFO_HEADER_OUT, 1);
-        curl_setopt ( $ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
-        curl_setopt ( $ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         return curl_exec($ch);
     }
 
@@ -269,6 +269,15 @@ class Requisites_model extends CI_Model {
         //Exceptions has catched by calling function (that faster)
     }
 
+    public function get_person_by_passport($series, $number) {
+        $client = $this->requisites_client();
+        $result = $client->getPersonByPassport($this->ApiRequestSubscriberToken_DTG, $series, $number);
+        if (empty($result)) {
+            throw new Exception("Ничего не удалось найти");
+        }
+        return $result;
+    }
+
     public function requisites_saver($json) {
         $token_DTG = $this->ApiRequestSubscriberToken_DTG;
         $client = $this->requisites_client();
@@ -283,7 +292,7 @@ class Requisites_model extends CI_Model {
             }
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
-            log_message('error', $ex->getMessage(). PHP_EOL . json_encode($json));
+            log_message('error', $ex->getMessage() . PHP_EOL . json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;
@@ -438,5 +447,4 @@ class Requisites_model extends CI_Model {
 //
 //        }
 //    }
-
 }

@@ -159,7 +159,7 @@ class Invoice extends CI_Controller {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
             $request->reference == 'price' ? $result = $this->price_model->get_price() : NULL;
-            $request->reference == 'inn' ? $result = $this->invoice_model->get_invoice_by_inn($request->id) : NULL;
+            $request->reference == 'inn' ? $result = $this->invoice_model->get_companyname_by_inn($request->id) : NULL;
             echo json_encode($result);
         }
         catch(Exception $ex){

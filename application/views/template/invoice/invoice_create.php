@@ -214,10 +214,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                 $scope.calculate();
             };
             $scope.searchInn = function() {
-                if($scope.Inn.length == 14) {
+                if($scope.Inn && $scope.Inn.length == 14) {
                     $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {reference: 'inn', id: $scope.Inn}).
                     then(function (response) {                       
                         $scope.company_name = response.data.company_name;
+                    }, function (response){
+                        
                     });
                 }
             };

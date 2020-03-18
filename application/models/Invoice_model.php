@@ -16,8 +16,8 @@ class Invoice_model extends CI_Model {
 
     private function pay_service_client() {
         $wsdl = (ENVIRONMENT == 'production') ?
-                        getenv('PAY_SERVICE_PROD') : //prod
-                        getenv('PAY_SERVICE_DEV'); //test
+                getenv('PAY_SERVICE_PROD') : //prod
+                getenv('PAY_SERVICE_DEV'); //test
         $context = stream_context_create([
             'ssl' => [
                 // set some SSL/TLS specific options
@@ -44,7 +44,7 @@ class Invoice_model extends CI_Model {
         $this->db->where('distributor.id_distributor', $this->session->userdata['logged_in']['UserDistributorID']);
         ($this->session->userdata['logged_in']['Show_Operator']) ?: //если это не менагер то посчитать только пользовательские
                         $this->db->where('users_id', $this->session->userdata['logged_in']['UserID'])->
-                        where(array('delete_marker' => FALSE)); //проверяем на доступ и не показываем удаленки
+                                where(array('delete_marker' => FALSE)); //проверяем на доступ и не показываем удаленки
         $this->db->where('invoice.pay_sum < invoice.total_sum');
         return $this->db->count_all_results('"Dealer_data".invoice'); //->result() у count_all_results отсутствует
     }
@@ -56,7 +56,7 @@ class Invoice_model extends CI_Model {
                 where('distributor.id_distributor', $this->session->userdata['logged_in']['UserDistributorID']);
         ($this->session->userdata['logged_in']['Show_Operator']) ?:
                         $this->db->where('users_id', $this->session->userdata['logged_in']['UserID'])->
-                        where(array('delete_marker' => FALSE)); //проверяем на доступ и не показываем удаленки
+                                where(array('delete_marker' => FALSE)); //проверяем на доступ и не показываем удаленки
         $this->db->where('invoice.pay_sum >= invoice.total_sum')->
                 where('COALESCE((SELECT requisites.requisites_invoice_id FROM "Dealer_data".requisites WHERE requisites_invoice_id=id_invoice),\'0\') = 0');
         //
@@ -78,19 +78,23 @@ class Invoice_model extends CI_Model {
                 where('invoice_serial_number', $InvoiceSerialNumber);
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
                         $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID'])->
-                        where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
+                                where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
         //убейте меня так делать нельзя
         return $this->db->get()->result();
     }
 
-    public function get_invoice_by_inn($inn){
+    public function get_companyname_by_inn($inn) {
         $this->db->select("inn")->
                 select("company_name")->
                 from('"Dealer_data".invoice')->
                 where('inn', $inn)->
                 order_by('creating_date_time', 'DESC')->
                 limit(1);
-        return $this->db->get()->row();
+        $result = $this->db->get()->row();
+        if (empty($result)) {
+            throw new Exception("Ничего не удалось найти");
+        }
+        return $result;
     }
 
     public function record_count() {
@@ -98,7 +102,7 @@ class Invoice_model extends CI_Model {
                 join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left');
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
                         $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID'])->
-                        where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
+                                where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
         return $this->db->count_all_results('"Dealer_data".invoice');
     }
 
@@ -121,7 +125,7 @@ class Invoice_model extends CI_Model {
                 join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left');
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
                         $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID'])->
-                        where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
+                                where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
         $this->db->limit($limit)->offset($offset);
         return $this->db->order_by('invoice.creating_date_time', 'DESC')->get()->result();
     }
@@ -145,7 +149,7 @@ class Invoice_model extends CI_Model {
                 join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left');
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
                         $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID'])->
-                        where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
+                                where(array('delete_marker' => FALSE)); ///проверяем на доступ и не показываем удаленки
         ($search == 'pay') ? $this->db->where('invoice.pay_sum >= invoice.total_sum') : ""; //фильтр оплаченые счета
         ($search == 'nonpay') ? $this->db->where('invoice.pay_sum < invoice.total_sum') : ""; //фильтр не оплаченные счета
         ($search == 'wait') ? $this->db->where('COALESCE((SELECT requisites.requisites_invoice_id FROM "Dealer_data".requisites WHERE requisites_invoice_id=id_invoice),\'0\') = 0 AND invoice.pay_sum >= invoice.total_sum') : ""; //фильтр оплаченые и ожидающие заполнения
@@ -199,7 +203,7 @@ class Invoice_model extends CI_Model {
     }
 
     public function invoice_delete($InvoiceSerialNumber) {
-        $this->db->set(array('delete_marker' => TRUE) , FALSE)->
+        $this->db->set(array('delete_marker' => TRUE), FALSE)->
                 where('invoice_serial_number', $InvoiceSerialNumber)->
                 update('"Dealer_data".invoice');
     }
@@ -226,7 +230,7 @@ class Invoice_model extends CI_Model {
                         from('"Dealer_payments".PayLog')->
                         join('"Dealer_payments".PaymentSystem', 'PayLog.PaymentSystemID = PaymentSystem.IDPaymentSystem')->
                         where('PayLog.Account', $invoice_number)->
-                        order_by('PayLog.DateTime','DESC')->
+                        order_by('PayLog.DateTime', 'DESC')->
                         get()->result();
         return $result;
     }

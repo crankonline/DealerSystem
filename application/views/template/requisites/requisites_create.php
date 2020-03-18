@@ -392,7 +392,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <img class="thumbnail" 
                                          ng-show="Data.common.files.kg && jur_file_ch"
-                                         ng-src="<?php echo base_url()?>{{Data.common.files.kg}}" 
+                                         ng-src="<?php echo base_url() ?>{{Data.common.files.kg}}" 
                                          width="400">
                                     <div align="center"
                                          ng-show="!Data.common.files.kg && jur_file_ch">
@@ -421,7 +421,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <img class="thumbnail" 
                                          ng-show="Data.common.files.ru && jur_file_ch"
-                                         ng-src="<?php echo base_url()?>{{Data.common.files.ru}}" 
+                                         ng-src="<?php echo base_url() ?>{{Data.common.files.ru}}" 
                                          width="400">
                                     <div align="center"
                                          ng-show="!Data.common.files.ru && jur_file_ch">
@@ -451,7 +451,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <img class="thumbnail" 
                                          ng-show="Data.common.files.m2a && jur_file_ch"
-                                         ng-src="<?php echo base_url()?>{{Data.common.files.m2a}}" 
+                                         ng-src="<?php echo base_url() ?>{{Data.common.files.m2a}}" 
                                          width="400">
                                     <div align="center"
                                          ng-show="!Data.common.files.m2a && jur_file_ch">
@@ -499,7 +499,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                maxlength="2" 
                                                required="" 
                                                upper-case 
-                                               ng-model="Data.common.representatives[key].person.passport.series">
+                                               ng-model="Data.common.representatives[key].person.passport.series"
+                                               ng-change="Get_person(Data.common.representatives[key].person.passport.series, Data.common.representatives[key].person.passport.number, key)">
                                     </td>
                                 </tr>
                                 <tr>
@@ -510,7 +511,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                maxlength="15" 
                                                required="" 
                                                numbers-only 
-                                               ng-model="Data.common.representatives[key].person.passport.number"></td>
+                                               ng-model="Data.common.representatives[key].person.passport.number"
+                                               ng-change="Get_person(Data.common.representatives[key].person.passport.series, Data.common.representatives[key].person.passport.number, key)">
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Орган выдавший паспорт</td>
@@ -639,7 +642,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                         <img class="thumbnail"
                                              ng-show="Data.common.representatives[key].files.front && rep_file_ch[key]"
-                                             ng-src="<?php echo base_url()?>{{Data.common.representatives[key].files.front}}" 
+                                             ng-src="<?php echo base_url() ?>{{Data.common.representatives[key].files.front}}" 
                                              width="400">
                                         <div align="center"
                                              ng-show="!Data.common.representatives[key].files.front && rep_file_ch[key]">
@@ -664,7 +667,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                         <img class="thumbnail" 
                                              ng-show="Data.common.representatives[key].files.back && rep_file_ch[key]"
-                                             ng-src="<?php echo base_url()?>{{Data.common.representatives[key].files.back}}" 
+                                             ng-src="<?php echo base_url() ?>{{Data.common.representatives[key].files.back}}" 
                                              width="400">
                                         <div align="center"
                                              ng-show="!Data.common.representatives[key].files.back && rep_file_ch[key]">
@@ -694,7 +697,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                         <img class="thumbnail" 
                                              ng-show="Data.common.representatives[key].files.copy && rep_file_ch[key]"
-                                             ng-src="<?php echo base_url()?>{{Data.common.representatives[key].files.copy}}" 
+                                             ng-src="<?php echo base_url() ?>{{Data.common.representatives[key].files.copy}}" 
                                              width="400">
                                         <div align="center"
                                              ng-show="!Data.common.representatives[key].files.copy && rep_file_ch[key]">
@@ -781,7 +784,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                             mObjNode('Data.common.capitalForm', $scope);
                                             var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id;
-<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";                    ?>;
+<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";                         ?>;
                                             //console.log($scope.CapitalForms.findIndex(x => x.id === defaultId));
                                             $scope.Data.common.capitalForm = $scope.CapitalForms[$scope.CapitalForms.findIndex(x => x.id === defaultId)];
                                         });
@@ -790,7 +793,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             $scope.ManagementForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                             mObjNode('Data.common.managementForm', $scope);
                                             var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;
-<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";                    ?>;
+<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";                         ?>;
                                             $scope.Data.common.managementForm = $scope.ManagementForms[$scope.ManagementForms.findIndex(x => x.id === defaultId)];
                                         });
                                 $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonOwnershipForms', id: ''}).//загрузка спр. ФОРМА СОБСТВЕННОСТИ
@@ -994,7 +997,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                     {id: '', name: 'Выберите район'},
                                                     {id: 'none', name: 'Областного подчинения'}].concat(response.data);
                                                 //if ($scope.currentjuristicregion.id !== '') {
-                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                                    ?>;
+                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                                         ?>;
                                                 //$scope.currentjuristicdistrict = $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id === defaultId)];
                                                 //  $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict.id);
                                                 //} else
@@ -1078,6 +1081,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 };
                                 $scope.Checked_role();
 
+                                $scope.Get_person = function (Series, Number, Key) {
+                                    if ((Series && Series.length > 1) && (Number && Number.length > 5)) {
+                                        $http.post('<?php echo base_url(); ?>index.php/requisites/get_person_by_passport_reference', {series: Series, number: Number}).
+                                                then(function (response) {
+                                                    $scope.Data.common.representatives[Key].person.passport.issuingAuthority = response.data.passport.issuingAuthority;
+                                                    $scope.Data.common.representatives[Key].person.passport.issuingDate = response.data.passport.issuingDate;
+                                                    $scope.Data.common.representatives[Key].person.surname = response.data.surname;
+                                                    $scope.Data.common.representatives[Key].person.name = response.data.name;
+                                                    $scope.Data.common.representatives[Key].person.middleName = response.data.middleName;
+                                                }, function (response){
+                                                    
+                                                });
+                                    }
+                                };
+
                                 $scope.Upload = function () {
                                     $scope.errorMsg = null;
                                     $scope.resultupload = null;
@@ -1154,9 +1172,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         }
                                                     }, function (evt) {
                                                         $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                                                        console.log($scope.progressjur);
+                                                        //console.log($scope.progressjur);
                                                     });
-                                                } else {check_jur = true;}
+                                                } else {
+                                                    check_jur = true;
+                                                }
 
                                                 for (var i = 0; i < $scope.count; i++) {
                                                     if ($scope.passport_side_1[i]) {
@@ -1181,14 +1201,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         }, function (evt) {
                                                             $scope.progressphy = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
                                                         });
-                                                    } else {count_of_count++;}
+                                                    } else {
+                                                        count_of_count++;
+                                                    }
                                                 }
                                             }, function (response) {
                                                 $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + response.status + '. <br> Сообщение: ' + response.data);
                                                 $scope.ErrorMessage = $scope.errorMsg;
                                                 $scope.toggle = true;
                                             });
-                                            
+
                                     setInterval(function () {
                                         if (check_jur === true && $scope.count === count_of_count) {
                                             $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
