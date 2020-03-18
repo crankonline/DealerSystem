@@ -50,7 +50,7 @@ class Migration_Create_table_files extends CI_Migration
 
         $this->dbforge->add_field(
             array(
-                'id_files' => array(
+                'id_files_juridical' => array(
                     'type' => 'INT',
                     'constraint' => 5,
                     'unsigned' => true,
@@ -75,14 +75,14 @@ class Migration_Create_table_files extends CI_Migration
                 ),
             )
         );
-        $this->dbforge->add_field('PRIMARY KEY (id_files)');
+        $this->dbforge->add_field('PRIMARY KEY (id_files_juridical)');
         $this->dbforge->add_field('FOREIGN KEY (requisites_id) REFERENCES "Dealer_data".requisites(id_requisites)');
         $this->dbforge->add_field('FOREIGN KEY (filetype_id) REFERENCES "Dealer_data".files_type(id_file_type)');
         $this->dbforge->create_table('Dealer_data.files_juridical', true);
 
         $this->dbforge->add_field(
             array(
-                'id_files' => array(
+                'id_files_representatives' => array(
                     'type' => 'INT',
                     'constraint' => 5,
                     'unsigned' => true,
@@ -111,7 +111,7 @@ class Migration_Create_table_files extends CI_Migration
                 ),
             )
         );
-        $this->dbforge->add_field('PRIMARY KEY (id_files)');
+        $this->dbforge->add_field('PRIMARY KEY (id_files_representatives)');
         $this->dbforge->add_field('FOREIGN KEY (requisites_id) REFERENCES "Dealer_data".requisites(id_requisites)');
         $this->dbforge->add_field('FOREIGN KEY (filetype_id) REFERENCES "Dealer_data".files_type(id_file_type)');
         $this->dbforge->create_table('Dealer_data.files_representatives', true);
