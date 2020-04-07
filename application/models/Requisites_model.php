@@ -10,13 +10,13 @@ class Requisites_model extends CI_Model {
         $wsdl = (ENVIRONMENT == 'production') ?
                 getenv('SOAP_REQUISITES_PROD') : //prod
                 getenv('SOAP_REQUISITES_DEV'); //dev
-
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
             'trace' => 1,
             'cache_wsdl' => WSDL_CACHE_NONE,
-            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            //'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            'location' => str_replace('?wsdl', '', $wsdl),
             'connection_timeout' => 5,
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -29,6 +29,7 @@ class Requisites_model extends CI_Model {
                 getenv('SOAP_REQUISITES_META_PROD') : //prod
                 getenv('SOAP_REQUISITES_META_DEV'); //dev
         $user = array(
+            'location' => str_replace('?wsdl', '', $wsdl),
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
         );
