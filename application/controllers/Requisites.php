@@ -585,7 +585,7 @@ class Requisites extends CI_Controller {
          *  'path'=>file_path,
          *  'ident'=>identify);
          */
-        $url = "http://mediaserverphp.dostek.test/file/s";
+        $url = getenv('MEDIA_SERVER');
         $fields = [
             'image' => new \CurlFile($path, 'image/png', 'index.jpeg'),
             'service' => '3'

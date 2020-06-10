@@ -438,7 +438,7 @@ class Requisites_model extends CI_Model {
          *  'representative_id'=> //if $file_type == 2
          *  'file_ident'); 
          */
-        if ($file_struct['filetype_id'] == 1 || $file_struct['filetype_id'] == 2 || $file_struct['filetype_id'] == 3) { //fuck fuck fuck
+        if (in_array($file_struct['filetype_id'], [1, 2, 3])) {
             $this->db->insert('"Dealer_data".files_juridical', $file_struct);
         } else {
             $file_struct['representative_ident'] = $ident;
