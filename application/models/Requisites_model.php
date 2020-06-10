@@ -427,6 +427,25 @@ class Requisites_model extends CI_Model {
         return $this->db->get()->result();
     }
 
+    public function save_file_ident($file_struct, $ident = null) {
+        /*
+         * $file_type = //1,2,3,4
+         * $part = //1 - phisical, 2 - juridical
+         * $file_struct
+         * array(
+         *  'requisites_id'=>, //id requisistes in db
+         *  'file_type_id'=>, //id file type
+         *  'representative_id'=> //if $file_type == 2
+         *  'file_ident'); 
+         */
+        if ($file_struct['filetype_id'] == 1 || $file_struct['filetype_id'] == 2 || $file_struct['filetype_id'] == 3) { //fuck fuck fuck
+            $this->db->insert('"Dealer_data".files_juridical', $file_struct);
+        } else {
+            $file_struct['representative_ident'] = $ident;
+            $this->db->insert('"Dealer_data".files_representatives', $file_struct);
+        }
+    }
+
 //    public function save_file_to_server($id_req, $file_type, $file_owner, $rep_id = NULL,$data) {
 //        try{
 //            $file_ident = $this->media_service_push();

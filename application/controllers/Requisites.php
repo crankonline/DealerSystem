@@ -389,7 +389,7 @@ class Requisites extends CI_Controller {
                 foreach ($request->json->common->representatives as $representatives) {
                     $structure = './uploads/' .
                             '/Representatives/' .
-                            $representatives->person->passport->series .
+                            //$representatives->person->passport->series .
                             $representatives->person->passport->number;
                     if (!is_dir($structure)) {
                         if (!mkdir($structure, 0777, TRUE)) {
@@ -568,12 +568,110 @@ class Requisites extends CI_Controller {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
             $result = $this->requisites_model->get_person_by_passport($request->series, $request->number);
-            $result->passport->issuingDate  = DateTime::createFromFormat('Y-m-d',$result->passport->issuingDate)->format('d.m.Y');
+            $result->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $result->passport->issuingDate)->format('d.m.Y');
             echo json_encode($result);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
-            log_message('error', 'get_person_by_passport_reference: '. $ex->getMessage());
+            log_message('error', 'get_person_by_passport_reference: ' . $ex->getMessage());
             http_response_code(500); //???
+            echo $ex->getMessage();
+        }
+    }
+
+    private function mediaupload($requisites_id, $file_type, $path, $ident = null) {
+        /* $file_struct
+         * array(
+         *  'part'=>phis_or_jur, //1 - phisical, 2 - juridical
+         *  'path'=>file_path,
+         *  'ident'=>identify);
+         */
+        $url = "http://mediaserverphp.dostek.test/file/s";
+        $fields = [
+            'image' => new \CurlFile($path, 'image/png', 'index.jpeg'),
+            'service' => '3'
+        ];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); // <-- raw data here hm?
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        if ($response) {
+            $file_struct_db =  array(
+                'requisites_id' => $requisites_id, //id requisistes in db
+                'filetype_id' => $file_type, //id file type
+                'file_ident' => json_decode($response)->fileName);
+            $this->requisites_model->save_file_ident($file_struct_db, $ident);
+            //var_dump(json_decode($response)->fileName); //insert into db
+        } else {
+            throw new Exception("медиа сервер не доступен");
+        }
+    }
+
+    public function requisites_file_upload($id_req, $ident, $file_owner) {
+        try {
+            $config['upload_path'] = ($file_owner == 1) ?
+                    './uploads/Juridical/' . $ident :
+                    './uploads/Representatives/' . $ident;
+            $config['allowed_types'] = 'jpg';
+            $this->load->library('upload', $config);
+            foreach ($_FILES as $key => $value) {
+                if ($key == 'mu_file_kg') {
+                    $config['file_name'] = "mu_file_kg.jpg";
+                    $this->upload->initialize($config);
+                    if (!$this->upload->do_upload($key)) {
+                        throw new Exception('При загрузке файла "mu_file_kg" произошла ошибка.' . $this->upload->display_errors());
+                    }
+                    $this->mediaupload($id_req, 1, $config['upload_path'] . '/' . $config['file_name']);
+                }
+                if ($key == 'mu_file_ru') {
+                    $config['file_name'] = "mu_file_ru.jpg";
+                    $this->upload->initialize($config);
+                    if (!$this->upload->do_upload($key)) {
+                        throw new Exception('При загрузке файла "mu_file_ru" произошла ошибка.' . $this->upload->display_errors());
+                    }
+                    $this->mediaupload($id_req, 2, $config['upload_path'] . '/' . $config['file_name']);
+                }
+                if ($key == 'm2a') {
+                    $config['file_name'] = "m2a.jpg";
+                    $this->upload->initialize($config);
+                    if (!$this->upload->do_upload($key)) {
+                        throw new Exception('При загрузке файла "m2a" произошла ошибка.' . $this->upload->display_errors());
+                    }
+                    $this->mediaupload($id_req, 3, $config['upload_path'] . '/' . $config['file_name']);
+                }
+                if ($key == 'passport_side_1') {
+                    $config['file_name'] = "passport_side_1.jpg";
+                    $this->upload->initialize($config);
+                    if (!$this->upload->do_upload($key)) {
+                        throw new Exception("При загрузке файла passport_side_1 {ident} произошла ошибка." . $this->upload->display_errors());
+                    }
+                    $this->mediaupload($id_req, 4, $config['upload_path'] . '/' . $config['file_name'], $ident);
+                }
+                 if ($key == 'passport_side_2') {
+                    $config['file_name'] = "passport_side_2.jpg";
+                    $this->upload->initialize($config);
+                    if (!$this->upload->do_upload($key)) {
+                        throw new Exception("При загрузке файла passport_side_2 {ident} произошла ошибка." . $this->upload->display_errors());
+                    }
+                    $this->mediaupload($id_req, 5, $config['upload_path'] . '/' . $config['file_name'], $ident);
+                }
+                 if ($key == 'passport_copy') {
+                    $config['file_name'] = "passport_copy.jpg";
+                    $this->upload->initialize($config);
+                    if (!$this->upload->do_upload($key)) {
+                        throw new Exception("При загрузке файла passport_copy {ident} произошла ошибка." . $this->upload->display_errors());
+                    }
+                    $this->mediaupload($id_req, 6, $config['upload_path'] . '/' . $config['file_name'], $ident);
+                }
+            }
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500); //на все справочники
             echo $ex->getMessage();
         }
     }

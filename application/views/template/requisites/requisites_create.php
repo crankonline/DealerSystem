@@ -795,7 +795,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                             $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                                                             mObjNode('Data.common.capitalForm', $scope);
                                                                             var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id;
-<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";                             ?>;
+<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";                              ?>;
                                                                             //console.log($scope.CapitalForms.findIndex(x => x.id === defaultId));
                                                                             $scope.Data.common.capitalForm = $scope.CapitalForms[$scope.CapitalForms.findIndex(x => x.id === defaultId)];
                                                                         });
@@ -804,7 +804,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                             $scope.ManagementForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
                                                                             mObjNode('Data.common.managementForm', $scope);
                                                                             var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;
-<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";                             ?>;
+<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";                              ?>;
                                                                             $scope.Data.common.managementForm = $scope.ManagementForms[$scope.ManagementForms.findIndex(x => x.id === defaultId)];
                                                                         });
                                                                 $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonOwnershipForms', id: ''}).//загрузка спр. ФОРМА СОБСТВЕННОСТИ
@@ -1009,7 +1009,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                                     {id: '', name: 'Выберите район'},
                                                                                     {id: 'none', name: 'Областного подчинения'}].concat(response.data);
                                                                                 //if ($scope.currentjuristicregion.id !== '') {
-                                                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                                             ?>;
+                                                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                                              ?>;
                                                                                 //$scope.currentjuristicdistrict = $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id === defaultId)];
                                                                                 //  $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict.id);
                                                                                 //} else
@@ -1116,8 +1116,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                 $scope.getSerialNumber = function (key, tokenIndex) {
                                                                     //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
                                                                     //$scope.Data.common.representatives[key].deviceSerial = 
-                                                                            var result = $scope.pluginManager.getDeviceSerial(tokenIndex);
-                                                                            console.log(result);
+                                                                    var result = $scope.pluginManager.getDeviceSerial(tokenIndex);
+                                                                    console.log(result);
                                                                 }
 
                                                                 $scope.Upload = function () {
@@ -1178,7 +1178,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                                                                 if ($scope.mu_file_kg) {
                                                                                     Upload.upload({
-                                                                                        url: '<?php echo base_url(); ?>index.php/requisites/requisites_juridical_file_upload/' + $scope.Data.common.inn,
+                                                                                        url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/' 
+                                                                                                + $scope.Data.common.inn + '/' + '1',
                                                                                         data: {
                                                                                             mu_file_kg: $scope.mu_file_kg,
                                                                                             mu_file_ru: $scope.mu_file_ru,
@@ -1205,7 +1206,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                                 for (var i = 0; i < $scope.count; i++) {
                                                                                     if ($scope.passport_side_1[i]) {
                                                                                         Upload.upload({
-                                                                                            url: '<?php echo base_url(); ?>index.php/requisites/requisites_representatives_file_upload/' + $scope.Data.common.representatives[i].person.passport.series + $scope.Data.common.representatives[i].person.passport.number,
+                                                                                            url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/' 
+                                                                                                    + $scope.Data.common.representatives[i].person.passport.number 
+                                                                                                    + '/' + 2,
                                                                                             data: {
                                                                                                 passport_side_1: $scope.passport_side_1[i],
                                                                                                 passport_side_2: $scope.passport_side_2[i],
