@@ -361,8 +361,15 @@ class Requisites_model extends CI_Model {
     }
 
     public function create_requisites($data) {
-        $this->db->insert('"Dealer_data".requisites', $data);
-        return $this->db->insert_id();
+        $result = $this->db->select('id_requisites')->
+                        from('"Dealer_data".requisites')->
+                        where('requisites_invoice_id', $data['requisites_invoice_id'])->get()->row();
+        if (!$result) {
+            $this->db->insert('"Dealer_data".requisites', $data);
+            return $this->db->insert_id();
+        } else {
+            return $result->id_requisites;
+        }
     }
 
     public function get_requisites($id_requisites) {
@@ -439,10 +446,10 @@ class Requisites_model extends CI_Model {
          *  'file_ident'); 
          */
         if (in_array($file_struct['filetype_id'], [1, 2, 3])) {
-            $this->db->insert('"Dealer_data".files_juridical', $file_struct);
+            $this->db->insert('"Dealer_images".files_juridical', $file_struct);
         } else {
             $file_struct['representative_ident'] = $ident;
-            $this->db->insert('"Dealer_data".files_representatives', $file_struct);
+            $this->db->insert('"Dealer_images".files_representatives', $file_struct);
         }
     }
 

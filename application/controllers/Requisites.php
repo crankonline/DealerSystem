@@ -299,119 +299,117 @@ class Requisites extends CI_Controller {
         }
     }
 
-    public function requisites_representatives_file_upload($passport) {
-        try {
-            $config['upload_path'] = './uploads/Representatives/' . $passport;
-            $config['allowed_types'] = 'jpg';
-            $this->load->library('upload', $config);
-            foreach ($_FILES as $key => $value) {
-                if ($key == 'passport_side_1') {
-                    $config['file_name'] = 'passport_side_front.jpg';
-                    $this->upload->initialize($config);
-                    if (!$this->upload->do_upload($key)) {
-                        throw new Exception('При загрузке файла "passport_side_front" произошла ошибка.' . $this->upload->display_errors());
-                    }
-                }
-                if ($key == 'passport_side_2') {
-                    $config['file_name'] = 'passport_side_back.jpg';
-                    $this->upload->initialize($config);
-                    if (!$this->upload->do_upload($key)) {
-                        throw new Exception('При загрузке файла "passport_side_back" произошла ошибка.' . $this->upload->display_errors());
-                    }
-                }
-                if ($key == 'passport_copy') {
-                    $config['file_name'] = 'passport_copy.jpg';
-                    $this->upload->initialize($config);
-                    if (!$this->upload->do_upload($key)) {
-                        throw new Exception('При загрузке файла "passport_copy" произошла ошибка.' . $this->upload->display_errors());
-                    }
-                }
-            }
-            echo '<p>Отправка сканированных изображений физических лиц - OK</p>';
-        } catch (Exception $ex) {
-            \Sentry\captureException($ex);
-            log_message('error', $ex->getMessage());
-            http_response_code(500); //на все справочники
-            echo $ex->getMessage();
-        }
-    }
-
-    public function requisites_juridical_file_upload($inn) {
-        try {
-            $config['upload_path'] = './uploads/Juridical/' . $inn;
-            $config['allowed_types'] = 'jpg';
-            $this->load->library('upload', $config);
-            foreach ($_FILES as $key => $value) {
-                if ($key == 'mu_file_kg') {
-                    $config['file_name'] = 'mu_file_kg.jpg';
-                    $this->upload->initialize($config);
-                    if (!$this->upload->do_upload($key)) {
-                        throw new Exception('При загрузке файла "mu_file_kg" произошла ошибка.' . $this->upload->display_errors());
-                    }
-                }
-                if ($key == 'mu_file_ru') {
-                    $config['file_name'] = 'mu_file_ru.jpg';
-                    $this->upload->initialize($config);
-                    if (!$this->upload->do_upload($key)) {
-                        throw new Exception('При загрузке файла "mu_file_ru" произошла ошибка.' . $this->upload->display_errors());
-                    }
-                }
-                if ($key == 'm2a') {
-                    $config['file_name'] = 'm2a.jpg';
-                    $this->upload->initialize($config);
-                    if (!$this->upload->do_upload($key)) {
-                        throw new Exception('При загрузке файла "m2a" произошла ошибка.' . $this->upload->display_errors());
-                    }
-                }
-            }
-            echo '<p>Отправка сканированных изображений юридического лица - OK</p>';
-        } catch (Exception $ex) {
-            \Sentry\captureException($ex);
-            log_message('error', $ex->getMessage());
-            http_response_code(500); //на все справочники
-            echo $ex->getMessage();
-        }
-    }
+//    public function requisites_representatives_file_upload($passport) {
+//        try {
+//            $config['upload_path'] = './uploads/Representatives/' . $passport;
+//            $config['allowed_types'] = 'jpg';
+//            $this->load->library('upload', $config);
+//            foreach ($_FILES as $key => $value) {
+//                if ($key == 'passport_side_1') {
+//                    $config['file_name'] = 'passport_side_front.jpg';
+//                    $this->upload->initialize($config);
+//                    if (!$this->upload->do_upload($key)) {
+//                        throw new Exception('При загрузке файла "passport_side_front" произошла ошибка.' . $this->upload->display_errors());
+//                    }
+//                }
+//                if ($key == 'passport_side_2') {
+//                    $config['file_name'] = 'passport_side_back.jpg';
+//                    $this->upload->initialize($config);
+//                    if (!$this->upload->do_upload($key)) {
+//                        throw new Exception('При загрузке файла "passport_side_back" произошла ошибка.' . $this->upload->display_errors());
+//                    }
+//                }
+//                if ($key == 'passport_copy') {
+//                    $config['file_name'] = 'passport_copy.jpg';
+//                    $this->upload->initialize($config);
+//                    if (!$this->upload->do_upload($key)) {
+//                        throw new Exception('При загрузке файла "passport_copy" произошла ошибка.' . $this->upload->display_errors());
+//                    }
+//                }
+//            }
+//            echo '<p>Отправка сканированных изображений физических лиц - OK</p>';
+//        } catch (Exception $ex) {
+//            \Sentry\captureException($ex);
+//            log_message('error', $ex->getMessage());
+//            http_response_code(500); //на все справочники
+//            echo $ex->getMessage();
+//        }
+//    }
+//    public function requisites_juridical_file_upload($inn) {
+//        try {
+//            $config['upload_path'] = './uploads/Juridical/' . $inn;
+//            $config['allowed_types'] = 'jpg';
+//            $this->load->library('upload', $config);
+//            foreach ($_FILES as $key => $value) {
+//                if ($key == 'mu_file_kg') {
+//                    $config['file_name'] = 'mu_file_kg.jpg';
+//                    $this->upload->initialize($config);
+//                    if (!$this->upload->do_upload($key)) {
+//                        throw new Exception('При загрузке файла "mu_file_kg" произошла ошибка.' . $this->upload->display_errors());
+//                    }
+//                }
+//                if ($key == 'mu_file_ru') {
+//                    $config['file_name'] = 'mu_file_ru.jpg';
+//                    $this->upload->initialize($config);
+//                    if (!$this->upload->do_upload($key)) {
+//                        throw new Exception('При загрузке файла "mu_file_ru" произошла ошибка.' . $this->upload->display_errors());
+//                    }
+//                }
+//                if ($key == 'm2a') {
+//                    $config['file_name'] = 'm2a.jpg';
+//                    $this->upload->initialize($config);
+//                    if (!$this->upload->do_upload($key)) {
+//                        throw new Exception('При загрузке файла "m2a" произошла ошибка.' . $this->upload->display_errors());
+//                    }
+//                }
+//            }
+//            echo '<p>Отправка сканированных изображений юридического лица - OK</p>';
+//        } catch (Exception $ex) {
+//            \Sentry\captureException($ex);
+//            log_message('error', $ex->getMessage());
+//            http_response_code(500); //на все справочники
+//            echo $ex->getMessage();
+//        }
+//    }
 
     public function requisites_create() {
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
-            //var_dump($request);die;
+
             /* Begin create file struc */
-            $structure = './uploads/' . '/Juridical/' . $request->json->common->inn;
-            if (!is_dir($structure)) {
-                if (!mkdir($structure, 0777, TRUE)) {
-                    throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Juridical');
-                }
-            }
-            if (isset($request->json->common->representatives)) {
-                foreach ($request->json->common->representatives as $representatives) {
-                    $structure = './uploads/' .
-                            '/Representatives/' .
-                            //$representatives->person->passport->series .
-                            $representatives->person->passport->number;
-                    if (!is_dir($structure)) {
-                        if (!mkdir($structure, 0777, TRUE)) {
-                            throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Representatives');
-                        }
-                    }
-                }
-            }
+//            $structure = './uploads/' . '/Juridical/' . $request->json->common->inn;
+//            if (!is_dir($structure)) {
+//                if (!mkdir($structure, 0777, TRUE)) {
+//                    throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Juridical');
+//                }
+//            }
+//            if (isset($request->json->common->representatives)) {
+//                foreach ($request->json->common->representatives as $representatives) {
+//                    $structure = './uploads/' .
+//                            '/Representatives/' .
+//                            //$representatives->person->passport->series .
+//                            $representatives->person->passport->number;
+//                    if (!is_dir($structure)) {
+//                        if (!mkdir($structure, 0777, TRUE)) {
+//                            throw new Exception('Не удалось создать структуру каталогов в файловом хранилище Representatives');
+//                        }
+//                    }
+//                }
+//            }
             /* ----------------------- */
 
-            $result_api_json = $this->requisites_model->requisites_saver($this->remap_to_save_format($request->json)); //------------INsertAPI
+            $result_api_json = $this->requisites_model->requisites_saver($this->remap_to_save_format($request->json)); //-INsertAPI надо провыерять нуждается ли текущаяя версия в исправлениии
             $pay_invoice = $this->requisites_model->create_pay_invoice($request->invoice_serial_number); //pay invice create
             $this->requisites_model->register_client_to1c($this->json_register_format($result_api_json)); //INsert 1C
-
             $data = array('json' => json_encode($result_api_json, JSON_UNESCAPED_UNICODE),
                 'json_version_id' => 3,
                 'requisites_invoice_id' => $request->invoice_id,
                 'pay_invoice_id' => $pay_invoice);
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
-            //echo $postdata; //to tests
 
-            $response_to_angular['data'] = '<p>Дождитесь окончания передачи данных. Ожидайте ответа сервера.</p>';
+
+            $response_to_angular['data'] = '<p>Реквизиты сохранены успешно.</p><p>Дождитесь окончания передачи изображений...</p>';
             $response_to_angular['id_requisites'] = $inserted_id_requisites;
             echo json_encode($response_to_angular);
             exit(1);
@@ -587,35 +585,36 @@ class Requisites extends CI_Controller {
          */
         $url = getenv('MEDIA_SERVER');
         $fields = [
-            'image' => new \CurlFile($path, 'image/png', 'index.jpeg'),
+            'image' => new \CurlFile($path, 'image/png', $requisites_id . '_' . $file_type . '_jpg'),
             'service' => '3'
         ];
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields); // <-- raw data here hm?
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
         curl_setopt($ch, CURLOPT_HEADER, 0);
         curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
         curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
-        if ($response) {
+        if ($response === false) {
+            throw new Exception('Ошибка при обращении к медиасерверу: ' . curl_error($ch));
+        } else {
             $file_struct_db = array(
                 'requisites_id' => $requisites_id, //id requisistes in db
                 'filetype_id' => $file_type, //id file type
                 'file_ident' => json_decode($response)->fileName);
             $this->requisites_model->save_file_ident($file_struct_db, $ident);
             //var_dump(json_decode($response)->fileName); //insert into db
-        } else {
-            throw new Exception("медиа сервер не доступен");
         }
     }
 
     public function requisites_file_upload($id_req, $ident, $file_owner) {
         try {
-            $config['upload_path'] = ($file_owner == 1) ?
-                    './uploads/Juridical/' . $ident :
-                    './uploads/Representatives/' . $ident;
+//            $config['upload_path'] = ($file_owner == 1) ?
+//                    './uploads/Juridical/' . $ident :
+//                    './uploads/Representatives/' . $ident;
+            $config['upload_path'] = './uploads/';
             $config['allowed_types'] = 'jpg';
             $this->load->library('upload', $config);
 
@@ -625,69 +624,35 @@ class Requisites extends CI_Controller {
                 'passport_side_1' => 4,
                 'passport_side_2' => 5,
                 'passport_copy' => 6);
+
             foreach ($_FILES as $key => $value) {
-                $config['file_name'] = $key . 'jpg';
+                $date = date_create();
+                $config['file_name'] = date_timestamp_get($date) . '_' . $key . '_' . $ident . '.jpg';
                 $this->upload->initialize($config);
                 if (!$this->upload->do_upload($key)) {
                     throw new Exception('При загрузке файла ' . $key . ' произошла ошибка.' . $this->upload->display_errors());
                 }
-                $this->mediaupload($id_req, $file_types[$key], $config['upload_path'] . '/' . $config['file_name']);
-
-//                if ($key == 'mu_file_kg') {
-//                    $config['file_name'] = "mu_file_kg.jpg";
-//                    $this->upload->initialize($config);
-//                    if (!$this->upload->do_upload($key)) {
-//                        throw new Exception('При загрузке файла "mu_file_kg" произошла ошибка.' . $this->upload->display_errors());
-//                    }
-//                    $this->mediaupload($id_req, 1, $config['upload_path'] . '/' . $config['file_name']);
-//                }
-//                if ($key == 'mu_file_ru') {
-//                    $config['file_name'] = "mu_file_ru.jpg";
-//                    $this->upload->initialize($config);
-//                    if (!$this->upload->do_upload($key)) {
-//                        throw new Exception('При загрузке файла "mu_file_ru" произошла ошибка.' . $this->upload->display_errors());
-//                    }
-//                    $this->mediaupload($id_req, 2, $config['upload_path'] . '/' . $config['file_name']);
-//                }
-//                if ($key == 'm2a') {
-//                    $config['file_name'] = "m2a.jpg";
-//                    $this->upload->initialize($config);
-//                    if (!$this->upload->do_upload($key)) {
-//                        throw new Exception('При загрузке файла "m2a" произошла ошибка.' . $this->upload->display_errors());
-//                    }
-//                    $this->mediaupload($id_req, 3, $config['upload_path'] . '/' . $config['file_name']);
-//                }
-//                if ($key == 'passport_side_1') {
-//                    $config['file_name'] = "passport_side_1.jpg";
-//                    $this->upload->initialize($config);
-//                    if (!$this->upload->do_upload($key)) {
-//                        throw new Exception("При загрузке файла passport_side_1 {ident} произошла ошибка." . $this->upload->display_errors());
-//                    }
-//                    $this->mediaupload($id_req, 4, $config['upload_path'] . '/' . $config['file_name'], $ident);
-//                }
-//                if ($key == 'passport_side_2') {
-//                    $config['file_name'] = "passport_side_2.jpg";
-//                    $this->upload->initialize($config);
-//                    if (!$this->upload->do_upload($key)) {
-//                        throw new Exception("При загрузке файла passport_side_2 {ident} произошла ошибка." . $this->upload->display_errors());
-//                    }
-//                    $this->mediaupload($id_req, 5, $config['upload_path'] . '/' . $config['file_name'], $ident);
-//                }
-//                if ($key == 'passport_copy') {
-//                    $config['file_name'] = "passport_copy.jpg";
-//                    $this->upload->initialize($config);
-//                    if (!$this->upload->do_upload($key)) {
-//                        throw new Exception("При загрузке файла passport_copy {ident} произошла ошибка." . $this->upload->display_errors());
-//                    }
-//                    $this->mediaupload($id_req, 6, $config['upload_path'] . '/' . $config['file_name'], $ident);
-//                }
+                $this->mediaupload($id_req, $file_types[$key], $config['upload_path'] . $config['file_name'], $ident);
+                echo '<p>Файл изображения ' . $key . ' - отправлен в хранилище</p>';
+                unlink($config['upload_path'] . $config['file_name']);
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
-            http_response_code(500); //на все справочники
+            http_response_code(500);
             echo $ex->getMessage();
         }
+    }
+
+    private function clear_tmp($path) {
+        $path = './uploads';
+        $files = glob($path . '/*');
+        foreach ($files as $file) {
+            is_dir($file) ? $this->clear_tmp($file) : unlink($file);
+        }
+        rmdir($path);
+
+        return;
     }
 
 }

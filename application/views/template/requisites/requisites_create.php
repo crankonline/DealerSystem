@@ -8,7 +8,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <?php echo $error_message; ?>
         </div>
     <?php else: ?>
-        <form ng-submit="Upload()">
+        <form ng-submit="Upload()" ng-show="toggle">
             <?php if (isset($message)): ?>
                 <div class="alert alert-warning" align="center">
                     <h3><strong>Внимание: </strong><?php echo $message; ?></h3>
@@ -733,6 +733,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                         <span class="glyphicon glyphicon-plus"></span> Добавить сотрудника
                                                     </button>
                                                 </div>
+                                                <div align="center" ng-show="toggle">
+                                                    <button type="submit" class="btn btn-success">
+                                                        <span class="glyphicon glyphicon-save"></span> Создать заявку
+                                                    </button>
+                                                </div>
+                                                </form>
+
                                                 <div class="alert alert-success" ng-hide="!resultupload">
                                         <!--            <strong>Well done! </strong> {{resultupload}}-->
                                                     <p ng-bind-html ="ResUpload"></p>
@@ -741,22 +748,22 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                         <!--            <strong>Oh snap! </strong> {{errorMsg}}-->
                                                     <p ng-bind-html ="ErrorMessage"></p>
                                                 </div>
-                                                <div class="progress progress-striped active" ng-hide="!progressjur || progressjur === 100" >
-                                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{progressjur}}%">
-                                                        <span class="sr-only">{{progressjur}}%</span>
+                                                <div ng-hide="!progressjur || progressjur === 100" >
+                                                    <div>Загрузка изображения юридического лица</div>
+                                                    <div class="progress progress-striped active">                                            
+                                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{progressjur}}%">                                                    
+                                                            <span class="sr-only">{{progressjur}}%</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div class="progress progress-striped active" ng-hide="!progressphy || progressphy === 100" >
-                                                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: {{progressphy}}%">
-                                                        <span class="sr-only">{{progressphy}}%</span>
+                                                <div ng-hide="!progressphy || progressphy === 100">
+                                                    <div>Загрузка изображения физических лиц</div>
+                                                    <div class="progress progress-striped active"> 
+                                                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: {{progressphy}}%">                                                        
+                                                            <span class="sr-only">{{progressphy}}%</span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                                <div align="center" ng-show="toggle">
-                                                    <button type="submit" class="btn btn-success">
-                                                        <span class="glyphicon glyphicon-save"></span> Создать заявку
-                                                    </button>
-                                                </div>
-                                                </form>
                                             <?php endif; ?>
                                             </div>
                                             <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
@@ -764,557 +771,558 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
                                             <script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
                                             <script type="text/javascript">
-                                                var RequisitesForm = angular.module('RequisitesForm', ['ngFileUpload', 'checklist-model']);
-                                                RequisitesForm
-                                                        .factory('mObjNode', [function () {
-                                                                return function (node, scope) {
-                                                                    var Nodes = node.split('.');
-                                                                    var Current = scope;
-                                                                    for (var i = 0; i < Nodes.length; i++) {
-                                                                        if (!Current[Nodes[i]]) {
-                                                                            Current[Nodes[i]] = {};
-                                                                        }
-                                                                        Current = Current[Nodes[i]];
-                                                                    }
-                                                                };
-                                                            }])
-                                                        .controller('RequisitesFormData', ['$scope', '$http', 'mObjNode', 'Upload', '$timeout', '$sce', '$window', function ($scope, $http, mObjNode, Upload, $timeout, $sce, $window) {
-                                                                window.scope = $scope;
-                                                                /*Load default reference*/
-                                                                $scope.requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''"); ?>;
-                                                                $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
-                                                                $scope.passport_side_1 = [];
-                                                                $scope.passport_side_2 = [];
-                                                                $scope.passport_copy = [];
-                                                                $scope.Data = $scope.requisites_json;
-                                                                $scope.pluginManager = new PluginManager();
-
-                                                                $scope.toggle = true;
-                                                                $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {reference: 'getCommonCapitalForms', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            mObjNode('Data.common.capitalForm', $scope);
-                                                                            var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id;
-<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";                              ?>;
-                                                                            //console.log($scope.CapitalForms.findIndex(x => x.id === defaultId));
-                                                                            $scope.Data.common.capitalForm = $scope.CapitalForms[$scope.CapitalForms.findIndex(x => x.id === defaultId)];
-                                                                        });
-                                                                $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {reference: 'getCommonManagementForms', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.ManagementForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            mObjNode('Data.common.managementForm', $scope);
-                                                                            var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;
-<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";                              ?>;
-                                                                            $scope.Data.common.managementForm = $scope.ManagementForms[$scope.ManagementForms.findIndex(x => x.id === defaultId)];
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonOwnershipForms', id: ''}).//загрузка спр. ФОРМА СОБСТВЕННОСТИ
-                                                                        then(function (response) {
-                                                                            $scope.OwnershipForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            //console.log($scope.OwnershipForms);
-                                                                            mObjNode('Data.common.legalForm.ownershipForm', $scope);
-                                                                            $scope.CivilLegalStatuses = [{id: '', name: 'Cначала выберите организационно-правововую форму'}];
-                                                                            $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[0];
-                                                                            $scope.LegalForms = [{id: '', name: 'Cначала выберите форму собственности'}];
-                                                                            $scope.Data.common.legalForm = $scope.LegalForms[0];
-                                                                            //console.log(angular.isUndefined($scope.Data.common.legalForm.ownershipForm));
-                                                                            var defaultId = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ? $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
-                                                                            $scope.Data.common.legalForm.ownershipForm = $scope.OwnershipForms[$scope.OwnershipForms.findIndex(x => x.id === defaultId)]; //знач. по умолчанию
-                                                                            if (defaultId !== '') {//прогружаем соотвественную Организационно-правоваю форму
-                                                                                $scope.loadLegalForm();
-                                                                            }
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonRegions', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.JuristicRegions = [
-                                                                                {id: '', name: 'Выберите область'},
-                                                                                {id: 'none', name: 'Республиканского подчинения'}].concat(response.data);
-                                                                            var defualtId = <?php echo (isset($requisites_json->common->juristicAddress)) ? (isset($requisites_json->common->juristicAddress->settlement->region) ? $requisites_json->common->juristicAddress->settlement->region->id : "'none'") : "''"; ?>;
-                                                                            //console.log(defualtId);
-                                                                            $scope.currentjuristicregion = $scope.JuristicRegions[$scope.JuristicRegions.findIndex(x => x.id == defualtId)];
-                                                                            $scope.PhysicalRegions = $scope.JuristicRegions;
-                                                                            $scope.currentPhysicalregion = $scope.PhysicalRegions[0];
-                                                                            if (defualtId !== '') {
-                                                                                $scope.loadJuristicDistricts();
-                                                                            }
-                                                                            ;
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonChiefBasises', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.ChiefBasises = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            mObjNode('Data.sf', $scope);
-                                                                            var defaultId = <?php echo (isset($requisites_json->common->chiefBasis->id)) ? $requisites_json->common->chiefBasis->id : "''"; ?>;
-                                                                            $scope.Data.common.chiefBasis = $scope.ChiefBasises[$scope.ChiefBasises.findIndex(x => x.id === defaultId)];
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getSfTariffs', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.SFTariffs = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            mObjNode('Data.sf', $scope);
-                                                                            var defaultId = <?php echo (isset($requisites_json->sf->tariff->id)) ? $requisites_json->sf->tariff->id : "''"; ?>;
-                                                                            $scope.Data.sf.tariff = $scope.SFTariffs[$scope.SFTariffs.findIndex(x => x.id === defaultId)];
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getSfRegions', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.SFRegions = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            mObjNode('Data.sf', $scope);
-                                                                            var defaultId = <?php echo (isset($requisites_json->sf->region->id)) ? $requisites_json->sf->region->id : "''"; ?>;
-                                                                            //console.log(defaultId);
-                                                                            $scope.Data.sf.region = $scope.SFRegions[$scope.SFRegions.findIndex(x => x.id == defaultId)]; //без условное сравнение
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getSTIRegions', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.STIRegions = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            mObjNode('Data.sti', $scope);
-                                                                            var defaultIddef = <?php echo (isset($requisites_json->sti->regionDefault->id)) ? $requisites_json->sti->regionDefault->id : "''"; ?>;
-                                                                            var defaultIdrec = <?php echo (isset($requisites_json->sti->regionReceive->id)) ? $requisites_json->sti->regionReceive->id : "''"; ?>;
-                                                                            $scope.Data.sti.regionDefault = $scope.STIRegions[$scope.STIRegions.findIndex(x => x.id == defaultIddef)]; //без условное сравнение
-                                                                            $scope.Data.sti.regionReceive = $scope.STIRegions[$scope.STIRegions.findIndex(x => x.id == defaultIdrec)]; //без условное сравнение
-                                                                        });
-                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonRepresentativePositions', id: ''}).
-                                                                        then(function (response) {
-                                                                            $scope.Positions = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                            //$scope.chief_position = $scope.Positions[0]; //справочник должности руководителя
-                                                                            //for (var i = 0; i < $scope.count; i++) {
-                                                                            //$scope.Data.common.representatives[i].position = $scope.Positions[0];
-                                                                            //}
-                                                                        });
-                                                                $scope.Roles = [
-                                                                    {id: 1, name: 'Руководитель'},
-                                                                    {id: 2, name: 'Бухгалтер'},
-                                                                    {id: 3, name: "Лицо ответственное за получение ЭЦП"},
-                                                                    {id: 4, name: "Лицо ответственное за использование ЭЦП"},
-                                                                    {id: 6, name: "Сотрудник корневой консалтинговой структуры"}
-                                                                ];
-                                                                $scope.edsUsageModels = [
-                                                                    {id: 2, name: "Использование ЭЦП из облачного хранилища"},
-                                                                    {id: 1, name: "Использование ЭЦП на РУТОКЕН"}
-                                                                ];
-                                                                //$scope.role_1 = true; $scope.role_2 = true; $scope.role_3 = true;
-                                                                /*End load default reference*/
-
-                                                                $scope.loadLegalForm = function () { //загрузка спр. Организационно-правовая форма
-                                                                    var tmp = $scope.Data.common.legalForm.ownershipForm;
-                                                                    //console.log(tmp);
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonLegalForms', id: $scope.Data.common.legalForm.ownershipForm.id}).
-                                                                            then(function (response) {
-                                                                                $scope.LegalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                                mObjNode('Data.common.legalForm', $scope);
-                                                                                var defaultId = <?php echo (isset($requisites_json->common->legalForm->id)) ? $requisites_json->common->legalForm->id : "''"; ?>;
-                                                                                $scope.Data.common.legalForm = $scope.LegalForms[$scope.LegalForms.findIndex(x => x.id === defaultId)];
-                                                                                $scope.Data.common.legalForm.ownershipForm = tmp;
-                                                                                if (defaultId !== 0) { //прошружам сооствествующий гражданскопровавой статус
-                                                                                    $scope.loadCivilLegalStatuses();
-                                                                                }
-                                                                            });
-                                                                };
-                                                                $scope.getOwnershimFormById = function (id) {
-                                                                    if (typeof id === 'object') {
-                                                                        id = id.id;
-                                                                        //console.log({id: id});
-                                                                    }
-                                                                    for (var i = 0; i < $scope.OwnershipForms.length; i++) {
-                                                                        //console.log($scope.OwnershipForms[i],id);
-                                                                        if ($scope.OwnershipForms[i].id === id)
-                                                                            return $scope.OwnershipForms[i];
-                                                                    }
-                                                                    return {id: id};
-                                                                };
-
-                                                                $scope.loadCivilLegalStatuses = function () {
-                                                                    var tmp = $scope.Data.common.legalForm.ownershipForm;
-                                                                    if ($scope.Data.common.legalForm.id === '') { //loadLegalForm меняет  $scope.Data.common.legalForm и срабатывает ng-change="loadCivilLegalStatuses()" (((
-                                                                        return;
-                                                                    }
-                                                                    //console.log($scope.OwnershipForms);
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonCivilLegalStatuses', id: $scope.Data.common.legalForm.id}).
-                                                                            then(function (response) {
-                                                                                $scope.CivilLegalStatuses = [{id: '', name: 'Выберите значение'}].concat(response.data);
-                                                                                mObjNode('Data.common.civilLegalStatus', $scope);
-                                                                                var defaultId = <?php echo (isset($requisites_json->common->civilLegalStatus->id)) ? $requisites_json->common->civilLegalStatus->id : 0; ?>;
-                                                                                $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[defaultId];
-                                                                                $scope.Data.common.legalForm.ownershipForm = $scope.getOwnershimFormById(tmp);
-                                                                            });
-                                                                };
-                                                                $scope.CheckGked = function () {
-                                                                    if ($scope.Data.common.mainActivity.gked.length >= 7) {
-                                                                        $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonActivityByGked', id: $scope.Data.common.mainActivity.gked}).
-                                                                                then(function (response) {
-                                                                                    $scope.Data.common.mainActivity.name = response.data.name;
-                                                                                    $scope.Data.common.mainActivity.id = response.data.id;
-                                                                                    $scope.Data.common.mainActivity.activity = response.data.activity;
-                                                                                    $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
-                                                                                }, function (response) {
-                                                                                    $scope.Data.common.mainActivity.name = response.data;
-                                                                                });
-                                                                    }
-                                                                };
-                                                                $scope.loadBankName = function () {
-                                                                    if ($scope.Data.common.bank.id.length > 5) {
-                                                                        $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonBankById', id: $scope.Data.common.bank.id}).
-                                                                                then(function (response) {
-                                                                                    mObjNode('Data.common.bank', $scope);
-                                                                                    $scope.Data.common.bank.name = response.data.name;
-                                                                                }, function (response) {
-                                                                                    $scope.Data.common.bank.name = response.data;
-                                                                                });
-                                                                    }
-                                                                };
-                                                                $scope.loadPhysicalDistricts = function () {
-                                                                    if ($scope.currentphysicalregion.id === 'none') {
-                                                                        $scope.currentphysicaldistrict = null;
-                                                                        $scope.loadPhysicalSettlements($scope.currentphysicalregion.id, $scope.currentphysicaldistrict);
-                                                                        return;
-                                                                    }
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonDistricts', id: $scope.currentphysicalregion.id}).
-                                                                            then(function (response) {
-                                                                                $scope.PhysicalDistricts = [
-                                                                                    {id: '', name: 'Выберите район'},
-                                                                                    {id: 'none', name: 'Областного подчинения'}].concat(response.data);
-                                                                                $scope.currentphysicaldistrict = $scope.PhysicalDistricts[0];
-                                                                            });
-                                                                };
-                                                                $scope.loadPhysicalSettlements = function (region, district) {
-                                                                    region = $scope.currentphysicalregion.id;
-                                                                    district = $scope.currentphysicaldistrict;
-                                                                    //console.log(district);
-                                                                    var districtid = $scope.currentphysicaldistrict ? (district.id || null) : null;
-                                                                    if (region === 'none' && !district) {
-                                                                        region = null;
-                                                                        districtid = null;
-                                                                    }
-                                                                    if (districtid === 'none') {
-                                                                        districtid = null;
-                                                                    }
-                                                                    if (districtid !== null) {
-                                                                        region = null;
-                                                                    }
-                                                                    //console.log(region + ' ' + districtid);
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonSettlements', id_region: region, id_district: districtid}).
-                                                                            then(function (response) {
-                                                                                $scope.PhysicalSettlements = [{id: '', name: 'Выберите населенный пункт'}].concat(response.data);
-                                                                                //console.log(response.data);
-                                                                                mObjNode('Data.common.physicalAddress.settlement', $scope);
-                                                                                $scope.Data.common.physicalAddress.settlement = $scope.PhysicalSettlements[0];
-                                                                            });
-                                                                }; ///////
-
-                                                                $scope.loadJuristicDistricts = function () {
-                                                                    if ($scope.currentjuristicregion.id === 'none') {
-                                                                        $scope.currentjuristicdistrict = null;
-                                                                        $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
-                                                                        return;
-                                                                    }
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonDistricts', id: $scope.currentjuristicregion.id}).
-                                                                            then(function (response) {
-                                                                                $scope.JuristicDistricts = [
-                                                                                    {id: '', name: 'Выберите район'},
-                                                                                    {id: 'none', name: 'Областного подчинения'}].concat(response.data);
-                                                                                //if ($scope.currentjuristicregion.id !== '') {
-                                                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                                              ?>;
-                                                                                //$scope.currentjuristicdistrict = $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id === defaultId)];
-                                                                                //  $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict.id);
-                                                                                //} else
-                                                                                //{
-                                                                                $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
-                                                                                //}
-                                                                                //console.log($scope.currentjuristicdistrict);
-                                                                            });
-                                                                };
-                                                                $scope.loadJuristicSettlements = function (region, district) {
-                                                                    //console.log($scope.currentjuristicdistrict);
-                                                                    if ($scope.currentjuristicdistrict === '') {
-                                                                        return;
-                                                                    }
-                                                                    region = $scope.currentjuristicregion.id;
-                                                                    district = $scope.currentjuristicdistrict;
-                                                                    //console.log(district);
-                                                                    var districtid = $scope.currentjuristicdistrict ? (district.id || null) : null;
-                                                                    if (region === 'none' && !district) {
-                                                                        region = null;
-                                                                        districtid = null;
-                                                                    }
-                                                                    if (districtid === 'none') {
-                                                                        districtid = null;
-                                                                    }
-                                                                    if (districtid !== null) {
-                                                                        region = null;
-                                                                    }
-                                                                    //console.log(region + ' ' + districtid);
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonSettlements', id_region: region, id_district: districtid}).
-                                                                            then(function (response) {
-                                                                                $scope.JuristicSettlements = [{id: '', name: 'Выберите населенный пункт'}].concat(response.data);
-                                                                                //console.log(response.data);
-                                                                                mObjNode('Data.common.juristicAddress.settlement', $scope);
-                                                                                var defaultId = <?php echo (isset($requisites_json->common->juristicAddress->settlement->id)) ? $requisites_json->common->juristicAddress->settlement->id : "''"; ?>;
-                                                                                //console.log(defaultId);
-                                                                                //console.log($scope.JuristicSettlements.findIndex(x => x.id == defaultId));//без условное сравнение
-                                                                                $scope.Data.common.juristicAddress.settlement = $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
-                                                                            });
-                                                                };
-                                                                $scope.addNewRepresentative = function () {
-                                                                    $scope.count++;
-                                                                    $scope.Data.common.representatives.push({position: $scope.Positions[0]});
-                                                                };
-                                                                $scope.RemoveRepresentative = function (key) {
-                                                                    $scope.Data.common.representatives.splice(key, 1);
-                                                                    $scope.count--;
-                                                                };
-
-                                                                $scope.Checked_role = function (role = false) {
-                                                                    if (role === false) {
-                                                                        //default params for roles
-                                                                        $scope.role_1 = true;
-                                                                        $scope.role_2 = true;
-                                                                        $scope.role_3 = true;
-                                                                        $scope.role_6 = true;
-                                                                        for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
-                                                                            for (var ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
-                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 1) ? $scope.role_1 = false : null;
-                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 2) ? $scope.role_2 = false : null;
-                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 3) ? $scope.role_3 = false : null;
-                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 6) ? $scope.role_6 = false : null;
-                                                                            }
-                                                                        }
-                                                                        //console.log('Default: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
-                                                                    } else {
-                                                                        //user changes
-                                                                        if (role.id == 1) {
-                                                                            $scope.role_1 = ($scope.role_1 === false) ? true : false;
-                                                                            //console.log('ruk = ' + $scope.role_1);
-                                                                        }
-                                                                        if (role.id == 2) {
-                                                                            $scope.role_2 = ($scope.role_2 === false) ? true : false;
-                                                                            //console.log('buh = ' + $scope.role_2);
-                                                                        }
-                                                                        if (role.id == 3) {
-                                                                            $scope.role_3 = ($scope.role_3 === false) ? true : false;
-                                                                            //console.log('rep = ' + $scope.role_3);
-                                                                        }
-                                                                        if (role.id == 6) {
-                                                                            $scope.role_6 = ($scope.role_6 === false) ? true : false;
-                                                                            console.log('rep = ' + $scope.role_6);
-                                                                        }
-                                                                        //console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
-                                                                }
-                                                                };
-                                                                $scope.Checked_role();
-
-                                                                $scope.Get_person = function (Series, Number, Key) {
-                                                                    if ((Series && Series.length > 1) && (Number && Number.length > 5)) {
-                                                                        $http.post('<?php echo base_url(); ?>index.php/requisites/get_person_by_passport_reference', {series: Series, number: Number}).
-                                                                                then(function (response) {
-                                                                                    $scope.Data.common.representatives[Key].person.passport.issuingAuthority = response.data.passport.issuingAuthority;
-                                                                                    $scope.Data.common.representatives[Key].person.passport.issuingDate = response.data.passport.issuingDate;
-                                                                                    $scope.Data.common.representatives[Key].person.surname = response.data.surname;
-                                                                                    $scope.Data.common.representatives[Key].person.name = response.data.name;
-                                                                                    $scope.Data.common.representatives[Key].person.middleName = response.data.middleName;
-                                                                                }, function (response) {
-
-                                                                                });
-                                                                    }
-                                                                };
-
-                                                                $scope.getSerialNumber = function (key, tokenIndex) {
-                                                                    //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
-                                                                    //$scope.Data.common.representatives[key].deviceSerial = 
-                                                                    var result = $scope.pluginManager.getDeviceSerial(tokenIndex);
-                                                                    console.log(result);
-                                                                }
-
-                                                                $scope.Upload = function () {
-                                                                    $scope.errorMsg = null;
-                                                                    $scope.resultupload = null;
-                                                                    $scope.toggle = false;
-
-                                                                    /* checks before upload */
-                                                                    if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
-                                                                        alert('Рег. номер Министерства Юстиции не соответствует маске XXXXXX-YYYY-ZZZ');
-                                                                        $scope.toggle = true;
-                                                                        return;
-                                                                    }
-                                                                    if (!$scope.Data.common.mainActivity.gked || !/^\d{2,2}\.\d{2,2}\.\d+$/.test($scope.Data.common.mainActivity.gked)) {
-                                                                        alert('Номер ГКЕД не соответствует маске XX.YY.ZZ');
-                                                                        $scope.toggle = true;
-                                                                        return;
-                                                                    }
-                                                                    if ($scope.Data.common.civilLegalStatus.name === 'Физическое лицо') {
-                                                                        $scope.Data.common.capitalForm = null;
-                                                                        $scope.Data.common.managementForm = null;
-                                                                        $scope.Data.common.rnmj = null;
-                                                                    }
-                                                                    for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
-                                                                        if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
-                                                                            $scope.Data.common.representatives[i].deviceSerial = null;
-                                                                            $scope.Data.common.representatives[i].edsUsageModel = null;
-                                                                        }
-                                                                        ;
-                                                                        if ($scope.Data.common.representatives[i].edsUsageModel != null) {
-                                                                            if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
-                                                                                $scope.Data.common.representatives[i].deviceSerial = null;
-                                                                            }
-                                                                        }
-                                                                        ;
-                                                                    }
-                                                                    /* end checks */
-
-                                                                    var id_requisites = null;
-                                                                    var check_jur = false; //for redirect
-                                                                    var count_of_count = 0; //for redirect
-                                                                    if ($scope.SameAddress) {
-                                                                        $scope.Data.common.physicalAddress = $scope.Data.common.juristicAddress;
-                                                                    }
-
-                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_create', {
-                                                                        invoice_id: $scope.invoice_id,
-                                                                        invoice_serial_number: $scope.invoice_serial_number,
-                                                                        json: $scope.Data
-                                                                                //json_original: $scope.json_original
-                                                                    }).
-                                                                            then(function (responce) {
-                                                                                //console.log(responce);
-                                                                                $scope.resultupload = responce.data.data;
-                                                                                $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
-                                                                                id_requisites = responce.data.id_requisites;
-                                                                                //console.log(responce);
-
-                                                                                if ($scope.mu_file_kg) {
-                                                                                    Upload.upload({
-                                                                                        url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/' 
-                                                                                                + $scope.Data.common.inn + '/' + '1',
-                                                                                        data: {
-                                                                                            mu_file_kg: $scope.mu_file_kg,
-                                                                                            mu_file_ru: $scope.mu_file_ru,
-                                                                                            m2a: $scope.m2a
+                                                                var RequisitesForm = angular.module('RequisitesForm', ['ngFileUpload', 'checklist-model']);
+                                                                RequisitesForm
+                                                                        .factory('mObjNode', [function () {
+                                                                                return function (node, scope) {
+                                                                                    var Nodes = node.split('.');
+                                                                                    var Current = scope;
+                                                                                    for (var i = 0; i < Nodes.length; i++) {
+                                                                                        if (!Current[Nodes[i]]) {
+                                                                                            Current[Nodes[i]] = {};
                                                                                         }
-                                                                                    }).then(function (responsejur) {
-                                                                                        $scope.resultupload = $scope.resultupload + responsejur.data;
-                                                                                        $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
-                                                                                        check_jur = true;
-                                                                                    }, function (responsejur) {
-                                                                                        if (responsejur.status > 0) {
-                                                                                            $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + responsejur.status + '. <br> Сообщение: ' + responsejur.data);
-                                                                                            $scope.ErrorMessage = $scope.errorMsg;
-                                                                                            $scope.toggle = true;
-                                                                                        }
-                                                                                    }, function (evt) {
-                                                                                        $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                                                                                        //console.log($scope.progressjur);
-                                                                                    });
-                                                                                } else {
-                                                                                    check_jur = true;
-                                                                                }
+                                                                                        Current = Current[Nodes[i]];
+                                                                                    }
+                                                                                };
+                                                                            }])
+                                                                        .controller('RequisitesFormData', ['$scope', '$http', 'mObjNode', 'Upload', '$timeout', '$sce', '$window', function ($scope, $http, mObjNode, Upload, $timeout, $sce, $window) {
+                                                                                window.scope = $scope;
+                                                                                /*Load default reference*/
+                                                                                $scope.requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''"); ?>;
+                                                                                $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
+                                                                                $scope.passport_side_1 = [];
+                                                                                $scope.passport_side_2 = [];
+                                                                                $scope.passport_copy = [];
+                                                                                $scope.Data = $scope.requisites_json;
+                                                                                $scope.pluginManager = new PluginManager();
 
-                                                                                for (var i = 0; i < $scope.count; i++) {
-                                                                                    if ($scope.passport_side_1[i]) {
-                                                                                        Upload.upload({
-                                                                                            url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/' 
-                                                                                                    + $scope.Data.common.representatives[i].person.passport.number 
-                                                                                                    + '/' + 2,
-                                                                                            data: {
-                                                                                                passport_side_1: $scope.passport_side_1[i],
-                                                                                                passport_side_2: $scope.passport_side_2[i],
-                                                                                                passport_copy: $scope.passport_copy[i]
+                                                                                $scope.toggle = true;
+                                                                                $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {reference: 'getCommonCapitalForms', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.CapitalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            mObjNode('Data.common.capitalForm', $scope);
+                                                                                            var defaultId = angular.equals($scope.Data.common.capitalForm, {}) ? '' : $scope.Data.common.capitalForm.id;
+<?php //echo (isset($requisites_json->common->capitalForm->id)) ? $requisites_json->common->capitalForm->id : "''";                                 ?>;
+                                                                                            //console.log($scope.CapitalForms.findIndex(x => x.id === defaultId));
+                                                                                            $scope.Data.common.capitalForm = $scope.CapitalForms[$scope.CapitalForms.findIndex(x => x.id === defaultId)];
+                                                                                        });
+                                                                                $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {reference: 'getCommonManagementForms', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.ManagementForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            mObjNode('Data.common.managementForm', $scope);
+                                                                                            var defaultId = angular.equals($scope.Data.common.managementForm, {}) ? '' : $scope.Data.common.managementForm.id;
+<?php //echo (isset($requisites_json->common->managementForm->id)) ? $requisites_json->common->managementForm->id : "''";                                 ?>;
+                                                                                            $scope.Data.common.managementForm = $scope.ManagementForms[$scope.ManagementForms.findIndex(x => x.id === defaultId)];
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonOwnershipForms', id: ''}).//загрузка спр. ФОРМА СОБСТВЕННОСТИ
+                                                                                        then(function (response) {
+                                                                                            $scope.OwnershipForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            //console.log($scope.OwnershipForms);
+                                                                                            mObjNode('Data.common.legalForm.ownershipForm', $scope);
+                                                                                            $scope.CivilLegalStatuses = [{id: '', name: 'Cначала выберите организационно-правововую форму'}];
+                                                                                            $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[0];
+                                                                                            $scope.LegalForms = [{id: '', name: 'Cначала выберите форму собственности'}];
+                                                                                            $scope.Data.common.legalForm = $scope.LegalForms[0];
+                                                                                            //console.log(angular.isUndefined($scope.Data.common.legalForm.ownershipForm));
+                                                                                            var defaultId = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ? $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
+                                                                                            $scope.Data.common.legalForm.ownershipForm = $scope.OwnershipForms[$scope.OwnershipForms.findIndex(x => x.id === defaultId)]; //знач. по умолчанию
+                                                                                            if (defaultId !== '') {//прогружаем соотвественную Организационно-правоваю форму
+                                                                                                $scope.loadLegalForm();
                                                                                             }
-                                                                                        }).then(function (responsephy) {
-                                                                                            $scope.resultupload = $scope.resultupload + responsephy.data;
-                                                                                            $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
-                                                                                            count_of_count++;
-                                                                                        }, function (responsephy) {
-                                                                                            if (responsephy.status > 0)
-                                                                                            {
-                                                                                                $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + responsephy.status + '. <br> Сообщение: ' + responsephy.data);
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonRegions', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.JuristicRegions = [
+                                                                                                {id: '', name: 'Выберите область'},
+                                                                                                {id: 'none', name: 'Республиканского подчинения'}].concat(response.data);
+                                                                                            var defualtId = <?php echo (isset($requisites_json->common->juristicAddress)) ? (isset($requisites_json->common->juristicAddress->settlement->region) ? $requisites_json->common->juristicAddress->settlement->region->id : "'none'") : "''"; ?>;
+                                                                                            //console.log(defualtId);
+                                                                                            $scope.currentjuristicregion = $scope.JuristicRegions[$scope.JuristicRegions.findIndex(x => x.id == defualtId)];
+                                                                                            $scope.PhysicalRegions = $scope.JuristicRegions;
+                                                                                            $scope.currentPhysicalregion = $scope.PhysicalRegions[0];
+                                                                                            if (defualtId !== '') {
+                                                                                                $scope.loadJuristicDistricts();
+                                                                                            }
+                                                                                            ;
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonChiefBasises', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.ChiefBasises = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            mObjNode('Data.sf', $scope);
+                                                                                            var defaultId = <?php echo (isset($requisites_json->common->chiefBasis->id)) ? $requisites_json->common->chiefBasis->id : "''"; ?>;
+                                                                                            $scope.Data.common.chiefBasis = $scope.ChiefBasises[$scope.ChiefBasises.findIndex(x => x.id === defaultId)];
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getSfTariffs', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.SFTariffs = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            mObjNode('Data.sf', $scope);
+                                                                                            var defaultId = <?php echo (isset($requisites_json->sf->tariff->id)) ? $requisites_json->sf->tariff->id : "''"; ?>;
+                                                                                            $scope.Data.sf.tariff = $scope.SFTariffs[$scope.SFTariffs.findIndex(x => x.id === defaultId)];
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getSfRegions', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.SFRegions = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            mObjNode('Data.sf', $scope);
+                                                                                            var defaultId = <?php echo (isset($requisites_json->sf->region->id)) ? $requisites_json->sf->region->id : "''"; ?>;
+                                                                                            //console.log(defaultId);
+                                                                                            $scope.Data.sf.region = $scope.SFRegions[$scope.SFRegions.findIndex(x => x.id == defaultId)]; //без условное сравнение
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getSTIRegions', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.STIRegions = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            mObjNode('Data.sti', $scope);
+                                                                                            var defaultIddef = <?php echo (isset($requisites_json->sti->regionDefault->id)) ? $requisites_json->sti->regionDefault->id : "''"; ?>;
+                                                                                            var defaultIdrec = <?php echo (isset($requisites_json->sti->regionReceive->id)) ? $requisites_json->sti->regionReceive->id : "''"; ?>;
+                                                                                            $scope.Data.sti.regionDefault = $scope.STIRegions[$scope.STIRegions.findIndex(x => x.id == defaultIddef)]; //без условное сравнение
+                                                                                            $scope.Data.sti.regionReceive = $scope.STIRegions[$scope.STIRegions.findIndex(x => x.id == defaultIdrec)]; //без условное сравнение
+                                                                                        });
+                                                                                $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonRepresentativePositions', id: ''}).
+                                                                                        then(function (response) {
+                                                                                            $scope.Positions = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                            //$scope.chief_position = $scope.Positions[0]; //справочник должности руководителя
+                                                                                            //for (var i = 0; i < $scope.count; i++) {
+                                                                                            //$scope.Data.common.representatives[i].position = $scope.Positions[0];
+                                                                                            //}
+                                                                                        });
+                                                                                $scope.Roles = [
+                                                                                    {id: 1, name: 'Руководитель'},
+                                                                                    {id: 2, name: 'Бухгалтер'},
+                                                                                    {id: 3, name: "Лицо ответственное за получение ЭЦП"},
+                                                                                    {id: 4, name: "Лицо ответственное за использование ЭЦП"},
+                                                                                    {id: 6, name: "Сотрудник корневой консалтинговой структуры"}
+                                                                                ];
+                                                                                $scope.edsUsageModels = [
+                                                                                    {id: 2, name: "Использование ЭЦП из облачного хранилища"},
+                                                                                    {id: 1, name: "Использование ЭЦП на РУТОКЕН"}
+                                                                                ];
+                                                                                //$scope.role_1 = true; $scope.role_2 = true; $scope.role_3 = true;
+                                                                                /*End load default reference*/
+
+                                                                                $scope.loadLegalForm = function () { //загрузка спр. Организационно-правовая форма
+                                                                                    var tmp = $scope.Data.common.legalForm.ownershipForm;
+                                                                                    //console.log(tmp);
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonLegalForms', id: $scope.Data.common.legalForm.ownershipForm.id}).
+                                                                                            then(function (response) {
+                                                                                                $scope.LegalForms = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                                mObjNode('Data.common.legalForm', $scope);
+                                                                                                var defaultId = <?php echo (isset($requisites_json->common->legalForm->id)) ? $requisites_json->common->legalForm->id : "''"; ?>;
+                                                                                                $scope.Data.common.legalForm = $scope.LegalForms[$scope.LegalForms.findIndex(x => x.id === defaultId)];
+                                                                                                $scope.Data.common.legalForm.ownershipForm = tmp;
+                                                                                                if (defaultId !== 0) { //прошружам сооствествующий гражданскопровавой статус
+                                                                                                    $scope.loadCivilLegalStatuses();
+                                                                                                }
+                                                                                            });
+                                                                                };
+                                                                                $scope.getOwnershimFormById = function (id) {
+                                                                                    if (typeof id === 'object') {
+                                                                                        id = id.id;
+                                                                                        //console.log({id: id});
+                                                                                    }
+                                                                                    for (var i = 0; i < $scope.OwnershipForms.length; i++) {
+                                                                                        //console.log($scope.OwnershipForms[i],id);
+                                                                                        if ($scope.OwnershipForms[i].id === id)
+                                                                                            return $scope.OwnershipForms[i];
+                                                                                    }
+                                                                                    return {id: id};
+                                                                                };
+
+                                                                                $scope.loadCivilLegalStatuses = function () {
+                                                                                    var tmp = $scope.Data.common.legalForm.ownershipForm;
+                                                                                    if ($scope.Data.common.legalForm.id === '') { //loadLegalForm меняет  $scope.Data.common.legalForm и срабатывает ng-change="loadCivilLegalStatuses()" (((
+                                                                                        return;
+                                                                                    }
+                                                                                    //console.log($scope.OwnershipForms);
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonCivilLegalStatuses', id: $scope.Data.common.legalForm.id}).
+                                                                                            then(function (response) {
+                                                                                                $scope.CivilLegalStatuses = [{id: '', name: 'Выберите значение'}].concat(response.data);
+                                                                                                mObjNode('Data.common.civilLegalStatus', $scope);
+                                                                                                var defaultId = <?php echo (isset($requisites_json->common->civilLegalStatus->id)) ? $requisites_json->common->civilLegalStatus->id : 0; ?>;
+                                                                                                $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[defaultId];
+                                                                                                $scope.Data.common.legalForm.ownershipForm = $scope.getOwnershimFormById(tmp);
+                                                                                            });
+                                                                                };
+                                                                                $scope.CheckGked = function () {
+                                                                                    if ($scope.Data.common.mainActivity.gked.length >= 7) {
+                                                                                        $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonActivityByGked', id: $scope.Data.common.mainActivity.gked}).
+                                                                                                then(function (response) {
+                                                                                                    $scope.Data.common.mainActivity.name = response.data.name;
+                                                                                                    $scope.Data.common.mainActivity.id = response.data.id;
+                                                                                                    $scope.Data.common.mainActivity.activity = response.data.activity;
+                                                                                                    $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
+                                                                                                }, function (response) {
+                                                                                                    $scope.Data.common.mainActivity.name = response.data;
+                                                                                                });
+                                                                                    }
+                                                                                };
+                                                                                $scope.loadBankName = function () {
+                                                                                    if ($scope.Data.common.bank.id.length > 5) {
+                                                                                        $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonBankById', id: $scope.Data.common.bank.id}).
+                                                                                                then(function (response) {
+                                                                                                    mObjNode('Data.common.bank', $scope);
+                                                                                                    $scope.Data.common.bank.name = response.data.name;
+                                                                                                }, function (response) {
+                                                                                                    $scope.Data.common.bank.name = response.data;
+                                                                                                });
+                                                                                    }
+                                                                                };
+                                                                                $scope.loadPhysicalDistricts = function () {
+                                                                                    if ($scope.currentphysicalregion.id === 'none') {
+                                                                                        $scope.currentphysicaldistrict = null;
+                                                                                        $scope.loadPhysicalSettlements($scope.currentphysicalregion.id, $scope.currentphysicaldistrict);
+                                                                                        return;
+                                                                                    }
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonDistricts', id: $scope.currentphysicalregion.id}).
+                                                                                            then(function (response) {
+                                                                                                $scope.PhysicalDistricts = [
+                                                                                                    {id: '', name: 'Выберите район'},
+                                                                                                    {id: 'none', name: 'Областного подчинения'}].concat(response.data);
+                                                                                                $scope.currentphysicaldistrict = $scope.PhysicalDistricts[0];
+                                                                                            });
+                                                                                };
+                                                                                $scope.loadPhysicalSettlements = function (region, district) {
+                                                                                    region = $scope.currentphysicalregion.id;
+                                                                                    district = $scope.currentphysicaldistrict;
+                                                                                    //console.log(district);
+                                                                                    var districtid = $scope.currentphysicaldistrict ? (district.id || null) : null;
+                                                                                    if (region === 'none' && !district) {
+                                                                                        region = null;
+                                                                                        districtid = null;
+                                                                                    }
+                                                                                    if (districtid === 'none') {
+                                                                                        districtid = null;
+                                                                                    }
+                                                                                    if (districtid !== null) {
+                                                                                        region = null;
+                                                                                    }
+                                                                                    //console.log(region + ' ' + districtid);
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonSettlements', id_region: region, id_district: districtid}).
+                                                                                            then(function (response) {
+                                                                                                $scope.PhysicalSettlements = [{id: '', name: 'Выберите населенный пункт'}].concat(response.data);
+                                                                                                //console.log(response.data);
+                                                                                                mObjNode('Data.common.physicalAddress.settlement', $scope);
+                                                                                                $scope.Data.common.physicalAddress.settlement = $scope.PhysicalSettlements[0];
+                                                                                            });
+                                                                                }; ///////
+
+                                                                                $scope.loadJuristicDistricts = function () {
+                                                                                    if ($scope.currentjuristicregion.id === 'none') {
+                                                                                        $scope.currentjuristicdistrict = null;
+                                                                                        $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
+                                                                                        return;
+                                                                                    }
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonDistricts', id: $scope.currentjuristicregion.id}).
+                                                                                            then(function (response) {
+                                                                                                $scope.JuristicDistricts = [
+                                                                                                    {id: '', name: 'Выберите район'},
+                                                                                                    {id: 'none', name: 'Областного подчинения'}].concat(response.data);
+                                                                                                //if ($scope.currentjuristicregion.id !== '') {
+                                                                                                //var defaultId = <?php //echo (isset($requisites_json->common->juristicAddress->settlement->district)) ? $requisites_json->common->juristicAddress->settlement->district : "''";                                                 ?>;
+                                                                                                //$scope.currentjuristicdistrict = $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id === defaultId)];
+                                                                                                //  $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict.id);
+                                                                                                //} else
+                                                                                                //{
+                                                                                                $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
+                                                                                                //}
+                                                                                                //console.log($scope.currentjuristicdistrict);
+                                                                                            });
+                                                                                };
+                                                                                $scope.loadJuristicSettlements = function (region, district) {
+                                                                                    //console.log($scope.currentjuristicdistrict);
+                                                                                    if ($scope.currentjuristicdistrict === '') {
+                                                                                        return;
+                                                                                    }
+                                                                                    region = $scope.currentjuristicregion.id;
+                                                                                    district = $scope.currentjuristicdistrict;
+                                                                                    //console.log(district);
+                                                                                    var districtid = $scope.currentjuristicdistrict ? (district.id || null) : null;
+                                                                                    if (region === 'none' && !district) {
+                                                                                        region = null;
+                                                                                        districtid = null;
+                                                                                    }
+                                                                                    if (districtid === 'none') {
+                                                                                        districtid = null;
+                                                                                    }
+                                                                                    if (districtid !== null) {
+                                                                                        region = null;
+                                                                                    }
+                                                                                    //console.log(region + ' ' + districtid);
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/reference_load', {reference: 'getCommonSettlements', id_region: region, id_district: districtid}).
+                                                                                            then(function (response) {
+                                                                                                $scope.JuristicSettlements = [{id: '', name: 'Выберите населенный пункт'}].concat(response.data);
+                                                                                                //console.log(response.data);
+                                                                                                mObjNode('Data.common.juristicAddress.settlement', $scope);
+                                                                                                var defaultId = <?php echo (isset($requisites_json->common->juristicAddress->settlement->id)) ? $requisites_json->common->juristicAddress->settlement->id : "''"; ?>;
+                                                                                                //console.log(defaultId);
+                                                                                                //console.log($scope.JuristicSettlements.findIndex(x => x.id == defaultId));//без условное сравнение
+                                                                                                $scope.Data.common.juristicAddress.settlement = $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
+                                                                                            });
+                                                                                };
+                                                                                $scope.addNewRepresentative = function () {
+                                                                                    $scope.count++;
+                                                                                    $scope.Data.common.representatives.push({position: $scope.Positions[0]});
+                                                                                };
+                                                                                $scope.RemoveRepresentative = function (key) {
+                                                                                    $scope.Data.common.representatives.splice(key, 1);
+                                                                                    $scope.count--;
+                                                                                };
+
+                                                                                $scope.Checked_role = function (role = false) {
+                                                                                    if (role === false) {
+                                                                                        //default params for roles
+                                                                                        $scope.role_1 = true;
+                                                                                        $scope.role_2 = true;
+                                                                                        $scope.role_3 = true;
+                                                                                        $scope.role_6 = true;
+                                                                                        for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
+                                                                                            for (var ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
+                                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 1) ? $scope.role_1 = false : null;
+                                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 2) ? $scope.role_2 = false : null;
+                                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 3) ? $scope.role_3 = false : null;
+                                                                                                ($scope.Data.common.representatives[i].roles[ii].id == 6) ? $scope.role_6 = false : null;
+                                                                                            }
+                                                                                        }
+                                                                                        //console.log('Default: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
+                                                                                    } else {
+                                                                                        //user changes
+                                                                                        if (role.id == 1) {
+                                                                                            $scope.role_1 = ($scope.role_1 === false) ? true : false;
+                                                                                            //console.log('ruk = ' + $scope.role_1);
+                                                                                        }
+                                                                                        if (role.id == 2) {
+                                                                                            $scope.role_2 = ($scope.role_2 === false) ? true : false;
+                                                                                            //console.log('buh = ' + $scope.role_2);
+                                                                                        }
+                                                                                        if (role.id == 3) {
+                                                                                            $scope.role_3 = ($scope.role_3 === false) ? true : false;
+                                                                                            //console.log('rep = ' + $scope.role_3);
+                                                                                        }
+                                                                                        if (role.id == 6) {
+                                                                                            $scope.role_6 = ($scope.role_6 === false) ? true : false;
+                                                                                            console.log('rep = ' + $scope.role_6);
+                                                                                        }
+                                                                                        //console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
+                                                                                }
+                                                                                };
+                                                                                $scope.Checked_role();
+
+                                                                                $scope.Get_person = function (Series, Number, Key) {
+                                                                                    if ((Series && Series.length > 1) && (Number && Number.length > 5)) {
+                                                                                        $http.post('<?php echo base_url(); ?>index.php/requisites/get_person_by_passport_reference', {series: Series, number: Number}).
+                                                                                                then(function (response) {
+                                                                                                    $scope.Data.common.representatives[Key].person.passport.issuingAuthority = response.data.passport.issuingAuthority;
+                                                                                                    $scope.Data.common.representatives[Key].person.passport.issuingDate = response.data.passport.issuingDate;
+                                                                                                    $scope.Data.common.representatives[Key].person.surname = response.data.surname;
+                                                                                                    $scope.Data.common.representatives[Key].person.name = response.data.name;
+                                                                                                    $scope.Data.common.representatives[Key].person.middleName = response.data.middleName;
+                                                                                                }, function (response) {
+
+                                                                                                });
+                                                                                    }
+                                                                                };
+
+                                                                                $scope.getSerialNumber = function (key, tokenIndex) {
+                                                                                    //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
+                                                                                    //$scope.Data.common.representatives[key].deviceSerial = 
+                                                                                    var result = $scope.pluginManager.getDeviceSerial(tokenIndex);
+                                                                                    console.log(result);
+                                                                                }
+
+                                                                                $scope.Upload = function () {
+                                                                                    $scope.errorMsg = null;
+                                                                                    $scope.resultupload = null;
+                                                                                    $scope.toggle = false;
+
+                                                                                    /* checks before upload */
+                                                                                    if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
+                                                                                        alert('Рег. номер Министерства Юстиции не соответствует маске XXXXXX-YYYY-ZZZ');
+                                                                                        $scope.toggle = true;
+                                                                                        return;
+                                                                                    }
+                                                                                    if (!$scope.Data.common.mainActivity.gked || !/^\d{2,2}\.\d{2,2}\.\d+$/.test($scope.Data.common.mainActivity.gked)) {
+                                                                                        alert('Номер ГКЕД не соответствует маске XX.YY.ZZ');
+                                                                                        $scope.toggle = true;
+                                                                                        return;
+                                                                                    }
+                                                                                    if ($scope.Data.common.civilLegalStatus.name === 'Физическое лицо') {
+                                                                                        $scope.Data.common.capitalForm = null;
+                                                                                        $scope.Data.common.managementForm = null;
+                                                                                        $scope.Data.common.rnmj = null;
+                                                                                    }
+                                                                                    for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
+                                                                                        if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
+                                                                                            $scope.Data.common.representatives[i].deviceSerial = null;
+                                                                                            $scope.Data.common.representatives[i].edsUsageModel = null;
+                                                                                        }
+                                                                                        ;
+                                                                                        if ($scope.Data.common.representatives[i].edsUsageModel != null) {
+                                                                                            if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
+                                                                                                $scope.Data.common.representatives[i].deviceSerial = null;
+                                                                                            }
+                                                                                        }
+                                                                                        ;
+                                                                                    }
+                                                                                    /* end checks */
+
+                                                                                    var id_requisites = null;
+                                                                                    var check_jur = false; //for redirect
+                                                                                    var count_of_count = 0; //for redirect
+                                                                                    if ($scope.SameAddress) {
+                                                                                        $scope.Data.common.physicalAddress = $scope.Data.common.juristicAddress;
+                                                                                    }
+
+                                                                                    $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_create', {
+                                                                                        invoice_id: $scope.invoice_id,
+                                                                                        invoice_serial_number: $scope.invoice_serial_number,
+                                                                                        json: $scope.Data
+                                                                                                //json_original: $scope.json_original
+                                                                                    }).
+                                                                                            then(function (responce) {
+                                                                                                //console.log(responce);
+                                                                                                $scope.resultupload = responce.data.data;
+                                                                                                $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
+                                                                                                id_requisites = responce.data.id_requisites;
+                                                                                                //console.log(responce);
+
+                                                                                                if ($scope.mu_file_kg) {
+                                                                                                    Upload.upload({
+                                                                                                        url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
+                                                                                                                + $scope.Data.common.inn + '/' + '1',
+                                                                                                        data: {
+                                                                                                            mu_file_kg: $scope.mu_file_kg,
+                                                                                                            mu_file_ru: $scope.mu_file_ru,
+                                                                                                            m2a: $scope.m2a
+                                                                                                        }
+                                                                                                    }).then(function (responsejur) {
+                                                                                                        $scope.resultupload = $scope.resultupload + responsejur.data;
+                                                                                                        $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
+                                                                                                        check_jur = true;
+                                                                                                        //console.log($sce.trustAsHtml($scope.resultupload));
+                                                                                                    }, function (responsejur) {
+                                                                                                        if (responsejur.status > 0) {
+                                                                                                            $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении изображений юридического лица, код ошибки: ' + responsejur.status + '. <br> Сообщение: ' + responsejur.data);
+                                                                                                            $scope.ErrorMessage = $scope.errorMsg;
+                                                                                                            $scope.toggle = true;
+                                                                                                        }
+                                                                                                    }, function (evt) {
+                                                                                                        $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                                                                                                        //console.log($scope.progressjur);
+                                                                                                    });
+                                                                                                } else {
+                                                                                                    check_jur = true;
+                                                                                                }
+
+                                                                                                for (var i = 0; i < $scope.count; i++) {
+                                                                                                    if ($scope.passport_side_1[i]) {
+                                                                                                        Upload.upload({
+                                                                                                            url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
+                                                                                                                    + $scope.Data.common.representatives[i].person.passport.number
+                                                                                                                    + '/' + 2,
+                                                                                                            data: {
+                                                                                                                passport_side_1: $scope.passport_side_1[i],
+                                                                                                                passport_side_2: $scope.passport_side_2[i],
+                                                                                                                passport_copy: $scope.passport_copy[i]
+                                                                                                            }
+                                                                                                        }).then(function (responsephy) {
+                                                                                                            $scope.resultupload = $scope.resultupload + responsephy.data;
+                                                                                                            $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
+                                                                                                            count_of_count++;
+                                                                                                        }, function (responsephy) {
+                                                                                                            if (responsephy.status > 0)
+                                                                                                            {
+                                                                                                                $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении изображений ответственных лиц, код ошибки: ' + responsephy.status + '. <br> Сообщение: ' + responsephy.data);
+                                                                                                                $scope.ErrorMessage = $scope.errorMsg;
+                                                                                                                $scope.toggle = true;
+                                                                                                            }
+                                                                                                        }, function (evt) {
+                                                                                                            $scope.progressphy = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+                                                                                                        });
+                                                                                                    } else {
+                                                                                                        count_of_count++;
+                                                                                                    }
+                                                                                                }
+                                                                                            }, function (response) {
+                                                                                                $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении реквизитов, код ошибки: ' + response.status + '. <br> Сообщение: ' + response.data);
                                                                                                 $scope.ErrorMessage = $scope.errorMsg;
                                                                                                 $scope.toggle = true;
-                                                                                            }
-                                                                                        }, function (evt) {
-                                                                                            $scope.progressphy = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                                                                                        });
-                                                                                    } else {
-                                                                                        count_of_count++;
+                                                                                            });
+
+                                                                                    setInterval(function () {
+                                                                                        if (check_jur === true && $scope.count === count_of_count) {
+                                                                                            $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
+                                                                                        }
+                                                                                    }, 2000);
+                                                                                };
+
+                                                                                $scope.range = function (min, max, step) {
+                                                                                    step = step || 1;
+                                                                                    var input = [];
+                                                                                    for (var i = min; i < max; i += step) {
+                                                                                        input.push(i);
                                                                                     }
+                                                                                    return input;
+                                                                                };
+                                                                            }]);
+
+                                                                RequisitesForm.directive('gkedMask', function () {
+                                                                    return {
+                                                                        require: 'ngModel',
+                                                                        link: function (scope, element, attr, ngModelCtrl) {
+                                                                            function fromUser(text) {
+                                                                                if (text) {
+                                                                                    var transformedInput = text.replace(/[^0-9.]/g, '');
+                                                                                    if (transformedInput !== text) {
+                                                                                        ngModelCtrl.$setViewValue(transformedInput);
+                                                                                        ngModelCtrl.$render();
+                                                                                    }
+                                                                                    return transformedInput;
                                                                                 }
-                                                                            }, function (response) {
-                                                                                $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении, код ошибки: ' + response.status + '. <br> Сообщение: ' + response.data);
-                                                                                $scope.ErrorMessage = $scope.errorMsg;
-                                                                                $scope.toggle = true;
-                                                                            });
-
-                                                                    setInterval(function () {
-                                                                        if (check_jur === true && $scope.count === count_of_count) {
-                                                                            $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
+                                                                                return undefined;
+                                                                            }
+                                                                            ngModelCtrl.$parsers.push(fromUser);
                                                                         }
-                                                                    }, 5000);
-                                                                };
+                                                                    };
+                                                                });
+                                                                RequisitesForm.directive('numbersOnly', function () {
+                                                                    return {
+                                                                        require: 'ngModel',
+                                                                        link: function (scope, element, attr, ngModelCtrl) {
+                                                                            function fromUser(text) {
+                                                                                if (text) {
+                                                                                    var transformedInput = text.replace(/[^0-9]/g, '');
+                                                                                    if (transformedInput !== text) {
+                                                                                        ngModelCtrl.$setViewValue(transformedInput);
+                                                                                        ngModelCtrl.$render();
+                                                                                    }
+                                                                                    return transformedInput;
+                                                                                }
+                                                                                return undefined;
+                                                                            }
+                                                                            ngModelCtrl.$parsers.push(fromUser);
+                                                                        }
+                                                                    };
+                                                                });
+                                                                RequisitesForm.directive('upperCase', function () {
+                                                                    return {
+                                                                        require: 'ngModel',
+                                                                        link: function (scope, element, attrs, modelCtrl) {
+                                                                            var upperCaseFunc = function (inputValue) {
 
-                                                                $scope.range = function (min, max, step) {
-                                                                    step = step || 1;
-                                                                    var input = [];
-                                                                    for (var i = min; i < max; i += step) {
-                                                                        input.push(i);
-                                                                    }
-                                                                    return input;
-                                                                };
-                                                            }]);
+                                                                                if (typeof inputValue == "undefined") {
+                                                                                    return;
+                                                                                }
 
-                                                RequisitesForm.directive('gkedMask', function () {
-                                                    return {
-                                                        require: 'ngModel',
-                                                        link: function (scope, element, attr, ngModelCtrl) {
-                                                            function fromUser(text) {
-                                                                if (text) {
-                                                                    var transformedInput = text.replace(/[^0-9.]/g, '');
-                                                                    if (transformedInput !== text) {
-                                                                        ngModelCtrl.$setViewValue(transformedInput);
-                                                                        ngModelCtrl.$render();
-                                                                    }
-                                                                    return transformedInput;
-                                                                }
-                                                                return undefined;
-                                                            }
-                                                            ngModelCtrl.$parsers.push(fromUser);
-                                                        }
-                                                    };
-                                                });
-                                                RequisitesForm.directive('numbersOnly', function () {
-                                                    return {
-                                                        require: 'ngModel',
-                                                        link: function (scope, element, attr, ngModelCtrl) {
-                                                            function fromUser(text) {
-                                                                if (text) {
-                                                                    var transformedInput = text.replace(/[^0-9]/g, '');
-                                                                    if (transformedInput !== text) {
-                                                                        ngModelCtrl.$setViewValue(transformedInput);
-                                                                        ngModelCtrl.$render();
-                                                                    }
-                                                                    return transformedInput;
-                                                                }
-                                                                return undefined;
-                                                            }
-                                                            ngModelCtrl.$parsers.push(fromUser);
-                                                        }
-                                                    };
-                                                });
-                                                RequisitesForm.directive('upperCase', function () {
-                                                    return {
-                                                        require: 'ngModel',
-                                                        link: function (scope, element, attrs, modelCtrl) {
-                                                            var upperCaseFunc = function (inputValue) {
+                                                                                var upperCasedString = inputValue.toUpperCase();
+                                                                                if (upperCasedString !== inputValue) {
+                                                                                    modelCtrl.$setViewValue(upperCasedString);
+                                                                                    modelCtrl.$render();
+                                                                                }
 
-                                                                if (typeof inputValue == "undefined") {
-                                                                    return;
-                                                                }
+                                                                                return upperCasedString;
+                                                                            }
 
-                                                                var upperCasedString = inputValue.toUpperCase();
-                                                                if (upperCasedString !== inputValue) {
-                                                                    modelCtrl.$setViewValue(upperCasedString);
-                                                                    modelCtrl.$render();
-                                                                }
-
-                                                                return upperCasedString;
-                                                            }
-
-                                                            modelCtrl.$parsers.push(upperCaseFunc);
-                                                            upperCaseFunc(scope[attrs.ngModel]);
-                                                        }
-                                                    };
-                                                });
+                                                                            modelCtrl.$parsers.push(upperCaseFunc);
+                                                                            upperCaseFunc(scope[attrs.ngModel]);
+                                                                        }
+                                                                    };
+                                                                });
                                             </script>
