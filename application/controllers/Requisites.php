@@ -583,9 +583,10 @@ class Requisites extends CI_Controller {
          *  'path'=>file_path,
          *  'ident'=>identify);
          */
+        $error = 'Ошибка при обращении к медиасерверу: ';
         $url = getenv('MEDIA_SERVER');
         $fields = [
-            'image' => new \CurlFile($path, 'image/png', $requisites_id . '_' . $file_type . '_jpg'),
+            'image' => new \CurlFile($path, 'image/jpg', $requisites_id . '_' . $file_type . '_jpg'),
             'service' => '3'
         ];
         $ch = curl_init($url);
@@ -598,13 +599,17 @@ class Requisites extends CI_Controller {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
         if ($response === false) {
-            throw new Exception('Ошибка при обращении к медиасерверу: ' . curl_error($ch));
+            throw new Exception($error . curl_error($ch));
         } else {
-            $file_struct_db = array(
-                'requisites_id' => $requisites_id, //id requisistes in db
-                'filetype_id' => $file_type, //id file type
-                'file_ident' => json_decode($response)->fileName);
-            $this->requisites_model->save_file_ident($file_struct_db, $ident);
+            if (isset(json_decode($response)->fileName)) {
+                $file_struct_db = array(
+                    'requisites_id' => $requisites_id, //id requisistes in db
+                    'filetype_id' => $file_type, //id file type
+                    'file_ident' => json_decode($response)->fileName);
+                $this->requisites_model->save_file_ident($file_struct_db, $ident);
+            } else {
+                throw new Exception($error . 'сервер вернул не действительное значение');
+            }
             //var_dump(json_decode($response)->fileName); //insert into db
         }
     }
@@ -642,17 +647,6 @@ class Requisites extends CI_Controller {
             http_response_code(500);
             echo $ex->getMessage();
         }
-    }
-
-    private function clear_tmp($path) {
-        $path = './uploads';
-        $files = glob($path . '/*');
-        foreach ($files as $file) {
-            is_dir($file) ? $this->clear_tmp($file) : unlink($file);
-        }
-        rmdir($path);
-
-        return;
     }
 
 }
