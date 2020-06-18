@@ -392,6 +392,22 @@ class Requisites_model extends CI_Model {
         return $result->row();
     }
 
+    public function get_requisites_ID($inn) {
+        $sql = <<<SQL
+                SELECT id_requisites
+                FROM "Dealer_data".requisites
+                JOIN "Dealer_data".invoice ON requisites.requisites_invoice_id = invoice.id_invoice
+                WHERE json -> 'common' ->> 'inn' = ?
+SQL;
+       var_dump( $this->db->query($sql, $inn)->result());die;
+//        var_dump( $this->db->select('id_requisites')->
+//                        select('requisites_creating_date_time')->
+//                        from('"Dealer_data".requisites')->
+//                        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice')->
+//                        where("json -> 'common' ->> 'inn' =", $inn)->get()->row()
+//                                );die;
+    }
+
     public function get_invoice_data_by_id($id_invoice) {
         return $this->db->select('invoice.inn')->
                         select('invoice.invoice_serial_number')->
@@ -453,25 +469,25 @@ class Requisites_model extends CI_Model {
         }
     }
 
-//    public function save_file_to_server($id_req, $file_type, $file_owner, $rep_id = NULL,$data) {
-//        try{
-//            $file_ident = $this->media_service_push();
-//            $data = array(
-//                array(
-//                    'requisites_id' => $id_req,
-//                    'filetype_id' => $file_type,
-//                    'representative_ident' => $file_ident                   
-//                )
-//            );
-//            $file_owner == 1 ? array_push($data, array(
-//                'representative_ident' => $rep_id
-//            )) : NULL;
-//            $file_owner == 1 ? $this->db->insert_batch('"Dealer_data".juridical', $data) :
-//                $this->db->insert_batch('"Dealer_data".files_representatives', $data);
-//        } catch (Exception $ex) {
-//            $message = 'При сохранении файла возникла ошибька -> ' . $ex->getMessage();
-//            throw new Exception($message);
-//
-//        }
-//    }
+    public function get_juridical_files_ident($ident) {
+        return $this->db->select('filetype_id')->
+                        select('file_ident')->
+                        select('timestamp')->
+                        from('"Dealer_data".requisites')->
+                        join('"Dealer_images".files_juridical',
+                                'files_juridical.requisites_id = requisites.id_requisites')->
+                        where('id_requisites', $ident)->get()->result();
+    }
+
+    public function get_representatives_files_ident($ident) {
+        return $this->db->select('representative_ident')->
+                        select('filetype_id')->
+                        select('file_ident')->
+                        select('timestamp')->
+                        from('"Dealer_data".requisites')->
+                        join('"Dealer_images".files_representatives',
+                                'files_representatives.requisites_id = requisites.id_requisites')->
+                        where('id_requisites', $ident)->get()->result();
+    }
+
 }

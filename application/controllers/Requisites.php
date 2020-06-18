@@ -48,53 +48,83 @@ class Requisites extends CI_Controller {
         return $result;
     }
 
-    private function read_files_v3($pointer, $search_field) {
-        $Juridical = array();
-        $Representatives = array();
-        if ($pointer == 'Juridical') {
-            $fullpath = 'uploads/Juridical/' . $search_field . '/';
-            $juridical = $this->getImges('uploads/Juridical/', $search_field);
-            for ($i = 0; $i < count($juridical); $i++) {
-                strpos($juridical[$i], "mu_file_ru") !== false ? $mu_file_ru[] = $juridical[$i] : null;
-                strpos($juridical[$i], "mu_file_kg") !== false ? $mu_file_kg[] = $juridical[$i] : null;
-                strpos($juridical[$i], "m2a") !== false ? $m2a[] = $juridical[$i] : null;
+    private function read_files_v3($pointer, $id_requisites) {
+        /*
+         * $pointer = 
+         *  1 - Juridical
+         *  2 - Representative
+         */
+//        $Juridical = array();
+//        $Representatives = array();
+//        if ($pointer == 'Juridical') {
+//            $fullpath = 'uploads/Juridical/' . $search_field . '/';
+//            $juridical = $this->getImges('uploads/Juridical/', $search_field);
+//            for ($i = 0; $i < count($juridical); $i++) {
+//                strpos($juridical[$i], "mu_file_ru") !== false ? $mu_file_ru[] = $juridical[$i] : null;
+//                strpos($juridical[$i], "mu_file_kg") !== false ? $mu_file_kg[] = $juridical[$i] : null;
+//                strpos($juridical[$i], "m2a") !== false ? $m2a[] = $juridical[$i] : null;
+//            }
+//            !isset($mu_file_ru) ? $mu_file_ru = null : natsort($mu_file_ru);
+//            !isset($mu_file_kg) ? $mu_file_kg = null : natsort($mu_file_kg);
+//            !isset($m2a) ? $m2a = null : natsort($m2a);
+//            empty($mu_file_ru) ?: $mu_file_ru = array_reverse($mu_file_ru, false)[0];
+//            empty($mu_file_kg) ?: $mu_file_kg = array_reverse($mu_file_kg, false)[0];
+//            empty($m2a) ?: $m2a = array_reverse($m2a, false)[0];
+//            $Juridical = array(
+//                'ru' => empty($mu_file_ru) ? null : $fullpath . $mu_file_ru,
+//                'kg' => empty($mu_file_kg) ? null : $fullpath . $mu_file_kg,
+//                'm2a' => empty($m2a) ? null : $fullpath . $m2a);
+//            return $Juridical;
+//        }
+//        if ($pointer = 'Representatives') {
+//            $fullpath = 'uploads/Representatives/' . $search_field . '/';
+//            $reparr = $this->getImges('uploads/Representatives/', $search_field);
+//            $passport_side_front = array();
+//            $passport_side_back = array();
+//            $passport_side_copy = array();
+//            for ($i = 0; $i < count($reparr); $i++) {
+//                strpos($reparr[$i], "passport_side_front") !== false ? $passport_side_front[] = $reparr[$i] : null;
+//                strpos($reparr[$i], "passport_side_back") !== false ? $passport_side_back[] = $reparr[$i] : null;
+//                strpos($reparr[$i], "passport_copy") !== false ? $passport_side_copy[] = $reparr[$i] : null;
+//            }
+//            !isset($passport_side_front) ? $passport_side_front = null : natsort($passport_side_front);
+//            !isset($passport_side_back) ? $passport_side_back = null : natsort($passport_side_back);
+//            !isset($passport_side_copy) ? $passport_side_copy = null : natsort($passport_side_copy);
+//            empty($passport_side_front) ?: $passport_side_front = array_reverse($passport_side_front, false)[0];
+//            empty($passport_side_back) ?: $passport_side_back = array_reverse($passport_side_back, false)[0];
+//            empty($passport_side_copy) ?: $passport_side_copy = array_reverse($passport_side_copy, false)[0];
+//            $Representatives = array(
+//                'front' => empty($passport_side_front) ? null : $fullpath . $passport_side_front,
+//                'back' => empty($passport_side_back) ? null : $fullpath . $passport_side_back,
+//                'copy' => empty($passport_side_copy) ? null : $fullpath . $passport_side_copy
+//            );
+//            return $Representatives;
+//        }
+        /*
+         * 1. get all records from jur
+         * 2. get all records from phys
+         * 3. select from array last record by fyle type jur and add to out array
+         * 4. select from array last record by fyle type phy and add to out array
+         */
+        $files = null;
+        ($pointer == 1) ?
+                        $files = $this->requisites_model->get_juridical_files_ident($id_requisites) : null;
+        ($pointer == 2 ) ?
+                        $files = $this->requisites_model->get_representatives_files_ident($id_requisites) : null;
+
+        if (!is_null($files)) {
+            foreach ($files as &$row) {
+                $tempfile = sys_get_temp_dir() . '/' . $row->file_ident;
+                file_put_contents($tempfile, fopen('http://mediaserverphp.dostek.test/file/download/' . $row->file_ident, 'r'));
+                $row->data = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($tempfile));
             }
-            !isset($mu_file_ru) ? $mu_file_ru = null : natsort($mu_file_ru);
-            !isset($mu_file_kg) ? $mu_file_kg = null : natsort($mu_file_kg);
-            !isset($m2a) ? $m2a = null : natsort($m2a);
-            empty($mu_file_ru) ?: $mu_file_ru = array_reverse($mu_file_ru, false)[0];
-            empty($mu_file_kg) ?: $mu_file_kg = array_reverse($mu_file_kg, false)[0];
-            empty($m2a) ?: $m2a = array_reverse($m2a, false)[0];
-            $Juridical = array(
-                'ru' => empty($mu_file_ru) ? null : $fullpath . $mu_file_ru,
-                'kg' => empty($mu_file_kg) ? null : $fullpath . $mu_file_kg,
-                'm2a' => empty($m2a) ? null : $fullpath . $m2a);
-            return $Juridical;
+        } else {
+            throw new Exception('При обработке изображений возникли ошибки.');
         }
-        if ($pointer = 'Representatives') {
-            $fullpath = 'uploads/Representatives/' . $search_field . '/';
-            $reparr = $this->getImges('uploads/Representatives/', $search_field);
-            $passport_side_front = array();
-            $passport_side_back = array();
-            $passport_side_copy = array();
-            for ($i = 0; $i < count($reparr); $i++) {
-                strpos($reparr[$i], "passport_side_front") !== false ? $passport_side_front[] = $reparr[$i] : null;
-                strpos($reparr[$i], "passport_side_back") !== false ? $passport_side_back[] = $reparr[$i] : null;
-                strpos($reparr[$i], "passport_copy") !== false ? $passport_side_copy[] = $reparr[$i] : null;
-            }
-            !isset($passport_side_front) ? $passport_side_front = null : natsort($passport_side_front);
-            !isset($passport_side_back) ? $passport_side_back = null : natsort($passport_side_back);
-            !isset($passport_side_copy) ? $passport_side_copy = null : natsort($passport_side_copy);
-            empty($passport_side_front) ?: $passport_side_front = array_reverse($passport_side_front, false)[0];
-            empty($passport_side_back) ?: $passport_side_back = array_reverse($passport_side_back, false)[0];
-            empty($passport_side_copy) ?: $passport_side_copy = array_reverse($passport_side_copy, false)[0];
-            $Representatives = array(
-                'front' => empty($passport_side_front) ? null : $fullpath . $passport_side_front,
-                'back' => empty($passport_side_back) ? null : $fullpath . $passport_side_back,
-                'copy' => empty($passport_side_copy) ? null : $fullpath . $passport_side_copy
-            );
-            return $Representatives;
-        }
+        return $files;
+
+        //$jur = $this->requisites_model->get_juridical_files_ident($id_requisites);
+        //$phy = $this->requisites_model->get_physical_files_ident($id_requisites);
     }
 
     private function json_register_format($json) {
@@ -472,14 +502,27 @@ class Requisites extends CI_Controller {
             $data['certificates'] = $this->requisites_model->get_certificates($RequisitesData->inn);
             $data['requisites_data'] = $RequisitesData;
 
-            ($RequisitesData->json_version_id == 1 || $RequisitesData->json_version_id == 2) ?
-                            $data['files'] = $this->read_files($RequisitesData->invoice_serial_number) : null;
+//            ($RequisitesData->json_version_id == 1 || $RequisitesData->json_version_id == 2) ?
+//                            $data['files'] = $this->read_files($RequisitesData->invoice_serial_number) : null;
+//
+//            if ($RequisitesData->json_version_id == 3) {
+//                $RequisitesData->json->common->files = $this->read_files_v3('Juridical', $RequisitesData->json->common->inn);
+//                foreach ($RequisitesData->json->common->representatives as &$rep) {
+//                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
+//                }
+//            }
 
-            if ($RequisitesData->json_version_id == 3) {
-                $RequisitesData->json->common->files = $this->read_files_v3('Juridical', $RequisitesData->json->common->inn);
-                foreach ($RequisitesData->json->common->representatives as &$rep) {
-                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
-                }
+            $RequisitesData->json->common->files = $this->read_files_v3(1, $id_requisites);
+            $representativesfiles = $this->read_files_v3(2, $id_requisites);
+
+            foreach ($RequisitesData->json->common->representatives as &$rep) {
+                $pn = $rep->person->passport->number;
+                $files = array_filter($representativesfiles, function($obj) use ($pn) {
+                    if ($obj->representative_ident == $pn)
+                        return true;
+                    return false;
+                });
+                $rep->files = $files;
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -489,9 +532,10 @@ class Requisites extends CI_Controller {
 
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        ($RequisitesData->json_version_id == 1) ? $this->load->view('template/requisites/requisites_show', $data) : null;
-        ($RequisitesData->json_version_id == 2) ? $this->load->view('template/requisites/requisites_show_V2', $data) : null;
-        ($RequisitesData->json_version_id == 3) ? $this->load->view('template/requisites/requisites_show_V3', $data) : null;
+//        ($RequisitesData->json_version_id == 1) ? $this->load->view('template/requisites/requisites_show', $data) : null;
+//        ($RequisitesData->json_version_id == 2) ? $this->load->view('template/requisites/requisites_show_V2', $data) : null;
+//        ($RequisitesData->json_version_id == 3) ? $this->load->view('template/requisites/requisites_show_V3', $data) : null;
+        $this->load->view('template/requisites/requisites_show_V3', $data);
         $this->load->view('template/footer');
     }
 
@@ -507,14 +551,15 @@ class Requisites extends CI_Controller {
             $data['invoice_data'] = $this->requisites_model->get_invoice_data_by_id($invoice_id);
 
             $requisites = $this->requisites_model->get_requisites_by_inn($data['invoice_data']->inn); //поиск в реквизитах
+            $id_requisites = $this->requisites_model->get_requisites_ID($data['invoice_data']->inn)->id_requisites; //поиск в локальной бд предыдущего айди
             if (!is_null($requisites)) {
                 foreach ($requisites->common->representatives as &$rep) {//prepare date format
                     $rep->person->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $rep->person->passport->issuingDate)->format('d.m.Y');
                 }
 
-                $requisites->common->files = $this->read_files_v3('Juridical', $requisites->common->inn);
+                $requisites->common->files = $this->read_files_v3(1, $id_requisites);
                 foreach ($requisites->common->representatives as &$rep) {
-                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
+                    //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
                 }
 
                 $data['requisites_json'] = $requisites;
