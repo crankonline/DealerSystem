@@ -9,6 +9,8 @@ class Migration_Create_schema_images extends CI_Migration {
 
         $sql = <<<SQL
 create schema if not exists "Dealer_images";
+                
+set search_path = "Dealer_images"
 
 create table if not exists "Dealer_images".files_owner
 (
