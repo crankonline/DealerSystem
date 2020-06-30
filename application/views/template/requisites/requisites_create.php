@@ -392,7 +392,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <img class="thumbnail" 
                                          ng-show="Data.common.files.kg && jur_file_ch"
-                                         ng-src="<?php echo base_url() ?>{{Data.common.files.kg}}" 
+                                         ng-src="{{Data.common.files.kg}}" 
                                          width="400">
                                     <div align="center"
                                          ng-show="!Data.common.files.kg && jur_file_ch">
@@ -421,7 +421,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <img class="thumbnail" 
                                          ng-show="Data.common.files.ru && jur_file_ch"
-                                         ng-src="<?php echo base_url() ?>{{Data.common.files.ru}}" 
+                                         ng-src="{{Data.common.files.ru}}" 
                                          width="400">
                                     <div align="center"
                                          ng-show="!Data.common.files.ru && jur_file_ch">
@@ -451,7 +451,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                     <img class="thumbnail" 
                                          ng-show="Data.common.files.m2a && jur_file_ch"
-                                         ng-src="<?php echo base_url() ?>{{Data.common.files.m2a}}" 
+                                         ng-src="{{Data.common.files.m2a}}" 
                                          width="400">
                                     <div align="center"
                                          ng-show="!Data.common.files.m2a && jur_file_ch">
@@ -650,7 +650,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                                                 <img class="thumbnail"
                                                                      ng-show="Data.common.representatives[key].files.front && rep_file_ch[key]"
-                                                                     ng-src="<?php echo base_url() ?>{{Data.common.representatives[key].files.front}}" 
+                                                                     ng-src="{{Data.common.representatives[key].files.front}}" 
                                                                      width="400">
                                                                 <div align="center"
                                                                      ng-show="!Data.common.representatives[key].files.front && rep_file_ch[key]">
@@ -675,7 +675,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                                                 <img class="thumbnail" 
                                                                      ng-show="Data.common.representatives[key].files.back && rep_file_ch[key]"
-                                                                     ng-src="<?php echo base_url() ?>{{Data.common.representatives[key].files.back}}" 
+                                                                     ng-src="{{Data.common.representatives[key].files.back}}" 
                                                                      width="400">
                                                                 <div align="center"
                                                                      ng-show="!Data.common.representatives[key].files.back && rep_file_ch[key]">
@@ -705,7 +705,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
                                                                 <img class="thumbnail" 
                                                                      ng-show="Data.common.representatives[key].files.copy && rep_file_ch[key]"
-                                                                     ng-src="<?php echo base_url() ?>{{Data.common.representatives[key].files.copy}}" 
+                                                                     ng-src="{{Data.common.representatives[key].files.copy}}" 
                                                                      width="400">
                                                                 <div align="center"
                                                                      ng-show="!Data.common.representatives[key].files.copy && rep_file_ch[key]">

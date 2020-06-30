@@ -397,9 +397,12 @@ class Requisites_model extends CI_Model {
                 SELECT id_requisites
                 FROM "Dealer_data".requisites
                 JOIN "Dealer_data".invoice ON requisites.requisites_invoice_id = invoice.id_invoice
+                JOIN "Dealer_images".files_juridical ON requisites.id_requisites = files_juridical.requisites_id
                 WHERE json -> 'common' ->> 'inn' = ?
+                ORDER BY id_requisites DESC
 SQL;
-       var_dump( $this->db->query($sql, $inn)->result());die;
+        return $this->db->query($sql, $inn)->row()->id_requisites;
+      // var_dump( $this->db->query($sql, $inn)->result());die;
 //        var_dump( $this->db->select('id_requisites')->
 //                        select('requisites_creating_date_time')->
 //                        from('"Dealer_data".requisites')->

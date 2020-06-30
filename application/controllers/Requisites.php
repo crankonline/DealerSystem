@@ -511,9 +511,16 @@ class Requisites extends CI_Controller {
 //                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
 //                }
 //            }
-
-            $RequisitesData->json->common->files = $this->read_files_v3(1, $id_requisites);
-            $representativesfiles = $this->read_files_v3(2, $id_requisites);
+            $files = $this->read_files_v3(1, $id_requisites);
+            !$files ? // если текущая ид без картинок то ищем последнею с картинкой
+                            $RequisitesData->json->common->files = $this->read_files_v3(1, $this->requisites_model->get_requisites_ID($RequisitesData->inn)) :
+                            $RequisitesData->json->common->files = $files;
+            //$RequisitesData->json->common->files = $this->read_files_v3(1, $id_requisites);
+            $files = $this->read_files_v3(2, $id_requisites);
+            !$files ? // если текущая ид без картинок то ищем последнею с картинкой
+                            $representativesfiles = $this->read_files_v3(2, $this->requisites_model->get_requisites_ID($RequisitesData->inn)) :
+                            $representativesfiles = $files;
+            //$representativesfiles = $this->read_files_v3(2, $id_requisites);
 
             foreach ($RequisitesData->json->common->representatives as &$rep) {
                 $pn = $rep->person->passport->number;
@@ -551,17 +558,31 @@ class Requisites extends CI_Controller {
             $data['invoice_data'] = $this->requisites_model->get_invoice_data_by_id($invoice_id);
 
             $requisites = $this->requisites_model->get_requisites_by_inn($data['invoice_data']->inn); //поиск в реквизитах
-            $id_requisites = $this->requisites_model->get_requisites_ID($data['invoice_data']->inn)->id_requisites; //поиск в локальной бд предыдущего айди
+            $id_requisites = $this->requisites_model->get_requisites_ID($data['invoice_data']->inn); //поиск в локальной бд предыдущего айди c картинками
+            /// var_dump($id_requisites);die;
             if (!is_null($requisites)) {
                 foreach ($requisites->common->representatives as &$rep) {//prepare date format
                     $rep->person->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $rep->person->passport->issuingDate)->format('d.m.Y');
                 }
-
-                $requisites->common->files = $this->read_files_v3(1, $id_requisites);
-                foreach ($requisites->common->representatives as &$rep) {
-                    //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
+                if (!is_null($id_requisites)) {
+                    $files = $this->read_files_v3(1, $id_requisites); //get arch juridical scans                    
+                    foreach ($files as $key => &$file) { //сделано в угоду старой вьюхи
+                        $file->filetype_id == 1 ? $requisites->common->files['kg'] = $file->data : null;
+                        $file->filetype_id == 2 ? $requisites->common->files['ru'] = $file->data : null;
+                        $file->filetype_id == 3 ? $requisites->common->files['m2a'] = $file->data : null;
+                    }
+                    $files = $this->read_files_v3(2, $id_requisites); //get arch physical scans                    
+                    foreach ($requisites->common->representatives as &$rep) {
+                        //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
+                        foreach ($files as $file) {
+                            if ($rep->person->passport->number == $file->representative_ident) {//сделано в угоду старой вьюхи
+                                $file->filetype_id == 4 ? $rep->files['front'] = $file->data : null;
+                                $file->filetype_id == 5 ? $rep->files['back'] = $file->data : null;
+                                $file->filetype_id == 6 ? $rep->files['copy'] = $file->data : null;
+                            }
+                        }
+                    }
                 }
-
                 $data['requisites_json'] = $requisites;
                 //$data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
