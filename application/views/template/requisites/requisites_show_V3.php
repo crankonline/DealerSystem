@@ -64,7 +64,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <?php else: ?>
                                 <tr class="danger">
                                 <?php endif; ?>
-        <!--<td><?php //echo $cert->CertNumber;      ?></td>-->
+        <!--<td><?php //echo $cert->CertNumber;          ?></td>-->
                                 <td style="width: 250px"><?php echo $cert->Owner; ?></td>
                                 <td style="width: 160px"><?php echo $cert->Passport->Series . " " . $cert->Passport->Number; ?></td>
                                 <td><?php echo $cert->Title; ?></td>
@@ -180,7 +180,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </tr>
                     <!--<tr>
                         <td>СОАТЭ</td>
-                        <td><?php //echo $requisites_data->json->contacts->real_address->settlement;                     ?></td>
+                        <td><?php //echo $requisites_data->json->contacts->real_address->settlement;                         ?></td>
                     </tr>-->
                     <tr>
                         <td><strong>Населенный пункт</strong></td>
@@ -245,43 +245,54 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     </tr>
 <!--                        <tr>
                         <td>Система отчетности</td>
-                        <td><?php //echo 'В josn не нет такого';                     ?></td>
+                        <td><?php //echo 'В josn не нет такого';                         ?></td>
                     </tr>-->
                 <tbody>    
             </table>
-            <h3 align="center">Сканированные документы - <button type="submit" class="btn btn-info" ng-click="juridical_scan = !juridical_scan">Показать / Скрыть</button></h3>
-            <table class="table" ng-show="juridical_scan">
-                <thead></thead>
-                <tbody>
-                    <tr class="success" align="center">
-                        <td><h4>Свидетельство о государственной регистрации Министерсва Юстиции (Кыргызская стороная)</h4></td>
-                    </tr>
-                    <tr>
-                        <?php
-                        echo (!empty($requisites_data->json->common->files['kg'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($requisites_data->json->common->files['kg']) . '" width="500" ></td>' :
-                                '<td align="center">Документ отсутсвует<td>';
-                        ?>
-                    </tr>
-                    <tr class="success" align="center">
-                        <td><h4>Свидетельство о государственной регистрации Министерсва Юстиции (Русская стороная)</h4></td>
-                    </tr>
-                    <tr>
-                        <?php
-                        echo (!empty($requisites_data->json->common->files['kg'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($requisites_data->json->common->files['ru']) . '" width="500" ></td>' :
-                                '<td align="center">Документ отсутсвует<td>';
-                        ?>
-                    </tr>
-                    <tr class="success" align="center">
-                        <td><h4>Форма М2А</h4></td>
-                    </tr>
-                    <tr>
-                        <?php
-                        echo (!empty($requisites_data->json->common->files['m2a'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($requisites_data->json->common->files['m2a']) . '" width="500" ></td>' :
-                                '<td align="center">Документ отсутсвует<td>';
-                        ?>
-                    </tr>
-                </tbody>
-            </table>
+            <!--            <h3 align="center">Сканированные документы - <button type="submit" class="btn btn-info" ng-click="juridical_scan = !juridical_scan">Показать / Скрыть</button></h3>-->
+            <!--            <table class="table" ng-show="juridical_scan">
+                            <thead></thead>
+                            <tbody>
+                                <tr class="success" align="center">
+                                    <td><h4>Свидетельство о государственной регистрации Министерсва Юстиции (Кыргызская стороная)</h4></td>
+                                </tr>
+                                <tr>
+            <?php
+            //echo (!empty($requisites_data->json->common->files[0]->)) ? '<td align="center"> <img class="thumbnail" src="' . base_url($requisites_data->json->common->files['kg']) . '" width="500" ></td>' :
+            //'<td align="center">Документ отсутсвует<td>';
+            ?>
+                                </tr>
+                                <tr class="success" align="center">
+                                    <td><h4>Свидетельство о государственной регистрации Министерсва Юстиции (Русская стороная)</h4></td>
+                                </tr>
+                                <tr>
+            <?php
+            //
+            //  echo (!empty($requisites_data->json->common->files['kg'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($requisites_data->json->common->files['ru']) . '" width="500" ></td>' :
+            //       '<td align="center">Документ отсутсвует<td>';
+            ?>
+                                </tr>
+                                <tr class="success" align="center">
+                                    <td><h4>Форма М2А</h4></td>
+                                </tr>
+                                <tr>
+            <?php
+            // echo (!empty($requisites_data->json->common->files['m2a'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($requisites_data->json->common->files['m2a']) . '" width="500" ></td>' :
+            //         '<td align="center">Документ отсутсвует<td>';
+            ?>
+                                </tr>
+                            </tbody>
+                        </table>-->
+            <h3 align="center">Сканированные документы</h3>
+            <div class="row">
+                <?php foreach ($requisites_data->json->common->files as $file): ?>
+                    <div class="col-xs-6 col-md-3">
+                        <a href="#" class="thumbnail">
+                            <img src=<?php echo $file->data ?> alt="...">
+                        </a>
+                    </div>
+                <?php endforeach; ?>
+            </div>
         </div>
     </div>
     <?php if (isset($requisites_data->json->common->representatives)): ?>
@@ -331,41 +342,50 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </tr>
                         </tbody>
                     </table>
-                    <?php if ($person->deviceSerial != '0000000000'): ?>
-                        <h3 align="center">Сканированные документы - <button type="submit" class="btn btn-info" ng-click="person_scan = !person_scan">Показать / Скрыть</button></h3>
-                        <table class="table" ng-show="person_scan">
-                            <thead></thead>
-                            <tbody>
-                                <tr class="success" align="center">
-                                    <td><h4>Паспорт физического лица (Cторона 1)</h4></td>
-                                </tr>
-                                <tr>
-                                    <?php
-                                        echo(!empty($person->files['front'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['front']) . '" width="500" ></td>' :
-                                            '<td align="center">Документ отсутсвует<td>'
-                                    ?>
-                                </tr>
-                                <tr class="success" align="center">
-                                    <td><h4>Паспорт физического лица (Cторона 2)</h4></td>
-                                </tr>
-                                <tr>
-                                    <?php
-                                        echo(!empty($person->files['back'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['back']) . '" width="500" ></td>' :
-                                            '<td align="center">Документ отсутсвует<td>'
-                                    ?>
-                                </tr>
-                                <tr class="success" align="center">
-                                    <td><h4>Нотариально заверенная копия</h4></td>
-                                </tr>
-                                <tr>
-                                    <?php
-                                        echo(!empty($person->files['copy'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['copy']) . '" width="500" ></td>' :
-                                            '<td align="center">Документ отсутсвует<td>'
-                                    ?>
-                                </tr>
-                            </tbody>
-                        </table>
-                    <?php endif; ?>
+                    <?php //if ($person->deviceSerial != '0000000000'): ?>
+                    <h3 align="center">Сканированные документы <!-- <button type="submit" class="btn btn-info" ng-click="person_scan = !person_scan">Показать / Скрыть</button>--></h3>
+        <!--                        <table class="table" ng-show="person_scan">
+                         <thead></thead>
+                         <tbody>
+                             <tr class="success" align="center">
+                                 <td><h4>Паспорт физического лица (Cторона 1)</h4></td>
+                             </tr>
+                             <tr>
+                    <?php
+//                                    echo(!empty($person->files['front'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['front']) . '" width="500" ></td>' :
+//                                            '<td align="center">Документ отсутсвует<td>'
+                    ?>
+                             </tr>
+                             <tr class="success" align="center">
+                                 <td><h4>Паспорт физического лица (Cторона 2)</h4></td>
+                             </tr>
+                             <tr>
+                    <?php
+//                                    echo(!empty($person->files['back'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['back']) . '" width="500" ></td>' :
+//                                            '<td align="center">Документ отсутсвует<td>'
+                    ?>
+                             </tr>
+                             <tr class="success" align="center">
+                                 <td><h4>Нотариально заверенная копия</h4></td>
+                             </tr>
+                             <tr>
+                    <?php
+//                                    echo(!empty($person->files['copy'])) ? '<td align="center"> <img class="thumbnail" src="' . base_url($person->files['copy']) . '" width="500" ></td>' :
+//                                            '<td align="center">Документ отсутсвует<td>'
+                    ?>
+                             </tr>
+                         </tbody>
+                     </table>-->
+                    <?php //endif; ?>
+                    <div class="row">
+                        <?php foreach ($person->files as $file): ?>
+                            <div class="col-xs-6 col-md-3">
+                                <a href="#" class="thumbnail">
+                                    <img src=<?php echo $file->data ?> alt="...">
+                                </a>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>

@@ -10,13 +10,13 @@ class Requisites_model extends CI_Model {
         $wsdl = (ENVIRONMENT == 'production') ?
                 getenv('SOAP_REQUISITES_PROD') : //prod
                 getenv('SOAP_REQUISITES_DEV'); //dev
-
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
             'trace' => 1,
             'cache_wsdl' => WSDL_CACHE_NONE,
-            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            //'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            'location' => str_replace('?wsdl', '', $wsdl),
             'connection_timeout' => 5,
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
@@ -29,6 +29,7 @@ class Requisites_model extends CI_Model {
                 getenv('SOAP_REQUISITES_META_PROD') : //prod
                 getenv('SOAP_REQUISITES_META_DEV'); //dev
         $user = array(
+            'location' => str_replace('?wsdl', '', $wsdl),
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
         );
@@ -360,8 +361,15 @@ class Requisites_model extends CI_Model {
     }
 
     public function create_requisites($data) {
-        $this->db->insert('"Dealer_data".requisites', $data);
-        return $this->db->insert_id();
+        $result = $this->db->select('id_requisites')->
+                        from('"Dealer_data".requisites')->
+                        where('requisites_invoice_id', $data['requisites_invoice_id'])->get()->row();
+        if (!$result) {
+            $this->db->insert('"Dealer_data".requisites', $data);
+            return $this->db->insert_id();
+        } else {
+            return $result->id_requisites;
+        }
     }
 
     public function get_requisites($id_requisites) {
@@ -382,6 +390,25 @@ class Requisites_model extends CI_Model {
                 join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'inner')->
                 get_where('"Dealer_data".requisites', array('id_requisites' => $id_requisites));
         return $result->row();
+    }
+
+    public function get_requisites_ID($inn) {
+        $sql = <<<SQL
+                SELECT id_requisites
+                FROM "Dealer_data".requisites
+                JOIN "Dealer_data".invoice ON requisites.requisites_invoice_id = invoice.id_invoice
+                JOIN "Dealer_images".files_juridical ON requisites.id_requisites = files_juridical.requisites_id
+                WHERE json -> 'common' ->> 'inn' = ?
+                ORDER BY id_requisites DESC
+SQL;
+        return $this->db->query($sql, $inn)->row()->id_requisites;
+      // var_dump( $this->db->query($sql, $inn)->result());die;
+//        var_dump( $this->db->select('id_requisites')->
+//                        select('requisites_creating_date_time')->
+//                        from('"Dealer_data".requisites')->
+//                        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice')->
+//                        where("json -> 'common' ->> 'inn' =", $inn)->get()->row()
+//                                );die;
     }
 
     public function get_invoice_data_by_id($id_invoice) {
@@ -426,25 +453,44 @@ class Requisites_model extends CI_Model {
         return $this->db->get()->result();
     }
 
-//    public function save_file_to_server($id_req, $file_type, $file_owner, $rep_id = NULL,$data) {
-//        try{
-//            $file_ident = $this->media_service_push();
-//            $data = array(
-//                array(
-//                    'requisites_id' => $id_req,
-//                    'filetype_id' => $file_type,
-//                    'representative_ident' => $file_ident                   
-//                )
-//            );
-//            $file_owner == 1 ? array_push($data, array(
-//                'representative_ident' => $rep_id
-//            )) : NULL;
-//            $file_owner == 1 ? $this->db->insert_batch('"Dealer_data".juridical', $data) :
-//                $this->db->insert_batch('"Dealer_data".files_representatives', $data);
-//        } catch (Exception $ex) {
-//            $message = 'При сохранении файла возникла ошибька -> ' . $ex->getMessage();
-//            throw new Exception($message);
-//
-//        }
-//    }
+    public function save_file_ident($file_struct, $ident = null) {
+        /*
+         * $file_type = //1,2,3,4
+         * $part = //1 - phisical, 2 - juridical
+         * $file_struct
+         * array(
+         *  'requisites_id'=>, //id requisistes in db
+         *  'file_type_id'=>, //id file type
+         *  'representative_id'=> //if $file_type == 2
+         *  'file_ident'); 
+         */
+        if (in_array($file_struct['filetype_id'], [1, 2, 3])) {
+            $this->db->insert('"Dealer_images".files_juridical', $file_struct);
+        } else {
+            $file_struct['representative_ident'] = $ident;
+            $this->db->insert('"Dealer_images".files_representatives', $file_struct);
+        }
+    }
+
+    public function get_juridical_files_ident($ident) {
+        return $this->db->select('filetype_id')->
+                        select('file_ident')->
+                        select('timestamp')->
+                        from('"Dealer_data".requisites')->
+                        join('"Dealer_images".files_juridical',
+                                'files_juridical.requisites_id = requisites.id_requisites')->
+                        where('id_requisites', $ident)->get()->result();
+    }
+
+    public function get_representatives_files_ident($ident) {
+        return $this->db->select('representative_ident')->
+                        select('filetype_id')->
+                        select('file_ident')->
+                        select('timestamp')->
+                        from('"Dealer_data".requisites')->
+                        join('"Dealer_images".files_representatives',
+                                'files_representatives.requisites_id = requisites.id_requisites')->
+                        where('id_requisites', $ident)->get()->result();
+    }
+
 }
