@@ -1,5 +1,7 @@
 <?php
+
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 /**
  * Created by PhpStorm.
  * User: dex
@@ -16,14 +18,13 @@ class Pdfcreate extends CI_Controller {
             'mode' => 'utf-8',
             'format' => 'A4-P',
             'default_font_size' => 10]);
-        
+
         $this->load->model('pdfrender_model');
 
         $this->load->model('invoice_model');
         $this->load->model('price_model');
 
         $this->load->model('requisites_model');
-
     }
 
     /**
@@ -33,8 +34,7 @@ class Pdfcreate extends CI_Controller {
 //        $data['data'] = $this->pdf_Invoice_model->get_all_invoice();
         $data['data'] = $this->pdfrender_model->get_all_invoice_unique();
         $data['data_req'] = $this->pdfrender_model->get_all_requisites_for_invoice();
-        $this->load->view('pdf/pdf_index',$data);
-
+        $this->load->view('pdf/pdf_index', $data);
     }
 
     /**
@@ -45,15 +45,15 @@ class Pdfcreate extends CI_Controller {
         !is_null($view) ?: show_error('Получены не верные параметры.', 500, $heading = 'Произошла ошибка');
         if ($view != FALSE) {
             $data['data'] = $this->pdfrender_model->get_all_invoice();
-            $this->load->view('pdf/pdf_index',$data);
+            $this->load->view('pdf/pdf_index', $data);
         } else {
             $filename = time();
 
-            $pdfFilePath = FCPATH."downloads/$filename.pdf";
+            $pdfFilePath = FCPATH . "downloads/$filename.pdf";
             $data['data'] = $this->pdfrender_model->get_all_invoice();
 
             if (file_exists($pdfFilePath) == FALSE) {
-                ini_set('memory_limit','32M'); // boost the memory limit if it's low ;)
+                ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                 $html = $this->load->view('pdf/pdf_index', $data, true); // render the view into HTML
                 //$this->load->library('pdf');
                 //$pdf = $this->pdf->load();
@@ -68,7 +68,7 @@ class Pdfcreate extends CI_Controller {
 
     public function test2() {
         $data['data'] = $this->pdfrender_model->get_invoice_single('2017030200004802');
-        print_r ($data['data']->template);
+        print_r($data['data']->template);
     }
 
     /**
@@ -137,13 +137,13 @@ class Pdfcreate extends CI_Controller {
             'okpo' => $data['data']->okpo,
             'sti_region' => $data['data']->sti_region,
             'bank_bik' => $data['data']->bank_bik,
-            'bank_name' =>  $data['data']->bank_name,
+            'bank_name' => $data['data']->bank_name,
             'bank_account' => $data['data']->bank_account,
             'inn_distributor' => $data['data']->inn_distributor
         );
         $data['distributor'] = $distributor;
 
-        $pay_invoice = array (
+        $pay_invoice = array(
             'id_pay_invoice' => $data['data']->id_pay_invoice,
             'pay_invoice_version_id' => $data['data']->pay_invoice_version_id,
             'serial' => $data['data']->serial,
@@ -158,9 +158,6 @@ class Pdfcreate extends CI_Controller {
         );
         $data['pay_invoice_version'] = $pay_invoice_version;
         //</editor-fold>
-
-
-
 //        echo "<pre>";
 //        print_r($data);
 //        echo "</pre><br/><br/><br/><br/><br/><br/>";
@@ -169,7 +166,7 @@ class Pdfcreate extends CI_Controller {
 //        echo "</pre><br/><br/><br/><br/><br/><br/>";
 //        exit(0);
 
-        if($data['data']->json_version_id == '1') {
+        if ($data['data']->json_version_id == '1') {
 //            echo "print old sf";
 
 
@@ -198,8 +195,7 @@ class Pdfcreate extends CI_Controller {
 
                 redirect("/downloads/$filename.pdf");
             }
-        }
-        else if ($data['data']->json_version_id == '2') {
+        } else if ($data['data']->json_version_id == '2') {
 //            echo "print new sf";
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1_v2', $data);
@@ -213,7 +209,7 @@ class Pdfcreate extends CI_Controller {
                 if (file_exists($pdfFilePath) == FALSE) {
                     ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                     $html = $this->load->view('pdf/pay_invoice_l_1_v2', $data, true); // render the view into HTML
-                   // $this->load->library('pdf');
+                    // $this->load->library('pdf');
                     //$pdf = $this->pdf->load();
                     //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
                     $this->pdf->WriteHTML($html); // write the HTML into the PDF
@@ -221,8 +217,15 @@ class Pdfcreate extends CI_Controller {
                     $this->pdf->Output();
                 }
 
-               // redirect("/downloads/$filename.pdf");
+                // redirect("/downloads/$filename.pdf");
             }
+        } else if ($data['data']->json_version_id == '3') {
+            //ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
+            $html = $this->load->view('pdf/pay_invoice_008', $data, true); // render the view into HTML
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+//            $this->pdf->AddPage();
+//            $this->pdf->WriteHTML($html);
+            $this->pdf->Output();
         } else {
             echo "no print";
         }
@@ -237,14 +240,7 @@ class Pdfcreate extends CI_Controller {
 //        print_r( $data );
 //        echo "</pre>";
 //        //die();
-
-
-
-
     }
-
-
-
 
     /**
      * Счет на оплату
@@ -252,7 +248,7 @@ class Pdfcreate extends CI_Controller {
      * @param $type - тип (bank, terminal)
      * @param bool $view - FALSE - отображение на страницу - иначе в пдф
      */
-    public function Invoice($invoice, $type, $view = FALSE){
+    public function Invoice($invoice, $type, $view = FALSE) {
 
         !is_null($view) ?: show_error('Получены не верные параметры.', 500, $heading = 'Произошла ошибка');
         !is_null($invoice) ?: show_error('Получены не верные параметры.', 500, $heading = 'Произошла ошибка');
@@ -262,24 +258,23 @@ class Pdfcreate extends CI_Controller {
         //format data to page
         $data['data']['0']->creating_date_time = date("Y.m.d H:i:s", strtotime($data['data']['0']->creating_date_time));
         if ($type == 'bank') {
-            $data['data']['0']->bank =
-                $data['data']['0']->full_name . ", "
-                . $data['data']['0']->address . ", "
-                . "ОКПО:" . $data['data']['0']->okpo . ", "
-                . "ИНН:" . $data['data']['0']->inn_distributor . ", "
-                . "ГНИ:" . $data['data']['0']->sti_region . ", "
-                . "БАНК:" . $data['data']['0']->bank_name . ", "
-                . "БИК:" . $data['data']['0']->bank_bik . ", "
-                . "Р/С:" . $data['data']['0']->bank_account;
+            $data['data']['0']->bank = $data['data']['0']->full_name . ", "
+                    . $data['data']['0']->address . ", "
+                    . "ОКПО:" . $data['data']['0']->okpo . ", "
+                    . "ИНН:" . $data['data']['0']->inn_distributor . ", "
+                    . "ГНИ:" . $data['data']['0']->sti_region . ", "
+                    . "БАНК:" . $data['data']['0']->bank_name . ", "
+                    . "БИК:" . $data['data']['0']->bank_bik . ", "
+                    . "Р/С:" . $data['data']['0']->bank_account;
         } else {
             $data['data']['0']->bank = $data['data']['0']->full_name;
         }
 
         //format items of invoice
         for ($i = 0; $i < sizeof($data['data']); $i++) {
-                $data['data'][$i]->id_count = $i+1;
-                $data['data'][$i]->price_print = number_format($data['data'][$i]->price, 2, '.', ' ');
-                $data['data'][$i]->price_count_print = number_format($data['data'][$i]->price_count, 2, '.', ' ');
+            $data['data'][$i]->id_count = $i + 1;
+            $data['data'][$i]->price_print = number_format($data['data'][$i]->price, 2, '.', ' ');
+            $data['data'][$i]->price_count_print = number_format($data['data'][$i]->price_count, 2, '.', ' ');
         }
 
 
@@ -302,7 +297,7 @@ class Pdfcreate extends CI_Controller {
             if (file_exists($pdfFilePath) == FALSE) {
                 ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                 $html = $this->load->view($data['data'][0]->template, $data, true); // render the view into HTML
-               // $this->load->library('pdf');
+                // $this->load->library('pdf');
                 //$pdf = $this->pdf->load();
                 //$pdf->SetFooter($_SERVER['HTTP_HOST'] . '|{PAGENO}|' . date(DATE_RFC822)); // Add a footer for good measure ;)
                 $this->pdf->WriteHTML($html); // write the HTML into the PDF
@@ -313,58 +308,19 @@ class Pdfcreate extends CI_Controller {
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Возвращает сохраненную пдф из папки downloads
      * работает через прописанный роут config/routes.php
      * @param $f - имя файла в папке downloads
      */
-    public function download($f){
+    public function download($f) {
         header("Content-type: application/pdf");
 
 //        $this->output->set_content_type('application/pdf');
-        $file = FCPATH."downloads/".$f;
+        $file = FCPATH . "downloads/" . $f;
 //        $data = file_get_contents( $file );
         readfile($file);
     }
-
 
     /**
      * Превращает числовае значение в прописное текстовое
@@ -372,42 +328,46 @@ class Pdfcreate extends CI_Controller {
      * @return string
      */
     public static function num2str($num) {
-        $nul='ноль';
-        $ten=array(
-            array('','один','два','три','четыре','пять','шесть','семь', 'восемь','девять'),
-            array('','одна','две','три','четыре','пять','шесть','семь', 'восемь','девять'),
+        $nul = 'ноль';
+        $ten = array(
+            array('', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'),
+            array('', 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'),
         );
-        $a20=array('десять','одиннадцать','двенадцать','тринадцать','четырнадцать' ,'пятнадцать','шестнадцать','семнадцать','восемнадцать','девятнадцать');
-        $tens=array(2=>'двадцать','тридцать','сорок','пятьдесят','шестьдесят','семьдесят' ,'восемьдесят','девяносто');
-        $hundred=array('','сто','двести','триста','четыреста','пятьсот','шестьсот', 'семьсот','восемьсот','девятьсот');
-        $unit=array( // Units
-            array('тыйын' ,'тыйын' ,'тыйын',     1),
-            array('сом'   ,'сом'   ,'сом'    ,0),
-            array('тысяча'  ,'тысячи'  ,'тысяч'     ,1),
-            array('миллион' ,'миллиона','миллионов' ,0),
-            array('миллиард','милиарда','миллиардов',0),
+        $a20 = array('десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать');
+        $tens = array(2 => 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто');
+        $hundred = array('', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот');
+        $unit = array(// Units
+            array('тыйын', 'тыйын', 'тыйын', 1),
+            array('сом', 'сом', 'сом', 0),
+            array('тысяча', 'тысячи', 'тысяч', 1),
+            array('миллион', 'миллиона', 'миллионов', 0),
+            array('миллиард', 'милиарда', 'миллиардов', 0),
         );
         //
-        list($rub,$kop) = explode('.',sprintf("%015.2f", floatval($num)));
+        list($rub, $kop) = explode('.', sprintf("%015.2f", floatval($num)));
         $out = array();
-        if (intval($rub)>0) {
-            foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
-                if (!intval($v)) continue;
-                $uk = sizeof($unit)-$uk-1; // unit key
+        if (intval($rub) > 0) {
+            foreach (str_split($rub, 3) as $uk => $v) { // by 3 symbols
+                if (!intval($v))
+                    continue;
+                $uk = sizeof($unit) - $uk - 1; // unit key
                 $gender = $unit[$uk][3];
-                list($i1,$i2,$i3) = array_map('intval',str_split($v,1));
+                list($i1, $i2, $i3) = array_map('intval', str_split($v, 1));
                 // mega-logic
                 $out[] = $hundred[$i1]; # 1xx-9xx
-                if ($i2>1) $out[]= $tens[$i2].' '.$ten[$gender][$i3]; # 20-99
-                else $out[]= $i2>0 ? $a20[$i3] : $ten[$gender][$i3]; # 10-19 | 1-9
+                if ($i2 > 1)
+                    $out[] = $tens[$i2] . ' ' . $ten[$gender][$i3];# 20-99
+                else
+                    $out[] = $i2 > 0 ? $a20[$i3] : $ten[$gender][$i3];# 10-19 | 1-9
                 // units without rub & kop
-                if ($uk>1) $out[]= self::morph($v,$unit[$uk][0],$unit[$uk][1],$unit[$uk][2]);
+                if ($uk > 1)
+                    $out[] = self::morph($v, $unit[$uk][0], $unit[$uk][1], $unit[$uk][2]);
             } //foreach
-        }
-        else $out[] = $nul;
-        $out[] = self::morph(intval($rub), $unit[1][0],$unit[1][1],$unit[1][2]); // rub
-        $out[] = $kop.' '.self::morph($kop,$unit[0][0],$unit[0][1],$unit[0][2]); // kop
-        return trim(preg_replace('/ {2,}/', ' ', join(' ',$out)));
+        } else
+            $out[] = $nul;
+        $out[] = self::morph(intval($rub), $unit[1][0], $unit[1][1], $unit[1][2]); // rub
+        $out[] = $kop . ' ' . self::morph($kop, $unit[0][0], $unit[0][1], $unit[0][2]); // kop
+        return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
     }
 
     /**
@@ -417,10 +377,13 @@ class Pdfcreate extends CI_Controller {
      */
     private static function morph($n, $f1, $f2, $f5) {
         $n = abs(intval($n)) % 100;
-        if ($n>10 && $n<20) return $f5;
+        if ($n > 10 && $n < 20)
+            return $f5;
         $n = $n % 10;
-        if ($n>1 && $n<5) return $f2;
-        if ($n==1) return $f1;
+        if ($n > 1 && $n < 5)
+            return $f2;
+        if ($n == 1)
+            return $f1;
         return $f5;
     }
 
@@ -443,6 +406,5 @@ class Pdfcreate extends CI_Controller {
         ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($token, $reference['id']) : NULL; //?? php 7.0
         return $result;
     }
-
 
 }
