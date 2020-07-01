@@ -567,18 +567,18 @@ class Requisites extends CI_Controller {
                 if (!is_null($id_requisites)) {
                     $files = $this->read_files_v3(1, $id_requisites); //get arch juridical scans                    
                     foreach ($files as $key => &$file) { //сделано в угоду старой вьюхи
-                        $file->filetype_id == 1 ? $requisites->common->files['kg'] = $file->data : null;
-                        $file->filetype_id == 2 ? $requisites->common->files['ru'] = $file->data : null;
-                        $file->filetype_id == 3 ? $requisites->common->files['m2a'] = $file->data : null;
+                        $file->filetype_id == 1 ? $requisites->common->files['kg'] = $file : null;
+                        $file->filetype_id == 2 ? $requisites->common->files['ru'] = $file : null;
+                        $file->filetype_id == 3 ? $requisites->common->files['m2a'] = $file : null;
                     }
                     $files = $this->read_files_v3(2, $id_requisites); //get arch physical scans                    
                     foreach ($requisites->common->representatives as &$rep) {
                         //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
                         foreach ($files as $file) {
                             if ($rep->person->passport->number == $file->representative_ident) {//сделано в угоду старой вьюхи
-                                $file->filetype_id == 4 ? $rep->files['front'] = $file->data : null;
-                                $file->filetype_id == 5 ? $rep->files['back'] = $file->data : null;
-                                $file->filetype_id == 6 ? $rep->files['copy'] = $file->data : null;
+                                $file->filetype_id == 4 ? $rep->files['front'] = $file : null;
+                                $file->filetype_id == 5 ? $rep->files['back'] = $file : null;
+                                $file->filetype_id == 6 ? $rep->files['copy'] = $file : null;
                             }
                         }
                     }
@@ -674,7 +674,7 @@ class Requisites extends CI_Controller {
                     'file_ident' => json_decode($response)->fileName);
                 $this->requisites_model->save_file_ident($file_struct_db, $ident);
             } else {
-                throw new Exception($error . 'сервер вернул не действительное значение');
+                throw new Exception($error . ' сервер вернул не действительное значение');
             }
             //var_dump(json_decode($response)->fileName); //insert into db
         }
@@ -707,6 +707,21 @@ class Requisites extends CI_Controller {
                 echo '<p>Файл изображения ' . $key . ' - отправлен в хранилище</p>';
                 unlink($config['upload_path'] . $config['file_name']);
             }
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500);
+            echo $ex->getMessage();
+        }
+    }
+
+    public function requisites_file_upload_skip($id_req, $file_type, $files_ident) {
+        try {
+            $file_struct_db = array(
+                    'requisites_id' => $id_req, //id requisistes in db
+                    'filetype_id' => $file_type, //id file type
+                    'file_ident' => $files_ident);
+             $this->requisites_model->save_file_ident($file_struct_db, $ident);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
