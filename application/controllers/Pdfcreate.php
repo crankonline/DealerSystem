@@ -165,20 +165,30 @@ class Pdfcreate extends CI_Controller {
 //        print_r($data['data_invoice']);
 //        echo "</pre><br/><br/><br/><br/><br/><br/>";
 //        exit(0);
+        if ($pay_invoice_version['id_pay_invoice_version'] == '2') {
+            //ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;
+            $token = false;
+            foreach ($data['data_invoice'] as $Record) {
+                $Record->id_inventory == 2 ? $token = true : null;
+            }
+            if ($token) {
+                $html = $this->load->view('pdf/pay_invoice_007', $data, true);
+                $this->pdf->WriteHTML($html);
+                $this->pdf->AddPage();
+            }
+            $html = $this->load->view($pay_invoice_version['template'], $data, true); // render the view into HTML
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+            $this->pdf->Output();
+            return;
+        }
 
-        if ($data['data']->json_version_id == '1') {
-//            echo "print old sf";
-
-
+        if ($data['data']->json_version_id == '1' && $data['data']->invoice_version_id == '1') {
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1', $data);
             } else {
-
                 $filename = time();
-
                 $pdfFilePath = FCPATH . "downloads/$filename.pdf";
                 $data['page_title'] = 'Pay Invoice'; // pass data to the view
-
                 if (file_exists($pdfFilePath) == FALSE) {
                     ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                     $html = $this->load->view('pdf/pay_invoice_l_1', $data, true); // render the view into HTML
@@ -192,10 +202,9 @@ class Pdfcreate extends CI_Controller {
                     $this->pdf->WriteHTML($html); // write the HTML into the PDF
                     $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
                 }
-
                 redirect("/downloads/$filename.pdf");
             }
-        } else if ($data['data']->json_version_id == '2') {
+        } else if ($data['data']->json_version_id == '2' && $data['data']->invoice_version_id == '1') {
 //            echo "print new sf";
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1_v2', $data);
@@ -219,13 +228,6 @@ class Pdfcreate extends CI_Controller {
 
                 // redirect("/downloads/$filename.pdf");
             }
-        } else if ($data['data']->json_version_id == '3') {
-            //ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
-            $html = $this->load->view('pdf/pay_invoice_008', $data, true); // render the view into HTML
-            $this->pdf->WriteHTML($html); // write the HTML into the PDF
-//            $this->pdf->AddPage();
-//            $this->pdf->WriteHTML($html);
-            $this->pdf->Output();
         } else {
             echo "no print";
         }
