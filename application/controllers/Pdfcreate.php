@@ -41,35 +41,35 @@ class Pdfcreate extends CI_Controller {
      * Testprint pdf - welcome index pdf
      * @param bool $view - default FALSE - other - print page
      */
-    public function test($view = FALSE) {
-        !is_null($view) ?: show_error('Получены не верные параметры.', 500, $heading = 'Произошла ошибка');
-        if ($view != FALSE) {
-            $data['data'] = $this->pdfrender_model->get_all_invoice();
-            $this->load->view('pdf/pdf_index', $data);
-        } else {
-            $filename = time();
-
-            $pdfFilePath = FCPATH . "downloads/$filename.pdf";
-            $data['data'] = $this->pdfrender_model->get_all_invoice();
-
-            if (file_exists($pdfFilePath) == FALSE) {
-                ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
-                $html = $this->load->view('pdf/pdf_index', $data, true); // render the view into HTML
-                //$this->load->library('pdf');
-                //$pdf = $this->pdf->load();
-                //$pdf->SetFooter($_SERVER['HTTP_HOST'].'|{PAGENO}|'.date(DATE_RFC822)); // Add a footer for good measure ;)
-                $this->pdf->WriteHTML($html); // write the HTML into the PDF
-                $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
-            }
-
-            redirect("/downloads/$filename.pdf");
-        }
-    }
-
-    public function test2() {
-        $data['data'] = $this->pdfrender_model->get_invoice_single('2017030200004802');
-        print_r($data['data']->template);
-    }
+//    public function test($view = FALSE) {
+//        !is_null($view) ?: show_error('Получены не верные параметры.', 500, $heading = 'Произошла ошибка');
+//        if ($view != FALSE) {
+//            $data['data'] = $this->pdfrender_model->get_all_invoice();
+//            $this->load->view('pdf/pdf_index', $data);
+//        } else {
+//            $filename = time();
+//
+//            $pdfFilePath = FCPATH . "downloads/$filename.pdf";
+//            $data['data'] = $this->pdfrender_model->get_all_invoice();
+//
+//            if (file_exists($pdfFilePath) == FALSE) {
+//                ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
+//                $html = $this->load->view('pdf/pdf_index', $data, true); // render the view into HTML
+//                //$this->load->library('pdf');
+//                //$pdf = $this->pdf->load();
+//                //$pdf->SetFooter($_SERVER['HTTP_HOST'].'|{PAGENO}|'.date(DATE_RFC822)); // Add a footer for good measure ;)
+//                $this->pdf->WriteHTML($html); // write the HTML into the PDF
+//                $this->pdf->Output($pdfFilePath, 'F'); // save to file because we can
+//            }
+//
+//            redirect("/downloads/$filename.pdf");
+//        }
+//    }
+//
+//    public function test2() {
+//        $data['data'] = $this->pdfrender_model->get_invoice_single('2017030200004802');
+//        print_r($data['data']->template);
+//    }
 
     /**
      * Счет фактура
@@ -173,6 +173,22 @@ class Pdfcreate extends CI_Controller {
             }
             if ($token) {
                 $html = $this->load->view('pdf/pay_invoice_007', $data, true);
+                $this->pdf->WriteHTML($html);
+                $this->pdf->AddPage();
+            }
+            $html = $this->load->view($pay_invoice_version['template'], $data, true); // render the view into HTML
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+            $this->pdf->Output();
+            return;
+        }
+        
+        if ($pay_invoice_version['id_pay_invoice_version'] == '3'){
+            $token = false;
+            foreach ($data['data_invoice'] as $Record) {
+                $Record->id_inventory == 2 ? $token = true : null;
+            }
+            if ($token) {
+                $html = $this->load->view('pdf/waybill', $data, true);
                 $this->pdf->WriteHTML($html);
                 $this->pdf->AddPage();
             }
@@ -315,98 +331,98 @@ class Pdfcreate extends CI_Controller {
      * работает через прописанный роут config/routes.php
      * @param $f - имя файла в папке downloads
      */
-    public function download($f) {
-        header("Content-type: application/pdf");
-
-//        $this->output->set_content_type('application/pdf');
-        $file = FCPATH . "downloads/" . $f;
-//        $data = file_get_contents( $file );
-        readfile($file);
-    }
+//    public function download($f) {
+//        header("Content-type: application/pdf");
+//
+////        $this->output->set_content_type('application/pdf');
+//        $file = FCPATH . "downloads/" . $f;
+////        $data = file_get_contents( $file );
+//        readfile($file);
+//    }
 
     /**
      * Превращает числовае значение в прописное текстовое
      * @param $num
      * @return string
      */
-    public static function num2str($num) {
-        $nul = 'ноль';
-        $ten = array(
-            array('', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'),
-            array('', 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'),
-        );
-        $a20 = array('десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать');
-        $tens = array(2 => 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто');
-        $hundred = array('', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот');
-        $unit = array(// Units
-            array('тыйын', 'тыйын', 'тыйын', 1),
-            array('сом', 'сом', 'сом', 0),
-            array('тысяча', 'тысячи', 'тысяч', 1),
-            array('миллион', 'миллиона', 'миллионов', 0),
-            array('миллиард', 'милиарда', 'миллиардов', 0),
-        );
-        //
-        list($rub, $kop) = explode('.', sprintf("%015.2f", floatval($num)));
-        $out = array();
-        if (intval($rub) > 0) {
-            foreach (str_split($rub, 3) as $uk => $v) { // by 3 symbols
-                if (!intval($v))
-                    continue;
-                $uk = sizeof($unit) - $uk - 1; // unit key
-                $gender = $unit[$uk][3];
-                list($i1, $i2, $i3) = array_map('intval', str_split($v, 1));
-                // mega-logic
-                $out[] = $hundred[$i1]; # 1xx-9xx
-                if ($i2 > 1)
-                    $out[] = $tens[$i2] . ' ' . $ten[$gender][$i3];# 20-99
-                else
-                    $out[] = $i2 > 0 ? $a20[$i3] : $ten[$gender][$i3];# 10-19 | 1-9
-                // units without rub & kop
-                if ($uk > 1)
-                    $out[] = self::morph($v, $unit[$uk][0], $unit[$uk][1], $unit[$uk][2]);
-            } //foreach
-        } else
-            $out[] = $nul;
-        $out[] = self::morph(intval($rub), $unit[1][0], $unit[1][1], $unit[1][2]); // rub
-        $out[] = $kop . ' ' . self::morph($kop, $unit[0][0], $unit[0][1], $unit[0][2]); // kop
-        return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
-    }
-
-    /**
-     * Склоняем словоформу
-     * используется в num2str
-     * @ author stone
-     */
-    private static function morph($n, $f1, $f2, $f5) {
-        $n = abs(intval($n)) % 100;
-        if ($n > 10 && $n < 20)
-            return $f5;
-        $n = $n % 10;
-        if ($n > 1 && $n < 5)
-            return $f2;
-        if ($n == 1)
-            return $f1;
-        return $f5;
-    }
+//    public static function num2str($num) {
+//        $nul = 'ноль';
+//        $ten = array(
+//            array('', 'один', 'два', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'),
+//            array('', 'одна', 'две', 'три', 'четыре', 'пять', 'шесть', 'семь', 'восемь', 'девять'),
+//        );
+//        $a20 = array('десять', 'одиннадцать', 'двенадцать', 'тринадцать', 'четырнадцать', 'пятнадцать', 'шестнадцать', 'семнадцать', 'восемнадцать', 'девятнадцать');
+//        $tens = array(2 => 'двадцать', 'тридцать', 'сорок', 'пятьдесят', 'шестьдесят', 'семьдесят', 'восемьдесят', 'девяносто');
+//        $hundred = array('', 'сто', 'двести', 'триста', 'четыреста', 'пятьсот', 'шестьсот', 'семьсот', 'восемьсот', 'девятьсот');
+//        $unit = array(// Units
+//            array('тыйын', 'тыйын', 'тыйын', 1),
+//            array('сом', 'сом', 'сом', 0),
+//            array('тысяча', 'тысячи', 'тысяч', 1),
+//            array('миллион', 'миллиона', 'миллионов', 0),
+//            array('миллиард', 'милиарда', 'миллиардов', 0),
+//        );
+//        //
+//        list($rub, $kop) = explode('.', sprintf("%015.2f", floatval($num)));
+//        $out = array();
+//        if (intval($rub) > 0) {
+//            foreach (str_split($rub, 3) as $uk => $v) { // by 3 symbols
+//                if (!intval($v))
+//                    continue;
+//                $uk = sizeof($unit) - $uk - 1; // unit key
+//                $gender = $unit[$uk][3];
+//                list($i1, $i2, $i3) = array_map('intval', str_split($v, 1));
+//                // mega-logic
+//                $out[] = $hundred[$i1]; # 1xx-9xx
+//                if ($i2 > 1)
+//                    $out[] = $tens[$i2] . ' ' . $ten[$gender][$i3];# 20-99
+//                else
+//                    $out[] = $i2 > 0 ? $a20[$i3] : $ten[$gender][$i3];# 10-19 | 1-9
+//                // units without rub & kop
+//                if ($uk > 1)
+//                    $out[] = self::morph($v, $unit[$uk][0], $unit[$uk][1], $unit[$uk][2]);
+//            } //foreach
+//        } else
+//            $out[] = $nul;
+//        $out[] = self::morph(intval($rub), $unit[1][0], $unit[1][1], $unit[1][2]); // rub
+//        $out[] = $kop . ' ' . self::morph($kop, $unit[0][0], $unit[0][1], $unit[0][2]); // kop
+//        return trim(preg_replace('/ {2,}/', ' ', join(' ', $out)));
+//    }
+//
+//    /**
+//     * Склоняем словоформу
+//     * используется в num2str
+//     * @ author stone
+//     */
+//    private static function morph($n, $f1, $f2, $f5) {
+//        $n = abs(intval($n)) % 100;
+//        if ($n > 10 && $n < 20)
+//            return $f5;
+//        $n = $n % 10;
+//        if ($n > 1 && $n < 5)
+//            return $f2;
+//        if ($n == 1)
+//            return $f1;
+//        return $f5;
+//    }
 
     /**
      * Считывает данные из соап сервиса
      */
-    public static function get_reference_byid($reference) {
-//        return get_reference_byid('72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9');
-        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
-        $user = array(
-            'login' => 'api-' . date('z') . '-user',
-            'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
-        );
-        $token = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
-        $client = new SoapClient($wsdl, $user);
-        ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonLegalFormById') ? $result = $client->getCommonLegalFormById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCivilLegalStatusById') ? $result = $client->getCommonCivilLegalStatusById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCapitalFormById') ? $result = $client->getCommonCapitalFormById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($token, $reference['id']) : NULL; //?? php 7.0
-        return $result;
-    }
+//    public static function get_reference_byid($reference) {
+////        return get_reference_byid('72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9');
+//        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
+//        $user = array(
+//            'login' => 'api-' . date('z') . '-user',
+//            'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
+//        );
+//        $token = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
+//        $client = new SoapClient($wsdl, $user);
+//        ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonLegalFormById') ? $result = $client->getCommonLegalFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonCivilLegalStatusById') ? $result = $client->getCommonCivilLegalStatusById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonCapitalFormById') ? $result = $client->getCommonCapitalFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        return $result;
+//    }
 
 }
