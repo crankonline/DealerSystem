@@ -14,7 +14,7 @@
 
             table.concept {
                 border-collapse: collapse;
-                width: 350px;
+                width: 700px;
             }
 
             table.concept td {
@@ -26,6 +26,10 @@
             }
             table.concept tr.small td {
                 font-size: 8px;
+            }
+            table.concept tr.border td{
+                border-bottom: solid;
+                border-width: thin;
             }
 
             table.concept td[colspan="1"] { min-width: 5%; width: 5%; max-width: 5%; }
@@ -55,6 +59,9 @@
             .large {
                 font-size: 13px;
             }
+            .title {
+                font-size: 20px;
+            }
 
             .center { text-align: center; }
             .right { text-align: right; }
@@ -81,413 +88,107 @@
         <table class="concept">
             <tbody>
 
-                <tr>
-                    <td colspan="9" class="small">
-                        <b>BLANK STI - 008</b><br/>
-                        Кыргызская Республика
+                <tr class="border">
+                    <td colspan="15" class="title" style="border-bottom: solid; border-width: thin;">
+                        <b>Расходная накладная от</b>
                     </td>
-                    <td colspan="21" align="center">
-                        <b class="center large">НАКЛАДНАЯ</b>
-                        <p class="small">bla bla bla</p>
+                    <td colspan="12" class="title">
+                        <b><?php echo (new \DateTime($data->requisites_creating_date_time))->format('d.m.Y'); ?></b>
                     </td>
-                    <td colspan="10" class="center small">
-                        Приложение 4
-                    </td>
+                    <td colspan="15"></td>
                 </tr>
                 <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-                <tr>
-                    <td colspan="16"></td>
-                    <td colspan="21" align="right">ВСЕГО ЛИСТОВ</td>
-                    <td colspan="3" class="bordered center">1</td>
-
-                </tr>
-                <tr>
-                    <td colspan="40" class="">&nbsp;</td>
-                </tr>
-                <tr>
-                    <td colspan="40"></td>
-                </tr>
-
-                <tr>
-                    <td colspan="2" class="bordered center">101</td>
-                    <td colspan="4">&nbsp;&nbsp; СТАТУС:</td>
-                    <td colspan="5" class="bordered center"></td>
-                    <td colspan="2" ></td>
-                    <td colspan="2" class="bordered center">102</td>
-                    <td colspan="6">&nbsp;&nbsp; НОМЕР: <?php echo $data->number; ?></td>
-                    <td colspan="2" class="bordered center">103</td>
-                    <td colspan="7">&nbsp;&nbsp; ДАТА ОФОРМЛЕНИЯ</td>
-                    <td colspan="1" class="bordered center"> <?php echo date("d", strtotime($data->requisites_creating_date_time)){0}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("d", strtotime($data->requisites_creating_date_time)){1}; ?></td>
-                    <td colspan="1"></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("m", strtotime($data->requisites_creating_date_time)){0}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("m", strtotime($data->requisites_creating_date_time)){1}; ?></td>
-                    <td colspan="1"></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){0}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){1}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){2}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){3}; ?></td>
-                </tr>
-                <tr class="small">
-                    <td colspan="20">&nbsp;</td>
-                    <td colspan="10">&nbsp;</td>
-                    <td colspan="2" class="center">день</td>
-                    <td colspan="4" class="center">месяц</td>
-                    <td colspan="4" class="center">год</td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
+                    <td height="10" colspan="40"></td>
                     <td></td>
                     <td></td>
                 </tr>
-                <tr class="bordered small">
-                    <td colspan="40" class="center">Раздел 1. Реквизиты поставщика и покупателя</td>
-                </tr>
-                <tr class="small">
-                    <td colspan="1" class="bordered center">201</td>
-                    <td colspan="5" rowspan="2" class="center border-top border-bottom">Поставщик ИНН</td>
-                    <?php for ($i = 0; $i < 14; $i++): ?>
-                        <td class="center bordered" rowspan="2" colspan="1"><?php echo $data->inn_distributor{$i}; ?></td>
-                    <?php endfor; ?>
-                    <td colspan="1" class="bordered center">301</td>
-                    <td colspan="5" rowspan="2" class="center border-top border-bottom border-right" >Покупатель ИНН</td>
-                    <?php for ($i = 0; $i < 14; $i++): ?>
-                        <td class="center bordered" rowspan = "2" colspan="1"><?php echo $json->common->inn{$i}; ?></td>
-                    <?php endfor; ?>
-                </tr>
-                <tr class="border-bottom">
-                    <td class="border-left border-bottom">&nbsp;</td>
-                    <td class="border-left border-bottom">&nbsp;</td>
-                </tr>
-
-                <tr class="small">
-                    <td colspan="1" class="bordered center">202</td>
-                    <td colspan="19" class="border-right center">Ф.И.О. ИП / Наименование организации</td>
-                    <td colspan="1" class="bordered center">302</td>
-                    <td colspan="19" class="border-right center">Ф.И.О. ИП / Наименование организации</td>
+                
+                <tr class="large">
+                    <td colspan="10">Поставщик:</td>
+                    <td colspan="30"><b>ОсОО "DOS TEK GROUP"</b> (ОсОО "Дос Тэк Групп")
+                        <br>со Основной склад</td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="border-left border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom"><?php echo $data->full_name; ?></td>
-                    <td colspan="1" class="border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom"><?php echo $json->common->name; ?></td>
+                    <td colspan="40" height="10"></td>
+                    <td></td>
+                    <td></td>
                 </tr>
-
-                <tr class="small">
-                    <td colspan="1" class="bordered center">203</td>
-                    <td colspan="5" rowspan="2" class="center border-top border-bottom">Филиал поставщика ИНН</td>
-                    <?php for ($i = 0; $i < 14; $i++): ?>
-                        <td class="center bordered" rowspan="2" colspan="1"></td>
-                    <?php endfor; ?>
-                    <td colspan="1" class="bordered center">303</td>
-                    <td colspan="5" rowspan="2" class="center border-top border-bottom border-right" >Филиал покупателя ИНН</td>
-                    <?php for ($i = 0; $i < 14; $i++): ?>
-                        <td class="center bordered" rowspan = "2" colspan="1"></td>
-                    <?php endfor; ?>
-                </tr>
-                <tr class="border-bottom">
-                    <td class="border-left border-bottom">&nbsp;</td>
-                    <td class="border-left border-bottom">&nbsp;</td>
-                </tr>
-
-                <tr class="small">
-                    <td colspan="1" class="bordered center">204</td>
-                    <td colspan="19" class="border-right center">Наименование филиала</td>
-                    <td colspan="1" class="bordered center">304</td>
-                    <td colspan="19" class="border-right center">Наименование филиала</td>
+                <tr class="large">
+                    <td colspan="10">Покупатель:</td>
+                    <td colspan="29"><b>Здесь может быть ваша реклама</b></td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="border-left border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom center">&nbsp;&nbsp;</td>
-                    <td colspan="1" class="border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom center"></td>
+                    <td height="10" colspan="40"></td>
+                    <td></td>
+                    <td></td>
                 </tr>
-
-                <tr class="small">
-                    <td colspan="1" class="bordered center">205</td>
-                    <td colspan="19" class="border-right center">Адрес (юридический и/или фактический)</td>
-                    <td colspan="1" class="bordered center">305</td>
-                    <td colspan="19" class="border-right center">Адрес (юридический и/или фактический</td>
+                <tr class="large">
+                    <td colspan="10">Комментарий:</td>
+                    <td colspan="29">Оплата за Token</td>
+                    <td></td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="border-left border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom"><?php echo $data->address; ?></td>
-                    <td colspan="1" class="border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom"><?php
-                        $juristicAddress = [
-                            isset($json->common->juristicAddress->settlement->district->region->name) ? $json->common->juristicAddress->settlement->district->region->name : "",
-                            isset($json->common->juristicAddress->settlement->district->name) ? $json->common->juristicAddress->settlement->district->name : "",
-                            isset($json->common->juristicAddress->settlement->name) ? $json->common->juristicAddress->settlement->name : "",
-                            isset($json->common->juristicAddress->street) ? $json->common->juristicAddress->street : "",
-                            isset($json->common->juristicAddress->building) ? $json->common->juristicAddress->building : "",
-                            isset($json->common->juristicAddress->apartment) ? $json->common->juristicAddress->apartment : ""
-                        ];
-                        $juristicAddressChecked = [];
-                        foreach ($juristicAddress as $item) {
-                            if ($item == "") {
-                                continue;
-                            }
-                            $juristicAddressChecked[] = $item;
-                        }
-                        echo implode(
-                                ', ', $juristicAddressChecked);
-                        ?>
-                    </td>
+                    <td height="12"></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <!-- Табличная часть -->
+                <tr class="large td-bordered td-center">
+                    <td colspan="2"><b>№ п/п</b></td>
+                    <td colspan="5"><b>Код</b></td>
+                    <td colspan="13"><b>Товар</b></td>
+                    <td colspan="9"><b>Количесвто</b></td>
+                    <td colspan="8"><b>Цена</b></td>
+                    <td colspan="5"><b>Сумма</b></td>                   
+                </tr>
+                <tr class="large td-bordered">
+                    <td class="center" colspan="2">1</td>
+                    <td class="center" colspan="5">00000056</td>
+                    <td class="center" colspan="13">Рутокен ЭЦП64КБ</td>
+                    <td class="right" colspan="9">1,000</td>
+                    <td class="right" colspan="8">1935,00</td>
+                    <td class="right" colspan="5">1935,00</td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="small bordered">206</td>
-                    <td colspan="2" rowspan="2" class="small border-bottom">Код налогового органа</td>
-                    <td colspan="1" rowspan="2" class="small center bordered"><?php echo $data->sti_code{0}; ?></td>
-                    <td colspan="1" rowspan="2" class="small center bordered"><?php echo $data->sti_code{1}; ?></td>
-                    <td colspan="1" rowspan="2" class="small center bordered"><?php echo $data->sti_code{2}; ?></td>
-                    <td colspan="14" class="small center">Наименование налогового органа</td>
-
-                    <td colspan="1" class="small bordered">306</td>
-                    <td colspan="2" rowspan="2" class="small border-bottom">Код налогового органа</td>
-                    <td colspan="1" rowspan="2" class="small center bordered"><?php echo $json->sti->regionDefault->id{0}; ?></td>
-                    <td colspan="1" rowspan="2" class="small center bordered"><?php echo $json->sti->regionDefault->id{1}; ?></td>
-                    <td colspan="1" rowspan="2" class="small center bordered"><?php echo $json->sti->regionDefault->id{2}; ?></td>
-                    <td colspan="14" class="small border-right center">Наименование налогового органа</td>
+                    <td height="10"></td>
+                </tr>
+                <!-- Подвал -->
+                <tr class="large">
+                    <td colspan="27"></td>
+                    <td colspan="10" align="right"><b>Итого:</b></td>
+                    <td colspan="5" align="right">1935,00</td>
+                </tr>
+                <tr class="large">
+                    <td colspan="27"></td> 
+                    <td colspan="10" align="right"><b>В том числе НДС:</b></td>
+                    <td colspan="5" align="right">205,49</td>
                 </tr>
                 <tr>
-                    <td colspan="6" class="border-left border-bottom"></td>
-                    <td colspan="14" class="border-left border-bottom" ><?php echo $data->sti_region; ?></td>
-                    <td colspan="6" class="border-left border-bottom"></td>
-                    <td colspan="14" class="border-left border-bottom border-right" ><?php echo $json->sti->regionDefault->name; ?></td>
+                    <td height="12" colspan="42"></td>
+                </tr>
+                <tr class="large">
+                    <td colspan="42">Всего наименований 1, на сумму 1935,00</td>
+                </tr>
+                <tr class="large">
+                    <td colspan="42"><b>Одна тысяча девятьсот тридцать пять сом 00 тыйын</b></td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="bordered small center">207</td>
-                    <td colspan="10" class="small center">Наименование банка и код (БИК)</td>
-                    <?php $biclengthdist = strlen($data->bank_bik); /* 6 */ ?>
-                    <?php for ($i = 0; $i < $biclengthdist; $i++): ?>
-                        <td class = "small center bordered" rowspan="2" colspan="1"><?php echo $data->bank_bik{$i}; ?></td>
-                    <?php endfor; ?>
-                    <td class = "center bordered" rowspan="2" colspan="1"></td>
-                    <td class = "center bordered" rowspan="2" colspan="1"></td>
-                    <td class = "center bordered" rowspan="2" colspan="1"></td>
-
-                    <td colspan="1" class="bordered small center">307</td>
-                    <td colspan="10" class="small center">Наименование банка и код (БИК)</td>
-                    <?php if (isset($json->common->bank->id)) : ?>
-                        <?php $biclength = strlen($json->common->bank->id); /* 6 */ ?>
-                        <?php for ($i = 0; $i < $biclength; $i++): ?>
-                            <td class = "small center bordered" rowspan="2" colspan="1"><?php echo $json->common->bank->id{$i}; ?></td>
-                        <?php endfor; ?>
-                    <?php else : ?>
-                        <?php for ($i = 0; $i < 6; $i++): ?>
-                            <td class = "center bordered" rowspan="2" colspan="1">X</td>
-                        <?php endfor; ?>
-                    <?php endif ?>
-                    <td class = "center bordered" rowspan="2" colspan="1"></td>
-                    <td class = "center bordered" rowspan="2" colspan="1"></td>
-                    <td class = "center bordered" rowspan="2" colspan="1"></td>
+                    <td height="15" colspan="42"></td>
                 </tr>
-
-
-                <tr>
-                    <td class="border-left border-bottom"></td>
-                    <td colspan="10" class="border-bottom" ><?php echo $data->bank_name; ?></td>
-                    <td class="border-left border-bottom"></td>
-                    <td colspan="10" class="border-bottom" ><?php echo isset($json->common->bank->name) ? $json->common->bank->name : ""; ?></td>
-                </tr>
-
-                <tr>
-                    <td colspan="1" class="bordered small">208</td>
-                    <td colspan="3" rowspan="2" class="small border-bottom">Расчетный счет</td>
-
-                    <?php $obalength = strlen($data->bank_account); //echo "<td>".$obalength."</td>"; /* 16 */ ?>
-                    <?php for ($i = 0; $i < $obalength; $i++): ?>
-                        <td class="small center bordered" rowspan = "2" colspan="1"><?php echo $data->bank_account{$i}; ?></td>
-                    <?php endfor; ?>
-
-                    <td colspan="1" class="bordered small">308</td>
-                    <td colspan="3" rowspan="2" class="small border-bottom">Расчетный счет</td>
-
-                    <?php if (isset($json->common->bankAccount)) : ?>
-                        <?php $balength = strlen($json->common->bankAccount); //echo "<td>".$balength."</td>";/* 16 */ ?>
-                        <?php if ($balength > 16): ?>
-                            <?php for ($i = 0; $i < 16; $i++): ?>
-                                <td class="small center bordered" rowspan = "2" colspan="1"><?php echo $json->common->bankAccount{$i}; ?></td>
-                            <?php endfor; ?>
-                        <?php else: ?>
-                            <?php for ($i = 0; $i < $balength; $i++): ?>
-                                <td class="small center bordered" rowspan = "2" colspan="1"><?php echo $json->common->bankAccount{$i}; ?></td>
-                            <?php endfor; ?>
-                        <?php endif; ?>
-                    <?php else : ?>
-                        <?php for ($i = 0; $i < 16; $i++): ?>
-                            <td class="center bordered" rowspan = "2" colspan="1">X</td>
-                        <?php endfor; ?>
-                    <?php endif ?>
-                </tr>
-
-
-                <tr class="border-bottom">
-                    <td class="border-left border-bottom">&nbsp;</td>
-                    <td class="border-left border-bottom">&nbsp;</td>
-                </tr>
-
-                <tr class="small">
-                    <td colspan="1" class="bordered center">209</td>
-                    <td colspan="19" class="border-right center"></td>
-                    <td colspan="1" class="bordered center">309</td>
-                    <td colspan="19" class="border-right center"></td>
-                </tr>
-
-                <tr>
-                    <td colspan="1" class="border-left border-bottom"></td>
-                    <td colspan="10" class="border-bottom">Дата регистрации как налогоплательщика НДС</td>
-                    <td colspan="9" class="border-bottom border-right"></td>
-                    <td colspan="1" class="border-bottom"></td>
-                    <td colspan="10" class="border-bottom">Дата регистрации как налогоплательщика НДС</td>
-                    <td colspan="9" class="border-bottom border-right"></td>
-                </tr>
-
-                <tr class="bordered small">
-                    <td colspan="40" class="center">Раздел 2. Информация о реализации</td>
-                </tr>
-
-
-                <tr>
-                    <td colspan="1" class="bordered small">401</td>
-                    <td colspan="12" class="small">Дата (период) поставки</td>
-                    <td colspan="1" class="bordered small">402</td>
-                    <td colspan="9" class="small">Вид поставки</td>
-                    <td colspan="1" class="bordered small">403</td>
-                    <td colspan="16" class="border-right small">Форма оплаты</td>
-                </tr>
-
-                <tr class="border-bottom">
-                    <td colspan="1"  class="border-left border-bottom">&nbsp;</td>
-                    <td colspan="12" class="center border-bottom"><?php echo date_format(new DateTime($data->requisites_creating_date_time), 'd.m.Y'); ?></td>
-                    <td colspan="1"  class="border-left border-bottom">&nbsp;</td>
-                    <td colspan="9"  class="center border-bottom">Внутренняя</td>
-                    <td colspan="1"  class="border-left border-bottom">&nbsp;</td>
-                    <td colspan="16" class="center border-right border-bottom">Безналичный</td>
-                </tr>
-
-                <tr class="small">
-                    <td colspan="1" class="bordered center">404</td>
-                    <td colspan="39" class="border-right center"></td>                    
-                </tr>
-
-                <tr>
-                    <td colspan="1" class="border-left border-bottom"></td>
-                    <td colspan="10" class="border-bottom">Договор (контракт) на реализацию (поставку) работ и услуг</td>
-                    <td colspan="9" class="border-bottom">№____________________________</td>
-                    <td colspan="5" class="border-bottom"><td>
-                    <td colspan="15" class="border-bottom border-right">____ . ____ . ________<td>
-                </tr>
-
-                <tr class="small">
-                    <td class="bordered" colspan="1">405</td>
-                    <td colspan="19">Корректировка к счету-фактуре НДС</td>
-                    <td class="bordered" colspan="1">406</td>
-                    <td colspan="19" class="border-right">Причины корректировки</td>
-                </tr>
-
-                <tr class="border-bottom">
-                    <td class="border-left border-bottom">&nbsp;</td>
-                    <td colspan="19" class="border-right border-bottom">&nbsp;</td>
-                    <td class=" border-bottom"></td>
-                    <td colspan="19" class="border-right border-bottom">&nbsp;</td>
-                </tr>
-
-                <tr class="bordered small">
-                    <td colspan="40" class="center">Раздел 3. Информация о работе и/или услуге</td>
-                </tr>
-
-                <tr class="small">
-                    <td colspan="14" class="border-left">
-                    <td colspan="5" class="center border-bottom">417</td>
-                    <td colspan="1"></td>
-                    <td colspan="1"></td>
-                    <td colspan="5" class="center border-bottom">1,000</td>
-                    <td colspan="14" class="border-right"></td>
-                </tr>
-                <tr class="small">
-                    <td colspan="14" class="border-left">
-                    <td colspan="5" class="center">Код валюты</td>
-                    <td colspan="1"></td>
-                    <td colspan="1"></td>
-                    <td colspan="5" class="center">Курс валюты</td>
-                    <td colspan="14" class="border-right"></td>
-                </tr>
-
-                <tr class="td-bordered td-center">
-                    <th class = "small" colspan="3" rowspan="2">Код работы и/или услуги</th>
-                    <th class = "small" colspan="11" rowspan="2">Наименование работы и/или услуги</th>
-<!--                    <th class = "small" colspan="2" rowspan="2">Ед. изм.</th>
-                    <th class = "small" colspan="3" rowspan="2">Колич-во (объем)</th>
-                    <th class = "small" colspan="3" rowspan="2">Цена (сом)</th>-->
-                    <th class = "small" colspan="10" rowspan="2">Стоимость услуг и товаров без НДС и НcП</th>
-                    <th class = "small" colspan="6">НДС</th>
-                    <th class = "small" colspan="6">НсП</th>
-                    <th class = "small" colspan="5" rowspan="2">Всего стоимость поставки</th>
-                </tr>
-                <tr class="td-bordered td-center">
-                    <th class="small" colspan="2">Ставка</th>
-                    <th class="small" colspan="4">Сумма</th>
-                    <th class="small" colspan="2">Ставка</th>
-                    <th class="small" colspan="4">Сумма</th>
-                </tr>
-
-                <?php $Sum = 0; $price_count = 0?>
-                <?php $addcount = 7 - count($data_invoice); ?>
-                <?php foreach ($data_invoice as $Record) : ?>
-                <?php if ($Record->id_inventory != 2): //если не токен?>
-                    <tr class="td-bordered">
-                        <td colspan="3" class="center"></td>
-                        <td colspan="11"><?php echo $Record->inventory_name; ?></td>
-    <!--                        <td colspan="2" class="center">шт.</td>-->
-    <!--                        <td colspan="3" class="center"><?php //echo $Record->count;    ?></td>-->
-    <!--                        <td colspan="3" class="center"><?php //echo number_format(($Record->price_count / $Record->count) / 1.12, 2, '.', '');    ?></td>-->
-                        <td colspan="10" class="right"><?php echo number_format($Record->price_count / 1.12, 2, ',', ''); ?></td>
-                        <td colspan="2" class="right">12,00</td>
-                        <td colspan="4" class="right"><?php echo number_format($Record->price_count  * 12 / 112, 2, ',', ''); ?></td>
-                        <td colspan="2" class="right">0,00</td>
-                        <td colspan="4" class="right">0,00</td>
-                        <td colspan="5" class="right"><?php echo number_format($Record->price_count, 2, ',', ''); ?></td>
-                    </tr>
-                    <?php $Sum += $Record->price_count; $price_count = $Record->price_count;?>
-                    <?php endif;?>
-                <?php endforeach; ?>
-
-                <tr class="td-bordered">
-                    <td colspan="14" class="right">ИТОГО ПО СЧЕТУ-ФАКТУРЕ:&nbsp; &nbsp;</td>
-                    <td colspan="10" class="right"><?php echo number_format($Sum / 1.12, 2, ',', ''); ?></td>
-                    <td colspan="2" class="center">X</td>
-                    <td colspan="4" class="right"><?php echo number_format($price_count * 12 / 112, 2, ',', ''); ?></td>
-                    <td colspan="2" class="center">X</td>
-                    <td colspan="4" class="right">0,00</td>
-                    <td colspan="5" class="right"><?php echo number_format($Sum, 2, ',', ''); ?></td>
-                </tr>
-
-                <tr>
-                    <td colspan="5" class = "bordered" rowspan="4"><br/><b>&nbsp; &nbsp;М.П.</b><br/><br/><br/></td>
-                    <td colspan="1" class="bordered center small">450</td>
-                    <td colspan="34" class="border-right"></td>                    
-                </tr>
-                <tr>             
-                    <td colspan="1" class="border-bottom"></td>
-                    <td colspan="10" class="border-bottom large">Ф.И.О руководителя организации или индивидуального предпринимателя</td>
-                    <td colspan="24" class="border-bottom border-right"></td>                    
+                <tr class="large">
+                    <td colspan="26"><b>Руководитель</b></td>
+                    <td colspan="16"><b>Бухгалтер/менеджер</b></td>
                 </tr>
                 <tr>
-                    <td colspan="1" class="bordered center small">451</td>
-                    <td colspan="34" class="border-right"></td>                    
+                    <td height="45" colspan="42"></td>
                 </tr>
-                <tr>             
-                    <td colspan="1" class="border-bottom"></td>
-                    <td colspan="10" class="border-bottom large">Ф.И.О бухгалтера</td>
-                    <td colspan="24" class="border-bottom border-right"></td>                    
+                <tr class="large">
+                    <td colspan="26"><b>Отпустил _________________________________</b></td>
+                    <td colspan="16"><b>Получил _________________________________</b></td>                    
                 </tr>
+                
             </tbody>
         </table>
 
