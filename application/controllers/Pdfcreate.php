@@ -158,12 +158,9 @@ class Pdfcreate extends CI_Controller {
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1', $data);
             } else {
-
                 $filename = time();
-
                 $pdfFilePath = FCPATH . "downloads/$filename.pdf";
                 $data['page_title'] = 'Pay Invoice'; // pass data to the view
-
                 if (file_exists($pdfFilePath) == FALSE) {
                     ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;)
                     $html = $this->load->view('pdf/pay_invoice_l_1', $data, true); // render the view into HTML
