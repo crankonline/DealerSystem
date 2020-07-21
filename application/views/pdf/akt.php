@@ -102,7 +102,7 @@
                     <td></td>
                     <td></td>
                 </tr>
-                
+
                 <tr class="large">
                     <td colspan="10">Исполнитель:</td>
                     <td colspan="30"><b>ОсОО "DOS TEK GROUP"</b> (ОсОО "Дос Тэк Групп")</td>
@@ -115,7 +115,7 @@
                 </tr>
                 <tr class="large">
                     <td colspan="10">Заказчик:</td>
-                    <td colspan="29"><b>Здесь может быть ваша реклама</b></td>
+                    <td colspan="29"><b><?= $json->common->name; ?></b></td>
                     <td></td>
                 </tr>
                 <tr>
@@ -137,14 +137,20 @@
                     <td colspan="8"><b>Цена</b></td>
                     <td colspan="5"><b>Сумма</b></td>                   
                 </tr>
-                <tr class="large td-bordered">
-                    <td class="center" colspan="2">1</td>
-                    <td class="center" colspan="18">Оплата за ЭЦП</td>
-                    <td class="right" colspan="5">1</td>
-                    <td class="center" colspan="4">шт</td>
-                    <td colspan="8" align="right">1935,00</td>
-                    <td colspan="5" align="right">1935,00</td>
-                </tr>
+                <?php $Sum = 0; ?>
+                <?php foreach ($data_invoice as $Record) : ?>
+                    <?php if ($Record->id_inventory != 2): //если не токен?>
+                        <tr class="large td-bordered">
+                            <td class="center" colspan="2">1</td>
+                            <td class="center" colspan="18">Оплата за ЭЦП</td>
+                            <td class="right" colspan="5"><?= number_format($Record->count, 2, ',', '') ?></td>
+                            <td class="center" colspan="4">шт</td>
+                            <td colspan="8" align="right"><?= number_format($Record->price_count / $Record->count, 2, ',', ''); ?></td>
+                            <td colspan="5" align="right"><?= number_format($Record->price_count, 2, ',', ''); ?></td>
+                        </tr>
+                        <?php $Sum = $Record->price_count; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
                 <tr>
                     <td height="10"></td>
                 </tr>
@@ -152,28 +158,28 @@
                 <tr class="large">
                     <td colspan="27"></td>
                     <td colspan="10" align="right"><b>Итого:</b></td>
-                    <td colspan="5" align="right">1935,00</td>
+                    <td colspan="5" align="right"><?= number_format($Sum, 2, ',', ''); ?></td>
                 </tr>
                 <tr class="large">
                     <td colspan="27"></td> 
                     <td colspan="10" align="right"><b>В том числе НДС:</b></td>
-                    <td colspan="5" align="right">205,49</td>
+                    <td colspan="5" align="right"><?= number_format(($Sum * 12 / 112), 2, ',', ''); ?></td>
                 </tr>
                 <tr>
                     <td height="12" colspan="42"></td>
                 </tr>
                 <tr class="large">
-                    <td colspan="42">Всего оказано услуг 1, на сумму 1935,00</td>
+                    <td colspan="42">Всего оказано услуг 1, на сумму <?= number_format($Sum, 2, ',', ''); ?> с</td>
                 </tr>
-                <tr class="large">
+<!--                <tr class="large">
                     <td colspan="42"><b>Одна тысяча девятьсот тридцать пять сом 00 тыйын</b></td>
-                </tr>
+                </tr>-->
                 <tr>
                     <td height="18"></td>
                 </tr>
                 <tr>
                     <td colspan="42" class="large border-bottom" style="border-width: medium;">Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и
-                    <br>срокам оказания услуг не имеет.</td>
+                        <br>срокам оказания услуг не имеет.</td>
                 </tr>
                 <tr>
                     <td colspan="42" height="15"></td>
@@ -186,20 +192,39 @@
                     <td height="12" colspan="42"></td>
                 </tr>
                 <tr>
-                    <td class="large" colspan="26">ИНН: 00211200910051</td>
-                    <td class="large" colspan="16">ИНН: 12345678912345</td>
+                    <td class="large" colspan="26">ИНН: <?= $data->inn_distributor; ?></td>
+                    <td class="large" colspan="16">ИНН: <?= $json->common->inn; ?></td>
                 </tr>
                 <tr>
-                    <td class="large" colspan="26">Адрес: г. Бишкек ул.Коенкозова, дом №8</td>
-                    <td class="large" colspan="16">Адрес: г. Бишкек ул.Коенкозова, дом №8</td>
+                    <td class="large" colspan="26">Адрес: <?= $data->address; ?></td>
+                    <td class="large" colspan="16">Адрес: <?php
+                        $juristicAddress = [
+                            isset($json->common->juristicAddress->settlement->district->region->name) ? $json->common->juristicAddress->settlement->district->region->name : "",
+                            isset($json->common->juristicAddress->settlement->district->name) ? $json->common->juristicAddress->settlement->district->name : "",
+                            isset($json->common->juristicAddress->settlement->name) ? $json->common->juristicAddress->settlement->name : "",
+                            isset($json->common->juristicAddress->street) ? $json->common->juristicAddress->street : "",
+                            isset($json->common->juristicAddress->building) ? $json->common->juristicAddress->building : "",
+                            isset($json->common->juristicAddress->apartment) ? $json->common->juristicAddress->apartment : ""
+                        ];
+                        $juristicAddressChecked = [];
+                        foreach ($juristicAddress as $item) {
+                            if ($item == "") {
+                                continue;
+                            }
+                            $juristicAddressChecked[] = $item;
+                        }
+                        echo implode(
+                                ', ', $juristicAddressChecked);
+                        ?>
+                    </td>
                 </tr>
                 <tr>
-                    <td class="large" colspan="26">Расчетный счет: 1280010015061112 в КИКБ</td>
-                    <td class="large" colspan="16">Расчетный счет: 1280010015061112 в КИКБ</td>
+                    <td class="large" colspan="26">Расчетный счет: <?= isset($data->bank_account) ? $data->bank_account . ' в ' . $data->bank_name : ""; ?></td>
+                    <td class="large" colspan="16">Расчетный счет: <?= isset($json->common->bankAccount) ? $json->common->bankAccount . ' в ' . $json->common->bank->name : ""; ?></td>
                 </tr>
                 <tr>
-                    <td class="large" colspan="26">БИК: 128001</td>
-                    <td class="large" colspan="16">БИК: 128001</td>
+                    <td class="large" colspan="26">БИК: <?= isset($data->bank_bik) ? $data->bank_bik : ""; ?></td>
+                    <td class="large" colspan="16">БИК: <?= isset($json->common->bank->id) ? $json->common->bank->id : ""; ?></td>
                 </tr>
                 <tr>
                     <td height="40"></td>
@@ -237,7 +262,7 @@
                     <td colspan="7"></td>
                     <td class="center" colspan="15"> (ФИО. подпись)</td>
                 </tr>
-                
+
             </tbody>
         </table>
 

@@ -102,7 +102,7 @@
                     <td></td>
                     <td></td>
                 </tr>
-                
+
                 <tr class="large">
                     <td colspan="10">Поставщик:</td>
                     <td colspan="30"><b>ОсОО "DOS TEK GROUP"</b> (ОсОО "Дос Тэк Групп")
@@ -116,7 +116,7 @@
                 </tr>
                 <tr class="large">
                     <td colspan="10">Покупатель:</td>
-                    <td colspan="29"><b>Здесь может быть ваша реклама</b></td>
+                    <td colspan="29"><b><?= $json->common->name; ?></b></td>
                     <td></td>
                 </tr>
                 <tr>
@@ -143,14 +143,20 @@
                     <td colspan="8"><b>Цена</b></td>
                     <td colspan="5"><b>Сумма</b></td>                   
                 </tr>
-                <tr class="large td-bordered">
-                    <td class="center" colspan="2">1</td>
-                    <td class="center" colspan="5">00000056</td>
-                    <td class="center" colspan="13">Рутокен ЭЦП64КБ</td>
-                    <td class="right" colspan="9">1,000</td>
-                    <td class="right" colspan="8">1935,00</td>
-                    <td class="right" colspan="5">1935,00</td>
-                </tr>
+                 <?php $Sum = 0; ?>
+                <?php foreach ($data_invoice as $key => $Record) : ?>
+                    <?php if ($Record->id_inventory == 2): //если токен?>
+                        <tr class="large td-bordered">
+                            <td class="center" colspan="2">1</td>
+                            <td class="center" colspan="5">00000056</td>
+                            <td class="center" colspan="13">Рутокен ЭЦП64КБ</td>
+                            <td class="right" colspan="9"><?= number_format($Record->count, 2, ',', '') ?></td>
+                            <td class="right" colspan="8"><?= number_format($Record->price_count / $Record->count, 2, ',', ''); ?></td>
+                            <td class="right" colspan="5"><?= number_format($Record->price_count, 2, ',', ''); ?></td>
+                        </tr>
+                        <?php $Sum = $Record->price_count; ?>
+                    <?php endif; ?>
+                <?php endforeach; ?>
                 <tr>
                     <td height="10"></td>
                 </tr>
@@ -158,22 +164,22 @@
                 <tr class="large">
                     <td colspan="27"></td>
                     <td colspan="10" align="right"><b>Итого:</b></td>
-                    <td colspan="5" align="right">1935,00</td>
+                    <td colspan="5" align="right"><?= number_format($Sum, 2, ',', ''); ?></td>
                 </tr>
                 <tr class="large">
                     <td colspan="27"></td> 
                     <td colspan="10" align="right"><b>В том числе НДС:</b></td>
-                    <td colspan="5" align="right">205,49</td>
+                    <td colspan="5" align="right"><?= number_format(($Sum * 12 / 112), 2, ',', ''); ?></td>
                 </tr>
                 <tr>
                     <td height="12" colspan="42"></td>
                 </tr>
                 <tr class="large">
-                    <td colspan="42">Всего наименований 1, на сумму 1935,00</td>
+                    <td colspan="42">Всего наименований 1, на сумму <?= number_format($Sum, 2, ',', ''); ?></td>
                 </tr>
-                <tr class="large">
+<!--                <tr class="large">
                     <td colspan="42"><b>Одна тысяча девятьсот тридцать пять сом 00 тыйын</b></td>
-                </tr>
+                </tr>-->
                 <tr>
                     <td height="15" colspan="42"></td>
                 </tr>
@@ -188,7 +194,7 @@
                     <td colspan="26"><b>Отпустил _________________________________</b></td>
                     <td colspan="16"><b>Получил _________________________________</b></td>                    
                 </tr>
-                
+
             </tbody>
         </table>
 
