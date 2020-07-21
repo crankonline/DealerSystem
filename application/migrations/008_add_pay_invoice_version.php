@@ -9,8 +9,12 @@ class Migration_Add_pay_invoice_version extends CI_Migration {
 
         $data = array(
             array(
-                'current' => true,
+                'current' => false,
                 'template' => 'pdf/pay_invoice_008'
+            ),
+            array(
+                'current' => true,
+                'template' => 'pdf/akt'
             )
         );
         $this->db->insert_batch('"Dealer_data".pay_invoice_version', $data);
@@ -18,7 +22,7 @@ class Migration_Add_pay_invoice_version extends CI_Migration {
         $fields = array(
             'pay_invoice_version_id' => array(
                 'type' => 'bigint',
-                'default' => 2
+                'default' => 3
             )
         );
         $this->dbforge->modify_column('"Dealer_data".pay_invoice', $fields);
