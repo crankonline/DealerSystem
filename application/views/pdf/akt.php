@@ -186,7 +186,7 @@
                 </tr>
                 <tr class="large">
                     <td colspan="26"><b>Исполнитель: ОсОО "DOS TEK GROUP"<br> (ОсОО "Дос Тэк Групп")</b></td>
-                    <td colspan="16"><b>Заказчик: Здесь может быть ваша реклама</b></td>
+                    <td colspan="16"><b>Заказчик: <?= $json->common->name; ?></b></td>
                 </tr>
                 <tr>
                     <td height="12" colspan="42"></td>
