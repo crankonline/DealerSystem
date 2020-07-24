@@ -157,15 +157,8 @@ class Pdfcreate extends CI_Controller {
             'template' => $data['data']->template
         );
         $data['pay_invoice_version'] = $pay_invoice_version;
-        //</editor-fold>
-//        echo "<pre>";
-//        print_r($data);
-//        echo "</pre><br/><br/><br/><br/><br/><br/>";
-//        echo "<pre>";
-//        print_r($data['data_invoice']);
-//        echo "</pre><br/><br/><br/><br/><br/><br/>";
-//        exit(0);
-        if ($pay_invoice_version['id_pay_invoice_version'] == '2') {
+
+        if ($pay_invoice_version['id_pay_invoice_version'] == '2') { //новые счет-фактурф
             //ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;
             $token = false;
             foreach ($data['data_invoice'] as $Record) {
@@ -181,8 +174,8 @@ class Pdfcreate extends CI_Controller {
             $this->pdf->Output();
             return;
         }
-        
-        if ($pay_invoice_version['id_pay_invoice_version'] == '3'){
+
+        if ($pay_invoice_version['id_pay_invoice_version'] == '3') { //временные акты и расходники
             $token = false;
             foreach ($data['data_invoice'] as $Record) {
                 $Record->id_inventory == 2 ? $token = true : null;
@@ -193,6 +186,13 @@ class Pdfcreate extends CI_Controller {
                 $this->pdf->AddPage();
             }
             $html = $this->load->view($pay_invoice_version['template'], $data, true); // render the view into HTML
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+            $this->pdf->Output();
+            return;
+        }
+
+        if ($pay_invoice_version['id_pay_invoice_version'] == '4') { //переходный период между старыми с/ф и актами
+            $html = $this->load->view($pay_invoice_version['template'], $data, true);
             $this->pdf->WriteHTML($html); // write the HTML into the PDF
             $this->pdf->Output();
             return;
@@ -424,5 +424,4 @@ class Pdfcreate extends CI_Controller {
 //        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($token, $reference['id']) : NULL; //?? php 7.0
 //        return $result;
 //    }
-
 }
