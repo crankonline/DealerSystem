@@ -109,22 +109,22 @@
                     <td colspan="40"></td>
                 </tr>
                 <tr>
-                    <td colspan="2" class="bordered center" bgcolor="gray">101</td>
-                    <td colspan="11">&nbsp;&nbsp;<b>СЕРИЯ: <?php echo $data->serial; ?></b></td>
+                   <td colspan="2" class="bordered center" bgcolor="gray">101</td>
+                    <td colspan="11"></td>
                     <td colspan="2" class="bordered center" bgcolor="gray">102</td>
-                    <td colspan="10">&nbsp;&nbsp;<b>НОМЕР: <?php echo $data->number; ?></b></td>
+                    <td colspan="10"></td>
                     <td colspan="2" class="bordered center" bgcolor="gray">103</td>
                     <td colspan="3">&nbsp;&nbsp;<b>ДАТА:</b> <?php //echo date("d.m.Y", strtotime($data->requisites_creating_date_time));  ?></b></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("d", strtotime($data->requisites_creating_date_time)){0}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("d", strtotime($data->requisites_creating_date_time)){1}; ?></td>
+                    <td colspan="1" class="bordered center"> 3<?php //echo date("d", strtotime($data->requisites_creating_date_time)){0}; ?></td>
+                    <td colspan="1" class="bordered center"> 0<?php //echo date("d", strtotime($data->requisites_creating_date_time)){1}; ?></td>
                     <td colspan="1"></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("m", strtotime($data->requisites_creating_date_time)){0}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("m", strtotime($data->requisites_creating_date_time)){1}; ?></td>
+                    <td colspan="1" class="bordered center"> 0<?php //echo date("m", strtotime($data->requisites_creating_date_time)){0}; ?></td>
+                    <td colspan="1" class="bordered center"> 6<?php //echo date("m", strtotime($data->requisites_creating_date_time)){1}; ?></td>
                     <td colspan="1"></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){0}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){1}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){2}; ?></td>
-                    <td colspan="1" class="bordered center"> <?php echo date("Y", strtotime($data->requisites_creating_date_time)){3}; ?></td>
+                    <td colspan="1" class="bordered center"> 2<?php //echo date("Y", strtotime($data->requisites_creating_date_time)){0}; ?></td>
+                    <td colspan="1" class="bordered center"> 0<?php //echo date("Y", strtotime($data->requisites_creating_date_time)){1}; ?></td>
+                    <td colspan="1" class="bordered center"> 2<?php //echo date("Y", strtotime($data->requisites_creating_date_time)){2}; ?></td>
+                    <td colspan="1" class="bordered center"> 0<?php //echo date("Y", strtotime($data->requisites_creating_date_time)){3}; ?></td>
                 </tr>
                 <tr class="small">
                     <td colspan="20">&nbsp;</td>
