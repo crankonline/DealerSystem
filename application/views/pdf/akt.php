@@ -89,13 +89,13 @@
             <tbody>
 
                 <tr class="border" style="border-bottom: solid; border-width: medium;">
-                    <td colspan=4 class="title">
+                    <td colspan=5 class="title">
                         <b>Акт от</b>
                     </td>
-                    <td colspan="12" class="title">
+                    <td colspan="13" class="title">
                         <b><?php echo (new \DateTime($data->requisites_creating_date_time))->format('d.m.Y'); ?></b>
                     </td>
-                    <td colspan="27"></td>
+                    <td colspan="25"></td>
                 </tr>
                 <tr>
                     <td height="14" colspan="40"></td>
