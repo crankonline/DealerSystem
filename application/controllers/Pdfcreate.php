@@ -154,7 +154,47 @@ class Pdfcreate extends CI_Controller {
         );
         $data['pay_invoice_version'] = $pay_invoice_version;
 
-        if ($data['data']->json_version_id == '1') {
+        if ($pay_invoice_version['id_pay_invoice_version'] == '2') { //новые счет-фактурф
+            //ini_set('memory_limit', '32M'); // boost the memory limit if it's low ;
+            $token = false;
+            foreach ($data['data_invoice'] as $Record) {
+                $Record->id_inventory == 2 ? $token = true : null;
+            }
+            if ($token) {
+                $html = $this->load->view('pdf/pay_invoice_007', $data, true);
+                $this->pdf->WriteHTML($html);
+                $this->pdf->AddPage();
+            }
+            $html = $this->load->view($pay_invoice_version['template'], $data, true); // render the view into HTML
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+            $this->pdf->Output();
+            return;
+        }
+
+        if ($pay_invoice_version['id_pay_invoice_version'] == '3') { //временные акты и расходники
+            $token = false;
+            foreach ($data['data_invoice'] as $Record) {
+                $Record->id_inventory == 2 ? $token = true : null;
+            }
+            if ($token) {
+                $html = $this->load->view('pdf/waybill', $data, true);
+                $this->pdf->WriteHTML($html);
+                $this->pdf->AddPage();
+            }
+            $html = $this->load->view($pay_invoice_version['template'], $data, true); // render the view into HTML
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+            $this->pdf->Output();
+            return;
+        }
+
+        if ($pay_invoice_version['id_pay_invoice_version'] == '4') { //переходный период между старыми с/ф и актами
+            $html = $this->load->view($pay_invoice_version['template'], $data, true);
+            $this->pdf->WriteHTML($html); // write the HTML into the PDF
+            $this->pdf->Output();
+            return;
+        }
+
+        if ($data['data']->json_version_id == '1' && $data['data']->invoice_version_id == '1') {
             if ($view != FALSE) {
                 $this->load->view('pdf/pay_invoice_l_1', $data);
             } else {
@@ -331,20 +371,20 @@ class Pdfcreate extends CI_Controller {
     /**
      * Считывает данные из соап сервиса
      */
-    public static function get_reference_byid($reference) {
-        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
-        $user = array(
-            'login' => 'api-' . date('z') . '-user',
-            'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
-        );
-        $token = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
-        $client = new SoapClient($wsdl, $user);
-        ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonLegalFormById') ? $result = $client->getCommonLegalFormById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCivilLegalStatusById') ? $result = $client->getCommonCivilLegalStatusById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonCapitalFormById') ? $result = $client->getCommonCapitalFormById($token, $reference['id']) : NULL; //?? php 7.0
-        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($token, $reference['id']) : NULL; //?? php 7.0
-        return $result;
-    }
-
+//    public static function get_reference_byid($reference) {
+////        return get_reference_byid('72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9');
+//        $wsdl = 'http://api.dostek.kg/RequisitesMeta.php?wsdl';
+//        $user = array(
+//            'login' => 'api-' . date('z') . '-user',
+//            'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
+//        );
+//        $token = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
+//        $client = new SoapClient($wsdl, $user);
+//        ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonLegalFormById') ? $result = $client->getCommonLegalFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonCivilLegalStatusById') ? $result = $client->getCommonCivilLegalStatusById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonCapitalFormById') ? $result = $client->getCommonCapitalFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        ($reference['reference'] == 'getCommonManagementFormById') ? $result = $client->getCommonManagementFormById($token, $reference['id']) : NULL; //?? php 7.0
+//        return $result;
+//    }
 }

@@ -15,6 +15,10 @@ class Migration_Add_pay_invoice_version extends CI_Migration {
             array(
                 'current' => true,
                 'template' => 'pdf/akt'
+            ),
+            array(
+                'current' => false,
+                'template' => 'pay_invoice_l_1_v3'
             )
         );
         $this->db->insert_batch('"Dealer_data".pay_invoice_version', $data);

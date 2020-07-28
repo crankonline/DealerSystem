@@ -89,13 +89,13 @@
             <tbody>
 
                 <tr class="border" style="border-bottom: solid; border-width: medium;">
-                    <td colspan="3" class="title">
+                    <td colspan=5 class="title">
                         <b>Акт от</b>
                     </td>
-                    <td colspan="12" class="title">
+                    <td colspan="13" class="title">
                         <b><?php echo (new \DateTime($data->requisites_creating_date_time))->format('d.m.Y'); ?></b>
                     </td>
-                    <td colspan="27"></td>
+                    <td colspan="25"></td>
                 </tr>
                 <tr>
                     <td height="14" colspan="40"></td>
@@ -132,10 +132,10 @@
                 <tr class="large td-bordered td-center">
                     <td colspan="2"><b>№</b></td>
                     <td colspan="18"><b>Услуга</b></td>
-                    <td colspan="5"><b>Кол-во</b></td>
-                    <td colspan="4"><b>Ед.</b></td>
-                    <td colspan="8"><b>Цена</b></td>
-                    <td colspan="5"><b>Сумма</b></td>                   
+                    <td colspan="7"><b>Кол-во</b></td>
+                    <td colspan="6"><b>Ед.</b></td>
+                    <td colspan="6"><b>Цена</b></td>
+                    <td colspan="4"><b>Сумма</b></td>                   
                 </tr>
                 <?php $Sum = 0; ?>
                 <?php foreach ($data_invoice as $Record) : ?>
@@ -143,10 +143,10 @@
                         <tr class="large td-bordered">
                             <td class="center" colspan="2">1</td>
                             <td class="center" colspan="18">Оплата за ЭЦП</td>
-                            <td class="right" colspan="5"><?= number_format($Record->count, 2, ',', '') ?></td>
-                            <td class="center" colspan="4">шт</td>
-                            <td colspan="8" align="right"><?= number_format($Record->price_count / $Record->count, 2, ',', ''); ?></td>
-                            <td colspan="5" align="right"><?= number_format($Record->price_count, 2, ',', ''); ?></td>
+                            <td class="right" colspan="7"><?= number_format($Record->count, 2, ',', '') ?></td>
+                            <td class="center" colspan="6">шт</td>
+                            <td colspan="6" align="right"><?= number_format($Record->price_count / $Record->count, 2, ',', ''); ?></td>
+                            <td colspan="4" align="right"><?= number_format($Record->price_count, 2, ',', ''); ?></td>
                         </tr>
                         <?php $Sum = $Record->price_count; ?>
                     <?php endif; ?>
@@ -156,14 +156,14 @@
                 </tr>
                 <!-- Подвал -->
                 <tr class="large">
-                    <td colspan="27"></td>
+                    <td colspan="29"></td>
                     <td colspan="10" align="right"><b>Итого:</b></td>
-                    <td colspan="5" align="right"><?= number_format($Sum, 2, ',', ''); ?></td>
+                    <td colspan="4" align="right"><?= number_format($Sum, 2, ',', ''); ?></td>
                 </tr>
                 <tr class="large">
-                    <td colspan="27"></td> 
+                    <td colspan="29"></td> 
                     <td colspan="10" align="right"><b>В том числе НДС:</b></td>
-                    <td colspan="5" align="right"><?= number_format(($Sum * 12 / 112), 2, ',', ''); ?></td>
+                    <td colspan="4" align="right"><?= number_format(($Sum * 12 / 112), 2, ',', ''); ?></td>
                 </tr>
                 <tr>
                     <td height="12" colspan="42"></td>
@@ -178,26 +178,29 @@
                     <td height="18"></td>
                 </tr>
                 <tr>
-                    <td colspan="42" class="large border-bottom" style="border-width: medium;">Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и
+                    <td colspan="43" class="large border-bottom" style="border-width: medium;">Вышеперечисленные услуги выполнены полностью и в срок. Заказчик претензий по объему, качеству и
                         <br>срокам оказания услуг не имеет.</td>
                 </tr>
                 <tr>
-                    <td colspan="42" height="15"></td>
+                    <td colspan="43" height="15"></td>
                 </tr>
                 <tr class="large">
-                    <td colspan="26"><b>Исполнитель: ОсОО "DOS TEK GROUP"<br> (ОсОО "Дос Тэк Групп")</b></td>
-                    <td colspan="16"><b>Заказчик: Здесь может быть ваша реклама</b></td>
+                    <td colspan="27"><b>Исполнитель: ОсОО "DOS TEK GROUP"<br> (ОсОО "Дос Тэк Групп")</b></td>
+                    <td colspan="7"></td>
+                    <td colspan="11"><b>Заказчик: <?= $json->common->name; ?></b></td>
                 </tr>
                 <tr>
-                    <td height="12" colspan="42"></td>
+                    <td height="12" colspan="43"></td>
                 </tr>
                 <tr>
                     <td class="large" colspan="26">ИНН: <?= $data->inn_distributor; ?></td>
-                    <td class="large" colspan="16">ИНН: <?= $json->common->inn; ?></td>
+                    <td colspan="8"></td>
+                    <td class="large" colspan="9">ИНН: <?= $json->common->inn; ?></td>
                 </tr>
                 <tr>
                     <td class="large" colspan="26">Адрес: <?= $data->address; ?></td>
-                    <td class="large" colspan="16">Адрес: <?php
+                    <td colspan="8"></td>
+                    <td class="large" colspan="9">Адрес: <?php
                         $juristicAddress = [
                             isset($json->common->juristicAddress->settlement->district->region->name) ? $json->common->juristicAddress->settlement->district->region->name : "",
                             isset($json->common->juristicAddress->settlement->district->name) ? $json->common->juristicAddress->settlement->district->name : "",
@@ -220,47 +223,49 @@
                 </tr>
                 <tr>
                     <td class="large" colspan="26">Расчетный счет: <?= isset($data->bank_account) ? $data->bank_account . ' в ' . $data->bank_name : ""; ?></td>
-                    <td class="large" colspan="16">Расчетный счет: <?= isset($json->common->bankAccount) ? $json->common->bankAccount . ' в ' . $json->common->bank->name : ""; ?></td>
+                    <td colspan="8"></td>
+                    <td class="large" colspan="9">Расчетный счет: <?= isset($json->common->bankAccount) ? $json->common->bankAccount . ' в ' . $json->common->bank->name : ""; ?></td>
                 </tr>
                 <tr>
                     <td class="large" colspan="26">БИК: <?= isset($data->bank_bik) ? $data->bank_bik : ""; ?></td>
-                    <td class="large" colspan="16">БИК: <?= isset($json->common->bank->id) ? $json->common->bank->id : ""; ?></td>
+                    <td colspan="8"></td>
+                    <td class="large" colspan="9">БИК: <?= isset($json->common->bank->id) ? $json->common->bank->id : ""; ?></td>
                 </tr>
                 <tr>
                     <td height="40"></td>
                 </tr>
                 <tr class="large">
                     <td class="bordered center" rowspan="2">МП</td>
-                    <td class="border-bottom" colspan="19" height="18"></td>
-                    <td colspan="6"></td>
+                    <td class="border-bottom" colspan="22" height="18"></td>
+                    <td colspan="11"></td>
                     <td class="bordered center" rowspan="2">МП</td>
-                    <td class="border-bottom" colspan="15" height="18"></td>                   
+                    <td class="border-bottom" colspan="7" height="18"></td>                   
                 </tr>
                 <tr>
-                    <td class="large center" colspan="20">(Должность)</td>
-                    <td colspan="6"></td>
-                    <td class="large center" colspan="16">(Должность)</td>
+                    <td class="large center" colspan="22">(Должность)</td>
+                    <td colspan="11"></td>
+                    <td class="large center" colspan="7">(Должность)</td>
                 </tr>
                 <tr>
-                    <td colspan="42" height="20"></td>
+                    <td colspan="43" height="20"></td>
                 </tr>
                 <tr>
                     <td></td>
-                    <td class="border-bottom" colspan="19" ></td>
-                    <td colspan="7"></td>
-                    <td class="border-bottom" colspan="15"></td>
+                    <td class="border-bottom" colspan="22" ></td>
+                    <td colspan="12"></td>
+                    <td class="border-bottom" colspan="7"></td>
                 </tr>
                 <tr>
                     <td height="17"></td>
-                    <td class="border-bottom" colspan="19" ></td>
-                    <td colspan="7"></td>
-                    <td class="border-bottom" colspan="15"></td>
+                    <td class="border-bottom" colspan="22" ></td>
+                    <td colspan="12"></td>
+                    <td class="border-bottom" colspan="7"></td>
                 </tr>
                 <tr class="large">
                     <td></td>
-                    <td class="center" colspan="19">(ФИО. подпись)</td>
-                    <td colspan="7"></td>
-                    <td class="center" colspan="15"> (ФИО. подпись)</td>
+                    <td class="center" colspan="22">(ФИО. подпись)</td>
+                    <td colspan="12"></td>
+                    <td class="center" colspan="7"> (ФИО. подпись)</td>
                 </tr>
 
             </tbody>
