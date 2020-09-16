@@ -436,6 +436,9 @@ class Requisites extends CI_Controller {
                 'json_version_id' => 3,
                 'requisites_invoice_id' => $request->invoice_id,
                 'pay_invoice_id' => $pay_invoice);
+//            $data = array('json' => json_encode($result_api_json, JSON_UNESCAPED_UNICODE),
+//                'json_version_id' => 3,
+//                'requisites_invoice_id' => $request->invoice_id);
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
 
 
