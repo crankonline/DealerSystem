@@ -82,6 +82,19 @@ class Invoice_model extends CI_Model {
         //убейте меня так делать нельзя
         return $this->db->get()->result();
     }
+    
+        public function get_invoice_convert($InvoiceSerialNumber) {
+        $this->db->select()->
+                from('"Dealer_data".invoice')->
+                join('"Dealer_data".sell', 'sell.invoice_id = invoice.id_invoice', 'inner')->
+                join('"Dealer_data".inventory', 'sell.inventory_id = inventory.id_inventory', 'inner')->
+                join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'inner')->
+                join('"Dealer_data".requisites', 'requisites.requisites_invoice_id = invoice.id_invoice', 'left')->
+                where('invoice_serial_number', $InvoiceSerialNumber);
+         ///проверяем на доступ и не показываем удаленки
+        //убейте меня так делать нельзя
+        return $this->db->get()->result();
+    }
 
     public function get_companyname_by_inn($inn) {
         $this->db->select("inn")->
