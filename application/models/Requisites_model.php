@@ -397,7 +397,7 @@ class Requisites_model extends CI_Model {
         return $result->row();
     }
 
-    public function get_requisites_ID($inn) {
+    public function get_requisites_ID($inn) { // ищет id у которых есть файлы
         $sql = <<<SQL
                 SELECT id_requisites
                 FROM "Dealer_data".requisites
@@ -406,14 +406,27 @@ class Requisites_model extends CI_Model {
                 WHERE json -> 'common' ->> 'inn' = ?
                 ORDER BY id_requisites DESC
 SQL;
-        return $this->db->query($sql, $inn)->row()->id_requisites;
-        // var_dump( $this->db->query($sql, $inn)->result());die;
-//        var_dump( $this->db->select('id_requisites')->
-//                        select('requisites_creating_date_time')->
-//                        from('"Dealer_data".requisites')->
-//                        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice')->
-//                        where("json -> 'common' ->> 'inn' =", $inn)->get()->row()
-//                                );die;
+        $result = $this->db->query($sql, $inn)->row();
+        if (!empty($result)) {
+            return $result->id_requisites;
+        } else {
+            return null;
+        }
+    }
+
+    public function get_requisites_JSON($inn) {
+        $sql = <<<SQL
+                SELECT json
+                FROM "Dealer_data".requisites
+                WHERE json -> 'common' ->> 'inn' = ?
+                ORDER BY requisites_creating_date_time DESC
+SQL;
+        $result = $this->db->query($sql, $inn)->row();
+        if (!empty($result)) {
+            return $result->json;
+        } else {
+            return null;
+        }
     }
 
     public function get_invoice_data_by_id($id_invoice) {
@@ -491,7 +504,7 @@ SQL;
         return $this->db->select('representative_ident')->
                         select('filetype_id')->
                         select('file_ident')->
-                        select('timestamp')->
+                        select("'timestamp'")->
                         from('"Dealer_data".requisites')->
                         join('"Dealer_images".files_representatives',
                                 'files_representatives.requisites_id = requisites.id_requisites')->

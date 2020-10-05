@@ -115,7 +115,7 @@ class Requisites extends CI_Controller {
         if (!is_null($files)) {
             foreach ($files as &$row) {
                 $tempfile = sys_get_temp_dir() . '/' . $row->file_ident;
-                file_put_contents($tempfile, fopen('http://mediaserverphp.dostek.test/file/download/' . $row->file_ident, 'r'));
+                file_put_contents($tempfile, fopen(getenv('MEDIA_SERVER') . 'file/download/' . $row->file_ident, 'r'));
                 $row->data = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($tempfile));
             }
         } else {
@@ -442,7 +442,7 @@ class Requisites extends CI_Controller {
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
 
 
-            $response_to_angular['data'] = '<p>Реквизиты сохранены успешно.</p><p>Дождитесь окончания передачи изображений...</p>';
+            $response_to_angular['data'] = '<p>Реквизиты сохранены успешно.</p><p>Дождитесь окончания обработки данных...</p>';
             $response_to_angular['id_requisites'] = $inserted_id_requisites;
             echo json_encode($response_to_angular);
             exit(1);
@@ -456,7 +456,6 @@ class Requisites extends CI_Controller {
 
     public function requisites_list_view() {
         try {
-            //var_dump($this->input->post('search_field'));die;
             (!is_null($this->input->post('search_field'))) ? $RequisitesData = $this->requisites_model->get_requisites_search($this->input->post('search_field')) :
                             $RequisitesData = $this->requisites_model->get_requisites_all($this->per_page, $this->uri->segment(3));
             $data['requisites_data'] = $RequisitesData;
@@ -562,7 +561,12 @@ class Requisites extends CI_Controller {
 
             $requisites = $this->requisites_model->get_requisites_by_inn($data['invoice_data']->inn); //поиск в реквизитах
             $id_requisites = $this->requisites_model->get_requisites_ID($data['invoice_data']->inn); //поиск в локальной бд предыдущего айди c картинками
-            /// var_dump($id_requisites);die;
+
+            if (is_null($requisites) && !is_null($id_requisites)) { //подгружаем из локальной бд если нет в цпх
+                $json = $this->requisites_model->get_requisites_JSON($data['invoice_data']->inn);
+                $requisites = json_decode($json);
+            }
+
             if (!is_null($requisites)) {
                 foreach ($requisites->common->representatives as &$rep) {//prepare date format
                     $rep->person->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $rep->person->passport->issuingDate)->format('d.m.Y');
@@ -589,7 +593,7 @@ class Requisites extends CI_Controller {
                 $data['requisites_json'] = $requisites;
                 //$data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
-            } else {
+            } else {// если нет нигде берем из внешних источников
                 $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ 
                 $mu_data = $this->requisites_model->get_mu_reference($data['invoice_data']->inn); //поиск в МЮ
                 if (is_array($sf_inninfo)) {
@@ -653,7 +657,7 @@ class Requisites extends CI_Controller {
          *  'ident'=>identify);
          */
         $error = 'Ошибка при обращении к медиасерверу: ';
-        $url = getenv('MEDIA_SERVER');
+        $url = getenv('MEDIA_SERVER') . 'file/s';
         $fields = [
             'image' => new \CurlFile($path, 'image/jpg', $requisites_id . '_' . $file_type . '_jpg'),
             'service' => '3'
@@ -718,13 +722,20 @@ class Requisites extends CI_Controller {
         }
     }
 
-    public function requisites_file_upload_skip($id_req, $file_type, $files_ident) {
+    public function requisites_file_upload_skip() {
         try {
+            $postdata = file_get_contents("php://input");
+            $request = json_decode($postdata);
             $file_struct_db = array(
-                    'requisites_id' => $id_req, //id requisistes in db
-                    'filetype_id' => $file_type, //id file type
-                    'file_ident' => $files_ident);
-             $this->requisites_model->save_file_ident($file_struct_db, $ident);
+                'requisites_id' => $request->id_requisites, //id requisistes in db
+                'filetype_id' => $request->filetype_id, //id file type
+                'file_ident' => $request->file_ident); //file ident
+            $ident = $request->rep_ident; // passport number if this's a representative           
+            $this->requisites_model->save_file_ident($file_struct_db, $ident);
+            
+            $response_to_angular['data'] = '<p>Идентификаторы графическиз образов сохранены успешно.</p>';            
+            echo json_encode($response_to_angular);
+            exit(1);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
