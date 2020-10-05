@@ -63,7 +63,7 @@ class Requisites_model extends CI_Model {
 
     private function soap_1c_client() {
         try {
-            ini_set("soap.wsdl_cache_enabled", "0");
+            //ini_set("soap.wsdl_cache_enabled", "0");
             $wsdl = (ENVIRONMENT == 'production') ?
                     getenv('SOAP_1C_PROD') : //prod
                     getenv('SOAP_1C_DEV'); //dev
@@ -72,12 +72,12 @@ class Requisites_model extends CI_Model {
                 'login' => getenv('1C_LOGIN'),
                 'password' => getenv('1C_PASSWORD'),
                 'trace' => 1,
-                'exceptions' => TRUE,
+                'exceptions' => FALSE,
                 'connection_timeout' => 5
             );
-            return new SoapClient($wsdl, $user);
+            return @new SoapClient($wsdl, $user);
         } catch (SoapFault $e) {
-            throw new Exception('Запрос в службу 1С -> ' . $e->getMessage());
+            throw new Exception('Запрос в службу 1С -> ' . $e->faultstring);
         }
     }
 
@@ -301,16 +301,21 @@ class Requisites_model extends CI_Model {
 
     public function create_pay_invoice($invoice_Serial_number) {
         $array = ['_id' => $invoice_Serial_number];
-        $client = $this->soap_1c_client();
-        $result = $client->GetNumberSF($array);
-        if ($result == null) {
-            throw new Exception("Запрос в службу 1С -> Номера электронных счетов фактур закончились");
-        }
-        $exp_res = explode("^", $result->return);
-        $serial = $exp_res[0];
-        $number = $exp_res[1];
-        $data = array('serial' => $serial,
-            'number' => $number);
+//        $client = $this->soap_1c_client();
+//        $result = $client->GetNumberSF($array);
+//        if (is_soap_fault($result)) {
+//            throw new Exception("Запрос в службу 1С, метод GetNumberSF -> {$result->faultstring}");
+//        }
+//        if ($result == null) {
+//            throw new Exception("Запрос в службу 1С, метод GetNumberSF -> Номера электронных счетов фактур закончились");
+//        }
+//        $exp_res = explode("^", $result->return);
+//        $serial = $exp_res[0];
+//        $number = 000; //$exp_res[1];
+//        $data = array('serial' => $serial,
+//            'number' => $number);
+        $data = array('serial' => null,
+            'number' => null);
 
         $this->db->insert('"Dealer_data".pay_invoice', $data);
         return $this->db->insert_id();
@@ -392,7 +397,7 @@ class Requisites_model extends CI_Model {
         return $result->row();
     }
 
-    public function get_requisites_ID($inn) {
+    public function get_requisites_ID($inn) { // ищет id у которых есть файлы
         $sql = <<<SQL
                 SELECT id_requisites
                 FROM "Dealer_data".requisites
@@ -401,14 +406,27 @@ class Requisites_model extends CI_Model {
                 WHERE json -> 'common' ->> 'inn' = ?
                 ORDER BY id_requisites DESC
 SQL;
-        return $this->db->query($sql, $inn)->row()->id_requisites;
-      // var_dump( $this->db->query($sql, $inn)->result());die;
-//        var_dump( $this->db->select('id_requisites')->
-//                        select('requisites_creating_date_time')->
-//                        from('"Dealer_data".requisites')->
-//                        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice')->
-//                        where("json -> 'common' ->> 'inn' =", $inn)->get()->row()
-//                                );die;
+        $result = $this->db->query($sql, $inn)->row();
+        if (!empty($result)) {
+            return $result->id_requisites;
+        } else {
+            return null;
+        }
+    }
+
+    public function get_requisites_JSON($inn) {
+        $sql = <<<SQL
+                SELECT json
+                FROM "Dealer_data".requisites
+                WHERE json -> 'common' ->> 'inn' = ?
+                ORDER BY requisites_creating_date_time DESC
+SQL;
+        $result = $this->db->query($sql, $inn)->row();
+        if (!empty($result)) {
+            return $result->json;
+        } else {
+            return null;
+        }
     }
 
     public function get_invoice_data_by_id($id_invoice) {
@@ -486,7 +504,7 @@ SQL;
         return $this->db->select('representative_ident')->
                         select('filetype_id')->
                         select('file_ident')->
-                        select('timestamp')->
+                        select("'timestamp'")->
                         from('"Dealer_data".requisites')->
                         join('"Dealer_images".files_representatives',
                                 'files_representatives.requisites_id = requisites.id_requisites')->
