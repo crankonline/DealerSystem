@@ -595,9 +595,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                             <input type="radio"
                                                    ng-model="Data.common.representatives[key].edsUsageModel"
                                                    ng-value="edsUsageModel"
-                                                   ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3"
-                                                   >
-                                            {{edsUsageModel.name }} - {{edsUsageModel.id}}
+                                                   ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3">
+                                            {{edsUsageModel.name }}
                                         </p>
                                     </td>
                                 </tr>
@@ -891,7 +890,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                                 {id: 6, name: "Сотрудник корневой консалтинговой структуры"}
                                                                             ];
                                                                             //$scope.role_1 = true; $scope.role_2 = true; $scope.role_3 = true;
-                                                                        
+
                                                                             $scope.edsUsageModels = [
                                                                                 {id: 1, name: "Использование ЭЦП на РУТОКЕН"},
                                                                                 {id: 2, name: "Использование ЭЦП из облачного хранилища"}
