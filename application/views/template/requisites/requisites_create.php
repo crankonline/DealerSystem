@@ -591,13 +591,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr ng-hide = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3">
                                     <td>Носитель ЭП</td>
                                     <td>
-                                        <p data-ng-repeat="edsUsageModel in edsUsageModels">
-                                            <input type="radio" 
-                                                   ng-model="Data.common.representatives[key].edsUsageModel" 
-                                                   ng-value="edsUsageModel"                                                   
-                                                   ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3"
-                                                   ng-checked="{{edsUsageModel.id == Data.common.representatives[key].edsUsageModel.id}}">
-                                            {{edsUsageModel.name}}
+                                        <p data-ng-repeat="edsUsageModel in edsUsageModels track by edsUsageModel.id">
+                                            <input type="radio"
+                                                   ng-model="Data.common.representatives[key].edsUsageModel"
+                                                   ng-value="edsUsageModel"
+                                                   ng-disabled = "Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3">
+                                            {{edsUsageModel.name }}
                                         </p>
                                     </td>
                                 </tr>
@@ -617,9 +616,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                            ng-disabled = "Data.common.representatives[key].edsUsageModel.id == 2 || (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)">
 
                                                 </td>
-                                                </tr>
-                                                </tbody>
-                                                </table>
+                                </tr>
+                            </tbody>
+                        </table>
 
                                                 <div class="page-header">
                                                     <h3 align="center"><span class="glyphicon glyphicon-picture"></span> Сканированные изображения паспорта</h3>
@@ -890,11 +889,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                                 {id: 4, name: "Лицо ответственное за использование ЭЦП"},
                                                                                 {id: 6, name: "Сотрудник корневой консалтинговой структуры"}
                                                                             ];
-                                                                            $scope.edsUsageModels = [
-                                                                                {id: 2, name: "Использование ЭЦП из облачного хранилища"},
-                                                                                {id: 1, name: "Использование ЭЦП на РУТОКЕН"}
-                                                                            ];
                                                                             //$scope.role_1 = true; $scope.role_2 = true; $scope.role_3 = true;
+
+                                                                            $scope.edsUsageModels = [
+                                                                                {id: 1, name: "Использование ЭЦП на РУТОКЕН"},
+                                                                                {id: 2, name: "Использование ЭЦП из облачного хранилища"}
+                                                                            ];
+                                                                            for(let i = 0; i < $scope.Data.common.representatives.length; i ++){
+                                                                                $scope.Data.common.representatives[i].edsUsageModel =
+                                                                                    $scope.edsUsageModels[$scope.edsUsageModels.findIndex(x => x.id == $scope.Data.common.representatives[i].edsUsageModel.id)]
+                                                                            }
+
                                                                             /*End load default reference*/
 
                                                                             $scope.loadLegalForm = function () { //загрузка спр. Организационно-правовая форма
@@ -1097,7 +1102,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                                     }
                                                                                     if (role.id == 6) {
                                                                                         $scope.role_6 = ($scope.role_6 === false) ? true : false;
-                                                                                        console.log('rep = ' + $scope.role_6);
+                                                                                        //console.log('rep = ' + $scope.role_6);
                                                                                     }
                                                                                     //console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3); 
                                                                             }
@@ -1123,7 +1128,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                                                                 //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
                                                                                 //$scope.Data.common.representatives[key].deviceSerial = 
                                                                                 var result = $scope.pluginManager.getDeviceSerial(tokenIndex);
-                                                                                console.log(result);
+                                                                                //console.log(result);
                                                                             }
 
                                                                             $scope.Upload = function () {
