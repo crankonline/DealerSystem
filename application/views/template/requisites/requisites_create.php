@@ -789,7 +789,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         </div>
         <div class="alert alert-danger" ng-hide="!errorMsg">
             <!--            <strong>Oh snap! </strong> {{errorMsg}}-->
-            <p ng-bind-html="ErrorMessage"></p>
+            <p ng-bind-html="ErrorMessages"></p>
         </div>
         <div ng-hide="!progressjur || progressjur === 100">
             <div>Загрузка изображения юридического лица</div>
@@ -841,6 +841,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             $scope.Data = $scope.requisites_json;
             $scope.pluginManager = new PluginManager();
 
+            $scope.EM = null;
             $scope.toggle = true;
             $http.post('<?php echo base_url("index.php/requisites/reference_load"); ?>', {
                 reference: 'getCommonCapitalForms',
@@ -1267,7 +1268,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 }).then(function (responce) {
                     //console.log(responce);
                     $scope.resultupload = responce.data.data;
-                    $scope.ResUpload += $sce.trustAsHtml($scope.resultupload);
+                    $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
                     id_requisites = responce.data.id_requisites;
                     //console.log(responce);
 
@@ -1282,13 +1283,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             }
                         }).then(function (responsejur) {
                             $scope.resultupload = $scope.resultupload + responsejur.data;
-                            $scope.ResUpload += $sce.trustAsHtml($scope.resultupload);
+                            $scope.ResUpload = $sce.trustAsHtml($scope.resultupload);
                             check_jur = true;
                             //console.log($sce.trustAsHtml($scope.resultupload));
                         }, function (responsejur) {
                             if (responsejur.status > 0) {
                                 $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении изображений юридического лица, код ошибки: ' + responsejur.status + '. <br> Сообщение: ' + responsejur.data);
-                                $scope.ErrorMessage += $scope.errorMsg;
+                                $scope.EM += $scope.errorMsg
+                                $scope.ErrorMessages = $scope.EM;
                                 $scope.toggle = true;
                             }
                         }, function (evt) {
@@ -1312,7 +1314,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             }, function (responsejur) {
                                 if (responsejur.status > 0) {
                                     $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении ID изображений юридического лица, код ошибки: ' + responsejur.status + '. <br> Сообщение: ' + responsejur.data);
-                                    $scope.ErrorMessage += $scope.errorMsg;
+                                    $scope.EM += $scope.errorMsg
+                                    $scope.ErrorMessages = $scope.EM;
                                     $scope.toggle = true;
                                 }
                             });
@@ -1338,7 +1341,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             }, function (responsephy) {
                                 if (responsephy.status > 0) {
                                     $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении изображений ответственных лиц, код ошибки: ' + responsephy.status + '. <br> Сообщение: ' + responsephy.data);
-                                    $scope.ErrorMessage += $scope.errorMsg;
+                                    $scope.EM += $scope.errorMsg
+                                    $scope.ErrorMessages = $scope.EM;
                                     $scope.toggle = true;
                                 }
                             }, function (evt) {
@@ -1360,7 +1364,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 }, function (responsephy) {
                                     if (responsephy.status > 0) {
                                         $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении ID изображений ответственных лиц, код ошибки: ' + responsephy.status + '. <br> Сообщение: ' + responsephy.data);
-                                        $scope.ErrorMessage += $scope.errorMsg;
+                                        $scope.EM += $scope.errorMsg
+                                        $scope.ErrorMessages = $scope.EM;
                                         $scope.toggle = true;
                                     }
                                 });
@@ -1370,7 +1375,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     }
                 }, function (response) {
                     $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении реквизитов, код ошибки: ' + response.status + '. <br> Сообщение: ' + response.data);
-                    $scope.ErrorMessage += $scope.errorMsg;
+                    $scope.EM += $scope.errorMsg
+                    $scope.ErrorMessages = $scope.EM;
                     $scope.toggle = true;
                 });
 
