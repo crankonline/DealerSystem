@@ -114,7 +114,7 @@ class Requisites extends CI_Controller {
 
         if (!is_null($files)) {
             foreach ($files as &$row) {
-                $tempfile = sys_get_temp_dir() . '/' . $row->file_ident;
+                $tempfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $row->file_ident;
                 file_put_contents($tempfile, fopen(getenv('MEDIA_SERVER') . 'file/download/' . $row->file_ident, 'r'));
                 $row->data = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($tempfile));
             }
@@ -237,9 +237,9 @@ class Requisites extends CI_Controller {
         $map->nsc = new stdClass();
 
         $map->common->mainActivity = $req->common->mainActivity->id;
-        is_null($req->common->capitalForm) ?: $map->common->capitalForm = $req->common->capitalForm->id;
+        is_null($req->common->capitalForm) ?$map->common->capitalForm = null : $map->common->capitalForm = $req->common->capitalForm->id;
         $map->common->legalForm = $req->common->legalForm->id;
-        is_null($req->common->managementForm) ?: $map->common->managementForm = $req->common->managementForm->id;
+        is_null($req->common->managementForm) ? $map->common->managementForm = null: $map->common->managementForm = $req->common->managementForm->id;
         $map->common->civilLegalStatus = $req->common->civilLegalStatus->id;
         $map->common->chiefBasis = $req->common->chiefBasis->id;
         $map->common->juristicAddress->settlement = $req->common->juristicAddress->settlement->id;
@@ -733,7 +733,7 @@ class Requisites extends CI_Controller {
             $ident = $request->rep_ident; // passport number if this's a representative           
             $this->requisites_model->save_file_ident($file_struct_db, $ident);
             
-            $response_to_angular['data'] = '<p>Идентификаторы графическиз образов сохранены успешно.</p>';            
+            $response_to_angular['data'] = '<p>Идентификаторы графических образов сохранены успешно.</p>';
             echo json_encode($response_to_angular);
             exit(1);
         } catch (Exception $ex) {
