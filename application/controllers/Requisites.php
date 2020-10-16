@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Requisites extends CI_Controller {
+class Requisites extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6
@@ -17,7 +19,8 @@ class Requisites extends CI_Controller {
 
     private $per_page = 20;
 
-    private function getImges($path, $album) {
+    private function getImges($path, $album)
+    {
         $pictures = array();
         if (is_dir($path . $album . "/")) {
             $dir = opendir($path . $album . "/");
@@ -32,7 +35,8 @@ class Requisites extends CI_Controller {
         return $pictures;
     }
 
-    private function read_files($pointer) {
+    private function read_files($pointer)
+    {
         $result = new stdClass();
         $result->Juridical = new stdClass();
         $result->Representatives = new stdClass();
@@ -48,7 +52,8 @@ class Requisites extends CI_Controller {
         return $result;
     }
 
-    private function read_files_v3($pointer, $id_requisites) {
+    private function read_files_v3($pointer, $id_requisites, $need_data = null)
+    {
         /*
          * $pointer = 
          *  1 - Juridical
@@ -108,15 +113,17 @@ class Requisites extends CI_Controller {
          */
         $files = null;
         ($pointer == 1) ?
-                        $files = $this->requisites_model->get_juridical_files_ident($id_requisites) : null;
-        ($pointer == 2 ) ?
-                        $files = $this->requisites_model->get_representatives_files_ident($id_requisites) : null;
+            $files = $this->requisites_model->get_juridical_files_ident($id_requisites) : null;
+        ($pointer == 2) ?
+            $files = $this->requisites_model->get_representatives_files_ident($id_requisites) : null;
 
         if (!is_null($files)) {
-            foreach ($files as &$row) {
-                $tempfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $row->file_ident;
-                file_put_contents($tempfile, fopen(getenv('MEDIA_SERVER') . 'file/download/' . $row->file_ident, 'r'));
-                $row->data = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($tempfile));
+            if (!is_null($need_data)) {
+                foreach ($files as &$row) {
+                    $tempfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $row->file_ident;
+                    file_put_contents($tempfile, fopen(getenv('MEDIA_SERVER') . 'file/download/' . $row->file_ident, 'r'));
+                    $row->data = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($tempfile));
+                }
             }
         } else {
             throw new Exception('При обработке изображений возникли ошибки.');
@@ -127,7 +134,8 @@ class Requisites extends CI_Controller {
         //$phy = $this->requisites_model->get_physical_files_ident($id_requisites);
     }
 
-    private function json_register_format($json) {
+    private function json_register_format($json)
+    {
         $json_register = new stdClass();
 
         $juristicAddress = [
@@ -146,7 +154,6 @@ class Requisites extends CI_Controller {
             $juristicAddressChecked[] = $item;
         }
         $juristicAddressText = implode(', ', $juristicAddressChecked);
-
 
 
         $physicalAddress = [
@@ -177,26 +184,26 @@ class Requisites extends CI_Controller {
         foreach ($json->common->representatives as $key => $rep) {
             foreach ($rep->roles as $role) {
                 if ($role->id == 1) {
-                    $leader = (string) $rep->person->surname . " "
-                            . (string) $rep->person->name . " "
-                            . (string) $rep->person->middleName;
+                    $leader = (string)$rep->person->surname . " "
+                        . (string)$rep->person->name . " "
+                        . (string)$rep->person->middleName;
                     $t = $rep->person->passport->series;
-                    $leaderpasport = (string) $rep->person->passport->series . ", "
-                            . (string) $rep->person->passport->number . ", "
-                            . (string) $rep->person->passport->issuingAuthority . ", "
-                            . (string) $rep->person->passport->issuingDate;
+                    $leaderpasport = (string)$rep->person->passport->series . ", "
+                        . (string)$rep->person->passport->number . ", "
+                        . (string)$rep->person->passport->issuingAuthority . ", "
+                        . (string)$rep->person->passport->issuingDate;
                     $leadertelephone = $rep->phone;
                     $leaderposition = $rep->position->name;
                 }
 
                 if ($role->id == 2) {
-                    $accountant = (string) $rep->person->surname . " "
-                            . (string) $rep->person->name . " "
-                            . (string) $rep->person->middleName;
-                    $accountantpasport = (string) $rep->person->passport->series . ", "
-                            . (string) $rep->person->passport->number . ", "
-                            . (string) $rep->person->passport->issuingAuthority . ", "
-                            . (string) $rep->person->passport->issuingDate;
+                    $accountant = (string)$rep->person->surname . " "
+                        . (string)$rep->person->name . " "
+                        . (string)$rep->person->middleName;
+                    $accountantpasport = (string)$rep->person->passport->series . ", "
+                        . (string)$rep->person->passport->number . ", "
+                        . (string)$rep->person->passport->issuingAuthority . ", "
+                        . (string)$rep->person->passport->issuingDate;
                     $accountantphone = $rep->phone;
                 }
             }
@@ -226,7 +233,8 @@ class Requisites extends CI_Controller {
         return $json_register;
     }
 
-    private function remap_to_save_format($req) {
+    private function remap_to_save_format($req)
+    {
         $map = new stdClass();
         $map->common = new stdClass();
         $map->common->juristicAddress = new stdClass();
@@ -237,9 +245,9 @@ class Requisites extends CI_Controller {
         $map->nsc = new stdClass();
 
         $map->common->mainActivity = $req->common->mainActivity->id;
-        is_null($req->common->capitalForm) ?$map->common->capitalForm = null : $map->common->capitalForm = $req->common->capitalForm->id;
+        is_null($req->common->capitalForm) ? $map->common->capitalForm = null : $map->common->capitalForm = $req->common->capitalForm->id;
         $map->common->legalForm = $req->common->legalForm->id;
-        is_null($req->common->managementForm) ? $map->common->managementForm = null: $map->common->managementForm = $req->common->managementForm->id;
+        is_null($req->common->managementForm) ? $map->common->managementForm = null : $map->common->managementForm = $req->common->managementForm->id;
         $map->common->civilLegalStatus = $req->common->civilLegalStatus->id;
         $map->common->chiefBasis = $req->common->chiefBasis->id;
         $map->common->juristicAddress->settlement = $req->common->juristicAddress->settlement->id;
@@ -289,7 +297,8 @@ class Requisites extends CI_Controller {
         return $map;
     }
 
-    private function pagination_gen() {
+    private function pagination_gen()
+    {
         $config['base_url'] = base_url() . '/index.php/requisites/requisites_list_view/';
         $config['per_page'] = $this->per_page;
         $config['num_links'] = 10;
@@ -312,7 +321,8 @@ class Requisites extends CI_Controller {
         return $this->pagination->create_links();
     }
 
-    public function reference_load() {
+    public function reference_load()
+    {
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
@@ -402,7 +412,8 @@ class Requisites extends CI_Controller {
 //        }
 //    }
 
-    public function requisites_create() {
+    public function requisites_create()
+    {
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
@@ -442,7 +453,7 @@ class Requisites extends CI_Controller {
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
 
 
-            $response_to_angular['data'] = '<p>Реквизиты сохранены успешно.</p><p>Дождитесь окончания обработки данных...</p>';
+            $response_to_angular['data'] = '<p>Реквизиты сохранены успешно. Дождитесь окончания обработки сканированных документов...</p>';
             $response_to_angular['id_requisites'] = $inserted_id_requisites;
             echo json_encode($response_to_angular);
             exit(1);
@@ -454,10 +465,11 @@ class Requisites extends CI_Controller {
         }
     }
 
-    public function requisites_list_view() {
+    public function requisites_list_view()
+    {
         try {
             (!is_null($this->input->post('search_field'))) ? $RequisitesData = $this->requisites_model->get_requisites_search($this->input->post('search_field')) :
-                            $RequisitesData = $this->requisites_model->get_requisites_all($this->per_page, $this->uri->segment(3));
+                $RequisitesData = $this->requisites_model->get_requisites_all($this->per_page, $this->uri->segment(3));
             $data['requisites_data'] = $RequisitesData;
             $data['pagination'] = $this->pagination_gen();
         } catch (Exception $ex) {
@@ -472,7 +484,8 @@ class Requisites extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function requisites_show_view($id_requisites = NULL) {
+    public function requisites_show_view($id_requisites = NULL)
+    {
         !is_null($id_requisites) ?: show_error('Получены не верные параметры', 500, $heading = 'Произошла ошибка');
         try {
             $RequisitesData = $this->requisites_model->get_requisites($id_requisites);            //print_r($RequisitesData);die;
@@ -513,20 +526,20 @@ class Requisites extends CI_Controller {
 //                    $rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
 //                }
 //            }
-            $files = $this->read_files_v3(1, $id_requisites);
+            $files = $this->read_files_v3(1, $id_requisites, true);
             !$files ? // если текущая ид без картинок то ищем последнею с картинкой
-                            $RequisitesData->json->common->files = $this->read_files_v3(1, $this->requisites_model->get_requisites_ID($RequisitesData->inn)) :
-                            $RequisitesData->json->common->files = $files;
+                $RequisitesData->json->common->files = $this->read_files_v3(1, $this->requisites_model->get_requisites_ID($RequisitesData->inn), true) :
+                $RequisitesData->json->common->files = $files;
             //$RequisitesData->json->common->files = $this->read_files_v3(1, $id_requisites);
-            $files = $this->read_files_v3(2, $id_requisites);
+            $files = $this->read_files_v3(2, $id_requisites, true);
             !$files ? // если текущая ид без картинок то ищем последнею с картинкой
-                            $representativesfiles = $this->read_files_v3(2, $this->requisites_model->get_requisites_ID($RequisitesData->inn)) :
-                            $representativesfiles = $files;
+                $representativesfiles = $this->read_files_v3(2, $this->requisites_model->get_requisites_ID($RequisitesData->inn), true) :
+                $representativesfiles = $files;
             //$representativesfiles = $this->read_files_v3(2, $id_requisites);
 
             foreach ($RequisitesData->json->common->representatives as &$rep) {
                 $pn = $rep->person->passport->number;
-                $files = array_filter($representativesfiles, function($obj) use ($pn) {
+                $files = array_filter($representativesfiles, function ($obj) use ($pn) {
                     if ($obj->representative_ident == $pn)
                         return true;
                     return false;
@@ -548,7 +561,8 @@ class Requisites extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function requisites_create_view($invoice_id = NULL) {
+    public function requisites_create_view($invoice_id = NULL)
+    {
         try {
             if ($this->session->userdata['logged_in']['Create_Invoice'] == FALSE) {
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
@@ -572,13 +586,13 @@ class Requisites extends CI_Controller {
                     $rep->person->passport->issuingDate = DateTime::createFromFormat('Y-m-d', $rep->person->passport->issuingDate)->format('d.m.Y');
                 }
                 if (!is_null($id_requisites)) {
-                    $files = $this->read_files_v3(1, $id_requisites); //get arch juridical scans                    
+                    $files = $this->read_files_v3(1, $id_requisites, null); //get arch juridical scans
                     foreach ($files as $key => &$file) { //сделано в угоду старой вьюхи
                         $file->filetype_id == 1 ? $requisites->common->files['kg'] = $file : null;
                         $file->filetype_id == 2 ? $requisites->common->files['ru'] = $file : null;
                         $file->filetype_id == 3 ? $requisites->common->files['m2a'] = $file : null;
                     }
-                    $files = $this->read_files_v3(2, $id_requisites); //get arch physical scans                    
+                    $files = $this->read_files_v3(2, $id_requisites, null); //get arch physical scans
                     foreach ($requisites->common->representatives as &$rep) {
                         //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
                         foreach ($files as $file) {
@@ -634,7 +648,8 @@ class Requisites extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function get_person_by_passport_reference() {
+    public function get_person_by_passport_reference()
+    {
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
@@ -649,7 +664,24 @@ class Requisites extends CI_Controller {
         }
     }
 
-    private function mediaupload($requisites_id, $file_type, $path, $ident = null) {
+    public function get_image_reference()
+    {
+        try {
+            $postdate = file_get_contents("php://input");
+            $request = json_decode($postdate);
+            $Dumpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $request->file_ident;
+            file_put_contents($Dumpfile, fopen(getenv('MEDIA_SERVER') . 'file/download/' . $request->file_ident, 'r'));
+            echo 'data:image/jpeg;base64,' . base64_encode(file_get_contents($Dumpfile));
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', 'get_image_reference: ' . $ex->getMessage());
+            http_response_code(500);
+            echo $ex->getMessage();
+        }
+    }
+
+    private function mediaupload($requisites_id, $file_type, $path, $ident = null)
+    {
         /* $file_struct
          * array(
          *  'part'=>phis_or_jur, //1 - phisical, 2 - juridical
@@ -687,12 +719,13 @@ class Requisites extends CI_Controller {
         }
     }
 
-    public function requisites_file_upload($id_req, $ident, $file_owner) {
+    public function requisites_file_upload($id_req, $ident, $file_owner)
+    {
         try {
 //            $config['upload_path'] = ($file_owner == 1) ?
 //                    './uploads/Juridical/' . $ident :
 //                    './uploads/Representatives/' . $ident;
-            $config['upload_path'] = './uploads/';
+            $config['upload_path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR;
             $config['allowed_types'] = 'jpg';
             $this->load->library('upload', $config);
 
@@ -711,8 +744,8 @@ class Requisites extends CI_Controller {
                     throw new Exception('При загрузке файла ' . $key . ' произошла ошибка.' . $this->upload->display_errors());
                 }
                 $this->mediaupload($id_req, $file_types[$key], $config['upload_path'] . $config['file_name'], $ident);
-                echo '<p>Файл изображения ' . $key . ' - отправлен в хранилище</p>';
                 unlink($config['upload_path'] . $config['file_name']);
+                echo '<p>Файл изображения ' . $key . ' - отправлен в хранилище</p>';
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -722,7 +755,8 @@ class Requisites extends CI_Controller {
         }
     }
 
-    public function requisites_file_upload_skip() {
+    public function requisites_file_upload_skip()
+    {
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
@@ -732,7 +766,7 @@ class Requisites extends CI_Controller {
                 'file_ident' => $request->file_ident); //file ident
             $ident = $request->rep_ident; // passport number if this's a representative           
             $this->requisites_model->save_file_ident($file_struct_db, $ident);
-            
+
             $response_to_angular['data'] = '<p>Идентификаторы графических образов сохранены успешно.</p>';
             echo json_encode($response_to_angular);
             exit(1);
