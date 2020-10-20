@@ -1254,6 +1254,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 $scope.errorMsg = null;
                 $scope.resultupload = null;
                 $scope.toggle = false;
+                $scope.EM = '';
+                $scope.SM = '';
 
                 /* checks before upload */
                 if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
@@ -1286,9 +1288,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 }
                 /* end checks */
 
-                var id_requisites = null;
-                var check_jur = false; //for redirect
-                var count_of_count = 0; //for redirect
+                let id_requisites = null;
+                let check_jur = false; //for redirect
+                let count_of_count = 0; //for redirect
                 if ($scope.SameAddress) {
                     $scope.Data.common.physicalAddress = $scope.Data.common.juristicAddress;
                 }
@@ -1300,11 +1302,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     //json_original: $scope.json_original
                 }).then(function (responce) {
                     //console.log(responce);
+                    id_requisites = responce.data.id_requisites;
                     $scope.resultupload = responce.data.data;
                     $scope.SM += $scope.resultupload;
                     $scope.ResUpload = $sce.trustAsHtml($scope.SM);
-                    id_requisites = responce.data.id_requisites;
-                    //console.log(responce);
+
+                    console.log(responce);
 
                     if ($scope.mu_file_kg) {
                         Upload.upload({
@@ -1418,11 +1421,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     $scope.toggle = true;
                 });
 
-                setInterval(function () {
-                    if (check_jur === true && $scope.count === count_of_count) {
-                        $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
-                    }
-                }, 5000);
+                //setInterval(function () {
+                //    if (check_jur === true && $scope.count === count_of_count) {
+                //        $window.location.href = '<?php //echo base_url() ?>//index.php/requisites/requisites_show_view/' + id_requisites; //redirect
+                //    }
+                //}, 5000);
             };
 
             $scope.range = function (min, max, step) {

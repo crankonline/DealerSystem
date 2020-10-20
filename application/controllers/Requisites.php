@@ -239,6 +239,7 @@ class Requisites extends CI_Controller
         $map->common = new stdClass();
         $map->common->juristicAddress = new stdClass();
         $map->common->physicalAddress = new stdClass();
+        $map->common->bank = null;
         $map->common->representatives = array();
         $map->sf = new stdClass();
         $map->sti = new stdClass();
@@ -268,8 +269,11 @@ class Requisites extends CI_Controller
         $map->common->rnmj = $req->common->rnmj;
         $map->common->eMail = $req->common->eMail;
         if (!is_null($req->common->bank)) {
-            $map->common->bank = $req->common->bank->id;
-            $map->common->bankAccount = $req->common->bankAccount;
+            $map->common->bankadcad = $req->common->bank->id;
+            $map->common->bank->bankAccount = $req->common->bank->bankAccount;
+        } else {
+           // $map->common->bank->id = null;
+            //$map->common->bank->bankAccount = null;
         }
         foreach ($req->common->representatives as $key => $rep) {
             $ImportrepResentatives = new stdClass();
@@ -692,7 +696,7 @@ class Requisites extends CI_Controller
         $url = getenv('MEDIA_SERVER') . 'file/s';
         $fields = [
             'image' => new \CurlFile($path, 'image/jpg', $requisites_id . '_' . $file_type . '_jpg'),
-            'service' => '3'
+            'service' => '1'
         ];
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_POST, 1);
