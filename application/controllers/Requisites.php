@@ -239,7 +239,6 @@ class Requisites extends CI_Controller
         $map->common = new stdClass();
         $map->common->juristicAddress = new stdClass();
         $map->common->physicalAddress = new stdClass();
-        $map->common->bank = null;
         $map->common->representatives = array();
         $map->sf = new stdClass();
         $map->sti = new stdClass();
@@ -268,12 +267,12 @@ class Requisites extends CI_Controller
         $map->common->rnsf = $req->common->rnsf;
         $map->common->rnmj = $req->common->rnmj;
         $map->common->eMail = $req->common->eMail;
-        if (!is_null($req->common->bank)) {
-            $map->common->bankadcad = $req->common->bank->id;
-            $map->common->bank->bankAccount = $req->common->bank->bankAccount;
+        if (!empty($req->common->bank)) {
+            $map->common->bank = $req->common->bank->id;
+            $map->common->bankAccount = $req->common->bankAccount;
         } else {
-           // $map->common->bank->id = null;
-            //$map->common->bank->bankAccount = null;
+            $map->common->bank = null;
+            $map->common->bankAccount = null;
         }
         foreach ($req->common->representatives as $key => $rep) {
             $ImportrepResentatives = new stdClass();
@@ -455,7 +454,9 @@ class Requisites extends CI_Controller
 //                'json_version_id' => 3,
 //                'requisites_invoice_id' => $request->invoice_id);
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
-
+            if (empty($inserted_id_requisites)){
+                throw new Exception('ID реквизита не определен' );
+            }
 
             $response_to_angular['data'] = '<p>Реквизиты сохранены успешно. Дождитесь окончания обработки сканированных документов...</p>';
             $response_to_angular['id_requisites'] = $inserted_id_requisites;

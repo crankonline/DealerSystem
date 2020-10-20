@@ -1301,13 +1301,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     json: $scope.Data
                     //json_original: $scope.json_original
                 }).then(function (responce) {
-                    //console.log(responce);
+                    console.log(responce);
                     id_requisites = responce.data.id_requisites;
+                    if(!id_requisites){//if null form server
+                        $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении изображений юридического лица, код ошибки: 500. <br> Сообщение: ID реквизита не определен');
+                        $scope.EM += $scope.errorMsg
+                        $scope.ErrorMessages = $sce.trustAsHtml($scope.EM);
+                        $scope.toggle = true;
+                        return;
+                    }
+
                     $scope.resultupload = responce.data.data;
                     $scope.SM += $scope.resultupload;
                     $scope.ResUpload = $sce.trustAsHtml($scope.SM);
-
-                    console.log(responce);
 
                     if ($scope.mu_file_kg) {
                         Upload.upload({
