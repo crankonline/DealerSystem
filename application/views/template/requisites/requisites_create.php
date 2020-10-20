@@ -1301,7 +1301,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     json: $scope.Data
                     //json_original: $scope.json_original
                 }).then(function (responce) {
-                    console.log(responce);
+                    //console.log(responce);
                     id_requisites = responce.data.id_requisites;
                     if(!id_requisites){//if null form server
                         $scope.errorMsg = $sce.trustAsHtml('Ошибка при сохранении изображений юридического лица, код ошибки: 500. <br> Сообщение: ID реквизита не определен');
@@ -1427,11 +1427,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     $scope.toggle = true;
                 });
 
-                //setInterval(function () {
-                //    if (check_jur === true && $scope.count === count_of_count) {
-                //        $window.location.href = '<?php //echo base_url() ?>//index.php/requisites/requisites_show_view/' + id_requisites; //redirect
-                //    }
-                //}, 5000);
+                setInterval(function () {
+                    if (check_jur === true && $scope.count === count_of_count) {
+                        $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
+                    }
+                }, 5000);
             };
 
             $scope.range = function (min, max, step) {

@@ -267,12 +267,12 @@ class Requisites extends CI_Controller
         $map->common->rnsf = $req->common->rnsf;
         $map->common->rnmj = $req->common->rnmj;
         $map->common->eMail = $req->common->eMail;
-        if (!empty($req->common->bank)) {
+        if (isset($req->common->bank->id)) {
             $map->common->bank = $req->common->bank->id;
             $map->common->bankAccount = $req->common->bankAccount;
         } else {
-            $map->common->bank = null;
-            $map->common->bankAccount = null;
+            $map->common->bank = "";
+            $map->common->bankAccount = "";
         }
         foreach ($req->common->representatives as $key => $rep) {
             $ImportrepResentatives = new stdClass();
