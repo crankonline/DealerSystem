@@ -497,7 +497,8 @@ SQL;
                         from('"Dealer_data".requisites')->
                         join('"Dealer_images".files_juridical',
                                 'files_juridical.requisites_id = requisites.id_requisites')->
-                        where('id_requisites', $ident)->get()->result();
+                        where('id_requisites', $ident)->
+                        order_by('filetype_id')->get()->result();
     }
 
     public function get_representatives_files_ident($ident) {
@@ -508,7 +509,8 @@ SQL;
                         from('"Dealer_data".requisites')->
                         join('"Dealer_images".files_representatives',
                                 'files_representatives.requisites_id = requisites.id_requisites')->
-                        where('id_requisites', $ident)->get()->result();
+                        where('id_requisites', $ident)->
+                        order_by('filetype_id')->get()->result();
     }
 
 }
