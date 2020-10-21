@@ -254,12 +254,14 @@ class Requisites extends CI_Controller
         $map->common->juristicAddress->postCode = $req->common->juristicAddress->postCode;
         $map->common->juristicAddress->street = $req->common->juristicAddress->street;
         $map->common->juristicAddress->building = $req->common->juristicAddress->building;
-        $map->common->juristicAddress->apartment = $req->common->juristicAddress->apartment;
+        isset($req->common->juristicAddress->apartment) ? $map->common->juristicAddress->apartment = $req->common->juristicAddress->apartment :
+            $map->common->juristicAddress->apartment = null;
         $map->common->physicalAddress->settlement = $req->common->physicalAddress->settlement->id;
         $map->common->physicalAddress->postCode = $req->common->physicalAddress->postCode;
         $map->common->physicalAddress->street = $req->common->physicalAddress->street;
         $map->common->physicalAddress->building = $req->common->physicalAddress->building;
-        $map->common->physicalAddress->apartment = $req->common->physicalAddress->apartment;
+        isset($req->common->physicalAddress->apartment) ? $map->common->physicalAddress->apartment = $req->common->physicalAddress->apartment :
+            $map->common->physicalAddress->apartment = null;
         $map->common->name = $req->common->name;
         $map->common->fullName = $req->common->fullName;
         $map->common->inn = $req->common->inn;
@@ -454,8 +456,8 @@ class Requisites extends CI_Controller
 //                'json_version_id' => 3,
 //                'requisites_invoice_id' => $request->invoice_id);
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
-            if (empty($inserted_id_requisites)){
-                throw new Exception('ID реквизита не определен' );
+            if (empty($inserted_id_requisites)) {
+                throw new Exception('ID реквизита не определен');
             }
 
             $response_to_angular['data'] = '<p>Реквизиты сохранены успешно. Дождитесь окончания обработки сканированных документов...</p>';
