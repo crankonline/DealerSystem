@@ -26,7 +26,7 @@ class Converter extends CI_Controller {
             'image' => new \CurlFile($path, 'image/jpg', $requisites_id . '_' . $file_type . '_jpg'),
             'service' => '1'
         ]; //var_dump($fields);die;
-        $ch = curl_init($url);
+        $ch = curl_init($url) . 'file/s';
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
