@@ -15,7 +15,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <div class="panel-body">
                 <div class="row">
                     <div class="col-lg-4"></div>
-                    <form action="<?php echo base_url() . "index.php/statistics/statistics_view_boss_cash_history/" ?>" method="post">
+                    <form action="<?php echo base_url() . "index.php/statistics/statistics_view_cash_history/" ?>" method="post">
                         <div class="col-lg-4">
                             <input type="text" class="form-control" placeholder="Введите ключевое слово поиска" autofocus="" name="search_field">
                         </div>

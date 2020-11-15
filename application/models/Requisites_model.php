@@ -4,20 +4,20 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model {
 
-    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9'; //DTG
+    private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
 
     private function requisites_client() {
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_REQUISITES_PROD') : //prod
-                        $wsdl = getenv('SOAP_REQUISITES_DEV'); //dev
-
+        $wsdl = (ENVIRONMENT == 'production') ?
+                getenv('SOAP_REQUISITES_PROD') : //prod
+                getenv('SOAP_REQUISITES_DEV'); //dev
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
             'trace' => 1,
             'cache_wsdl' => WSDL_CACHE_NONE,
-            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 10,
+            //'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            'location' => str_replace('?wsdl', '', $wsdl),
+            'connection_timeout' => 5,
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
         );
@@ -25,10 +25,11 @@ class Requisites_model extends CI_Model {
     }
 
     private function reference_client() {
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_REQUISITES_META_PROD') : //prod
-                        $wsdl = getenv('SOAP_REQUISITES_META_DEV'); //dev
+        $wsdl = (ENVIRONMENT == 'production') ?
+                getenv('SOAP_REQUISITES_META_PROD') : //prod
+                getenv('SOAP_REQUISITES_META_DEV'); //dev
         $user = array(
+            'location' => str_replace('?wsdl', '', $wsdl),
             'login' => 'api-' . date('z') . '-user',
             'password' => 'p@-' . round(date('z') * 3.14 * 15 * 2.7245 / 4 + 448) . '$'
         );
@@ -36,46 +37,52 @@ class Requisites_model extends CI_Model {
     }
 
     private function pki_dtg_client() {
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_PKI_PROD') : //prod
-                        $wsdl = getenv('SOAP_PKI_DEV'); //dev
+        $wsdl = (ENVIRONMENT == 'production') ?
+                getenv('SOAP_PKI_PROD') : //prod
+                getenv('SOAP_PKI_DEV'); //dev
         $options = [
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
             'trace' => 1,
             'cache_wsdl' => WSDL_CACHE_NONE,
             'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
-            'connection_timeout' => 10
+            'connection_timeout' => 5
         ];
         return new SoapClient($wsdl, $options);
     }
 
     private function sf_inninfo() {
-        $wsdl = 'http://eleed.sf.kg:8041/PayerInfoService?wsdl';
+        $wsdl = getenv('ELEED');
         $options = [
             'trace' => TRUE,
             'exceptions' => TRUE,
-            'connection_timeout' => 10
+            'connection_timeout' => 5
         ];
         return new SoapClient($wsdl, $options);
     }
 
     private function soap_1c_client() {
-        ini_set("soap.wsdl_cache_enabled", "0");
-        (ENVIRONMENT == 'production') ?
-                        $wsdl = getenv('SOAP_1C_PROD') : //prod
-                        $wsdl = getenv('SOAP_1C_DEV'); //dev
+        try {
+            //ini_set("soap.wsdl_cache_enabled", "0");
+            $wsdl = (ENVIRONMENT == 'production') ?
+                    getenv('SOAP_1C_PROD') : //prod
+                    getenv('SOAP_1C_DEV'); //dev
 
-        $user = array(
-            'login' => 'sochi',
-            'password' => 'ufvguygbvjvbugjsb6546fg964b96',
-            "trace" => 1, "exception" => 0
-        );
-        return new SoapClient($wsdl, $user);
+            $user = array(
+                'login' => getenv('1C_LOGIN'),
+                'password' => getenv('1C_PASSWORD'),
+                'trace' => 1,
+                'exceptions' => FALSE,
+                'connection_timeout' => 5
+            );
+            return @new SoapClient($wsdl, $user);
+        } catch (SoapFault $e) {
+            throw new Exception('Запрос в службу 1С -> ' . $e->faultstring);
+        }
     }
 
     private function mu_info($inn) {
-        $URL_MJ = 'http://register.minjust.gov.kg/register/';
+        $URL_MJ = getenv('MINJUST');
 
         $type = 'tin';
         $value = $inn;
@@ -165,6 +172,23 @@ class Requisites_model extends CI_Model {
         }
     }
 
+    private function media_service_push() {
+        $url = getenv('MEDIA_SERVER');
+        $fields = [
+            'image' => new \CurlFile('index.jpeg', 'image/png', 'index.jpeg'),
+            'service' => '1'
+        ];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 1);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        return curl_exec($ch);
+    }
+
     public function get_mu_reference($inn) {
         try {
             $result = $this->mu_info($inn);
@@ -174,9 +198,9 @@ class Requisites_model extends CI_Model {
                 return $result; //[0][2]; //только номер минюста
             }
         } catch (Exception $ex) {
-            $message = 'Запрос в службу министерсва юстиции -> ' . $ex->getMessage();
-            log_message('error', $message);
-            throw new Exception($message);
+            log_message('error', 'Запрос в службу министерсва юстиции -> ' . $ex->getMessage());
+            \Sentry\captureException($ex);
+            return null;
         }
     }
 
@@ -189,10 +213,10 @@ class Requisites_model extends CI_Model {
             } else {
                 return $result->PayerInfo;
             }
-        } catch (Exception $ex) {
-            $message = 'Запрос в службу социального фонда -> ' . $ex->getMessage();
-            log_message('error', $message);
-            throw new Exception($message);
+        } catch (SoapFault $ex) {
+            log_message('error', 'Запрос в службу социального фонда -> ' . $ex->getMessage());
+            \Sentry\captureException($ex);
+            return[];
         }
     }
 
@@ -240,16 +264,19 @@ class Requisites_model extends CI_Model {
     }
 
     public function get_requisites_by_inn($inn) {
-        try {
-            $token_DTG = $this->ApiRequestSubscriberToken_DTG;
-            $client = $this->requisites_client();
-            $result = $client->getByInn($token_DTG, $inn);
-            return $result;
-        } catch (Exception $ex) {
-            $message = 'Запрос в службу реквизитов -> ' . $ex->getMessage();
-            log_message('error', $message);
-            throw new Exception($message);
+        $token_DTG = $this->ApiRequestSubscriberToken_DTG;
+        $client = $this->requisites_client();
+        return $client->getByInn($token_DTG, $inn);
+        //Exceptions has catched by calling function (that faster)
+    }
+
+    public function get_person_by_passport($series, $number) {
+        $client = $this->requisites_client();
+        $result = $client->getPersonByPassport($this->ApiRequestSubscriberToken_DTG, $series, $number);
+        if (empty($result)) {
+            throw new Exception("Ничего не удалось найти");
         }
+        return $result;
     }
 
     public function requisites_saver($json) {
@@ -258,16 +285,15 @@ class Requisites_model extends CI_Model {
         try {
             $result_dtg = $client->getByInn($token_DTG, $json->common->inn);
             if (is_null($result_dtg)) { //DTG
-                $uid_ENOT = $client->register($token_DTG, $json);
-                $result_dtg = $client->getByUid($token_DTG, $uid_ENOT);
+                $uid_DTG = $client->register($token_DTG, $json);
+                $result_dtg = $client->getByUid($token_DTG, $uid_DTG);
             } else {
                 $client->update($token_DTG, $result_dtg->uid, $json);
                 $result_dtg = $client->getByUid($token_DTG, $result_dtg->uid);
             }
         } catch (Exception $ex) {
             $message = 'Ошибка при сохранении в службу реквизитов DTG -> ' . $ex->getMessage();
-            log_message('error', $message);
-            log_message('error', json_encode($json));
+            log_message('error', $ex->getMessage() . PHP_EOL . json_encode($json));
             throw new Exception($message);
         }
         return $result_dtg;
@@ -275,16 +301,21 @@ class Requisites_model extends CI_Model {
 
     public function create_pay_invoice($invoice_Serial_number) {
         $array = ['_id' => $invoice_Serial_number];
-        $client = $this->soap_1c_client();
-        $result = $client->GetNumberSF($array);
-        if ($result == null) {
-            throw new Exception("Запрос в службу 1С -> Номера электронных счетов фактур закончились");
-        }
-        $exp_res = explode("^", $result->return);
-        $serial = $exp_res[0];
-        $number = $exp_res[1];
-        $data = array('serial' => $serial,
-            'number' => $number);
+//        $client = $this->soap_1c_client();
+//        $result = $client->GetNumberSF($array);
+//        if (is_soap_fault($result)) {
+//            throw new Exception("Запрос в службу 1С, метод GetNumberSF -> {$result->faultstring}");
+//        }
+//        if ($result == null) {
+//            throw new Exception("Запрос в службу 1С, метод GetNumberSF -> Номера электронных счетов фактур закончились");
+//        }
+//        $exp_res = explode("^", $result->return);
+//        $serial = $exp_res[0];
+//        $number = 000; //$exp_res[1];
+//        $data = array('serial' => $serial,
+//            'number' => $number);
+        $data = array('serial' => null,
+            'number' => null);
 
         $this->db->insert('"Dealer_data".pay_invoice', $data);
         return $this->db->insert_id();
@@ -335,8 +366,15 @@ class Requisites_model extends CI_Model {
     }
 
     public function create_requisites($data) {
-        $this->db->insert('"Dealer_data".requisites', $data);
-        return $this->db->insert_id();
+        $result = $this->db->select('id_requisites')->
+                        from('"Dealer_data".requisites')->
+                        where('requisites_invoice_id', $data['requisites_invoice_id'])->get()->row();
+        if (!$result) {
+            $this->db->insert('"Dealer_data".requisites', $data);
+            return $this->db->insert_id();
+        } else {
+            return $result->id_requisites;
+        }
     }
 
     public function get_requisites($id_requisites) {
@@ -359,6 +397,38 @@ class Requisites_model extends CI_Model {
         return $result->row();
     }
 
+    public function get_requisites_ID($inn) { // ищет id у которых есть файлы
+        $sql = <<<SQL
+                SELECT id_requisites
+                FROM "Dealer_data".requisites
+                JOIN "Dealer_data".invoice ON requisites.requisites_invoice_id = invoice.id_invoice
+                JOIN "Dealer_images".files_juridical ON requisites.id_requisites = files_juridical.requisites_id
+                WHERE json -> 'common' ->> 'inn' = ?
+                ORDER BY id_requisites DESC
+SQL;
+        $result = $this->db->query($sql, $inn)->row();
+        if (!empty($result)) {
+            return $result->id_requisites;
+        } else {
+            return null;
+        }
+    }
+
+    public function get_requisites_JSON($inn) {
+        $sql = <<<SQL
+                SELECT json
+                FROM "Dealer_data".requisites
+                WHERE json -> 'common' ->> 'inn' = ?
+                ORDER BY requisites_creating_date_time DESC
+SQL;
+        $result = $this->db->query($sql, $inn)->row();
+        if (!empty($result)) {
+            return $result->json;
+        } else {
+            return null;
+        }
+    }
+
     public function get_invoice_data_by_id($id_invoice) {
         return $this->db->select('invoice.inn')->
                         select('invoice.invoice_serial_number')->
@@ -374,7 +444,6 @@ class Requisites_model extends CI_Model {
             return $result;
         } catch (Exception $ex) {
             $message = 'Запрос в службу PKI -> ' . $ex->getMessage();
-            log_message('error', $message);
             throw new Exception($message);
         }
     }
@@ -382,13 +451,11 @@ class Requisites_model extends CI_Model {
     public function register_client_to1c($json_register) {
         try {
             $parameters = new \stdClass();
-
             $parameters->data = json_encode($json_register, JSON_UNESCAPED_UNICODE);
             $client = $this->soap_1c_client();
             $client->registration($parameters);
         } catch (Exception $ex) {
             $message = 'Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage();
-            log_message('error', $message);
             throw new Exception($message);
         }
     }
@@ -402,6 +469,48 @@ class Requisites_model extends CI_Model {
         !is_null($UserID) ? $this->db->join('"Dealer_data".users', 'invoice.users_id = users.id_users')->
                                 where('id_users', $UserID) : NULL;
         return $this->db->get()->result();
+    }
+
+    public function save_file_ident($file_struct, $ident = null) {
+        /*
+         * $file_type = //1,2,3,4
+         * $part = //1 - phisical, 2 - juridical
+         * $file_struct
+         * array(
+         *  'requisites_id'=>, //id requisistes in db
+         *  'file_type_id'=>, //id file type
+         *  'representative_id'=> //if $file_type == 2
+         *  'file_ident'); 
+         */
+        if (in_array($file_struct['filetype_id'], [1, 2, 3])) {
+            $this->db->insert('"Dealer_images".files_juridical', $file_struct);
+        } else {
+            $file_struct['representative_ident'] = $ident;
+            $this->db->insert('"Dealer_images".files_representatives', $file_struct);
+        }
+    }
+
+    public function get_juridical_files_ident($ident) {
+        return $this->db->select('filetype_id')->
+                        select('file_ident')->
+                        select('timestamp')->
+                        from('"Dealer_data".requisites')->
+                        join('"Dealer_images".files_juridical',
+                                'files_juridical.requisites_id = requisites.id_requisites')->
+                        where('id_requisites', $ident)->
+                        order_by('filetype_id')->get()->result();
+    }
+
+    public function get_representatives_files_ident($ident) {
+        return $this->db->select('representative_ident')->
+                        select('filetype_id')->
+                        select('file_ident')->
+                        select("'timestamp'")->
+                        from('"Dealer_data".requisites')->
+                        join('"Dealer_images".files_representatives',
+                                'files_representatives.requisites_id = requisites.id_requisites')->
+                        where('id_requisites', $ident)->
+                        order_by('filetype_id')->get()->result();
     }
 
 }
