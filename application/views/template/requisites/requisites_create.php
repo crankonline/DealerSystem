@@ -573,6 +573,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            gked-mask
                                            ng-model="Data.common.representatives[key].person.passport.issuingDate"></td>
                             </tr>
+                            <tr>
+                                <td>ПИН</td>
+                                <td><input type="text"
+                                            class="form-control"
+                                            placeholder="Персональный идентификационный номер"
+                                            minlength="14"
+                                            maxlength="14"
+                                            required
+                                            numbers-only
+                                            ng-model="Data.common.representatives[key].person.pin"></td>
+                            </tr>
                             <tr class="success">
                                 <td colspan="2" align="center">Персональные данные</td>
                             </tr>
@@ -1237,6 +1248,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         $scope.Data.common.representatives[Key].person.surname = response.data.surname;
                         $scope.Data.common.representatives[Key].person.name = response.data.name;
                         $scope.Data.common.representatives[Key].person.middleName = response.data.middleName;
+                        $scope.Data.common.representatives[Key].person.pin = response.data.pin;
                     }, function (response) {
 
                     });
@@ -1315,7 +1327,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     //console.log(responce);
                     id_requisites = responce.data.id_requisites;
                     if (!id_requisites) {//if null form server
-                        $scope.ErrorFunc('<p>Ошибка при сохранении изображений, код ошибки: 500.</p><p> Сообщение: ID реквизита не определен</p>');
+                        $scope.ErrorFunc('<p>Ошибка при сохранении изображений. ID реквизита не определен</p>');
                         return;
                     }
 
