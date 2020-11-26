@@ -456,14 +456,13 @@ class Requisites extends CI_Controller
 //                'json_version_id' => 3,
 //                'requisites_invoice_id' => $request->invoice_id);
             $inserted_id_requisites = $this->requisites_model->create_requisites($data); //insert BD
-            if (empty($inserted_id_requisites)) {
-                throw new Exception('ID реквизита не определен');
-            }
+//            if (empty($inserted_id_requisites)) {
+//                throw new Exception('ID реквизита не определен');
+//            }
 
             $response_to_angular['data'] = '<p>Реквизиты сохранены успешно. Дождитесь окончания обработки сканированных документов...</p>';
             $response_to_angular['id_requisites'] = $inserted_id_requisites;
             echo json_encode($response_to_angular);
-            exit(1);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
