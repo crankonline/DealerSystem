@@ -279,6 +279,7 @@ class Requisites extends CI_Controller
         foreach ($req->common->representatives as $key => $rep) {
             $ImportrepResentatives = new stdClass();
             $ImportrepResentatives->person = $rep->person;
+            $ImportrepResentatives->person->middleName = isset($rep->person->middleName) ? $rep->person->middleName : null;
             $ImportrepResentatives->person->passport->issuingDate = DateTime::createFromFormat('d.m.Y', $ImportrepResentatives->person->passport->issuingDate)->format('Y-m-d\TH:i:sP');
             $ImportrepResentatives->edsUsageModel = isset($rep->edsUsageModel->id) ? $rep->edsUsageModel->id : null;
             $ImportrepResentatives->position = $rep->position->id;
