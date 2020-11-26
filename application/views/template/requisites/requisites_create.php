@@ -1419,7 +1419,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     }
                 }, function (response) {
                     $scope.ErrorFunc('<p>Ошибка при сохранении реквизитов, код ошибки: ' + response.status + '.</p><p> Сообщение: ' + response.data + '</p>');
-                    console.log(response);
                 });
 
                 setInterval(function () {
