@@ -62,8 +62,6 @@ class Requisites_model extends CI_Model {
     }
 
     private function soap_1c_client() {
-        try {
-            //ini_set("soap.wsdl_cache_enabled", "0");
             $wsdl = (ENVIRONMENT == 'production') ?
                     getenv('SOAP_1C_PROD') : //prod
                     getenv('SOAP_1C_DEV'); //dev
@@ -72,13 +70,10 @@ class Requisites_model extends CI_Model {
                 'login' => getenv('1C_LOGIN'),
                 'password' => getenv('1C_PASSWORD'),
                 'trace' => 1,
-                'exceptions' => FALSE,
+                'exceptions' => true,
                 'connection_timeout' => 5
             );
-            return @new SoapClient($wsdl, $user);
-        } catch (SoapFault $e) {
-            throw new Exception('Запрос в службу 1С -> ' . $e->faultstring);
-        }
+            return new SoapClient($wsdl, $user);
     }
 
     private function mu_info($inn) {
