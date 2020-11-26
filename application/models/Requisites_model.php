@@ -76,8 +76,13 @@ class Requisites_model extends CI_Model {
                 'connection_timeout' => 5
             );
             return @new SoapClient($wsdl, $user);
-        } catch (SoapFault $e) {
-            throw new Exception('Запрос в службу 1С -> ' . $e->faultstring);
+        } catch (SoapFault $ex) {
+            //throw new Exception('Запрос в службу 1С -> ' . $e->faultstring);
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500); //на все справочники
+            echo $ex->getMessage();
+            exit(1);
         }
     }
 
@@ -449,15 +454,15 @@ SQL;
     }
 
     public function register_client_to1c($json_register) {
-        try {
+ //       try {
             $parameters = new \stdClass();
             $parameters->data = json_encode($json_register, JSON_UNESCAPED_UNICODE);
             $client = $this->soap_1c_client();
             $client->registration($parameters);
-        } catch (Exception $ex) {
-            $message = 'Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage();
-            throw new Exception($message);
-        }
+//        } catch (Exception $ex) {
+//            $message = 'Запрос в службу 1C на регистрацию клиента -> ' . $ex->getMessage();
+//            throw new Exception($message);
+//        }
     }
 
     public function get_inn_list_by_date($date_start, $date_finish, $UserID = NULL) {
