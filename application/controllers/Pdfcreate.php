@@ -171,10 +171,10 @@ class Pdfcreate extends CI_Controller {
             return;
         }
 
-        if ($pay_invoice_version['id_pay_invoice_version'] == '3') { //временные акты и расходники
+        if ($pay_invoice_version['id_pay_invoice_version'] == '3') { //временные акты и расходники. Нет ничего постоянее чем ...
             $token = false;
             foreach ($data['data_invoice'] as $Record) {
-                $Record->id_inventory == 2 ? $token = true : null;
+                in_array($Record->id_inventory, [2,7])?$token = true : null;
             }
             if ($token) {
                 $html = $this->load->view('pdf/waybill', $data, true);
