@@ -145,7 +145,7 @@
                 </tr>
                  <?php $Sum = 0; ?>
                 <?php foreach ($data_invoice as $key => $Record) : ?>
-                    <?php if ($Record->id_inventory == 2): //если токен?>
+                    <?php if (in_array($Record->id_inventory, [2,7])): //если токен?>
                         <tr class="large td-bordered">
                             <td class="center" colspan="2">1</td>
                             <td class="center" colspan="5">00000056</td>
