@@ -978,8 +978,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 {id: 2, name: "Использование ЭЦП из облачного хранилища"}
             ];
             for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
-                $scope.Data.common.representatives[i].edsUsageModel =
-                    $scope.edsUsageModels[$scope.edsUsageModels.findIndex(x => x.id == $scope.Data.common.representatives[i].edsUsageModel.id)]
+                if ($scope.Data.common.representatives[i].edsUsageModel != null) {
+                    $scope.Data.common.representatives[i].edsUsageModel =
+                        $scope.edsUsageModels[$scope.edsUsageModels.findIndex(x => x.id == $scope.Data.common.representatives[i].edsUsageModel.id)]
+                }
             }
 
             angular.forEach($scope.Data.common.files, function (item) { //грузим сканы юрлица
