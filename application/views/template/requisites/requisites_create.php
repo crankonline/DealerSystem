@@ -576,13 +576,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <tr>
                                 <td>ПИН</td>
                                 <td><input type="text"
-                                            class="form-control"
-                                            placeholder="Персональный идентификационный номер"
-                                            minlength="14"
-                                            maxlength="14"
-                                            required
-                                            numbers-only
-                                            ng-model="Data.common.representatives[key].person.pin"></td>
+                                           class="form-control"
+                                           placeholder="Персональный идентификационный номер"
+                                           minlength="14"
+                                           maxlength="14"
+                                           required
+                                           numbers-only
+                                           ng-model="Data.common.representatives[key].person.pin"></td>
                             </tr>
                             <tr class="success">
                                 <td colspan="2" align="center">Персональные данные</td>
@@ -978,8 +978,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 {id: 2, name: "Использование ЭЦП из облачного хранилища"}
             ];
             for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
-                $scope.Data.common.representatives[i].edsUsageModel =
-                    $scope.edsUsageModels[$scope.edsUsageModels.findIndex(x => x.id == $scope.Data.common.representatives[i].edsUsageModel.id)]
+                if ($scope.Data.common.representatives[i].edsUsageModel != null) {
+                    $scope.Data.common.representatives[i].edsUsageModel =
+                        $scope.edsUsageModels[$scope.edsUsageModels.findIndex(x => x.id == $scope.Data.common.representatives[i].edsUsageModel.id)]
+                }
             }
 
             angular.forEach($scope.Data.common.files, function (item) { //грузим сканы юрлица
@@ -1262,7 +1264,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 //console.log(result);
             }
 
-            $scope.SuccessFunc = function (message){
+            $scope.SuccessFunc = function (message) {
                 $scope.resultupload = $sce.trustAsHtml(message);
                 $scope.SM += $scope.resultupload;
                 $scope.ResUpload = $sce.trustAsHtml($scope.SM);
