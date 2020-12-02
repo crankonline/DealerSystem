@@ -576,13 +576,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <tr>
                                 <td>ПИН</td>
                                 <td><input type="text"
-                                            class="form-control"
-                                            placeholder="Персональный идентификационный номер"
-                                            minlength="14"
-                                            maxlength="14"
-                                            required
-                                            numbers-only
-                                            ng-model="Data.common.representatives[key].person.pin"></td>
+                                           class="form-control"
+                                           placeholder="Персональный идентификационный номер"
+                                           minlength="14"
+                                           maxlength="14"
+                                           required
+                                           numbers-only
+                                           ng-model="Data.common.representatives[key].person.pin"></td>
                             </tr>
                             <tr class="success">
                                 <td colspan="2" align="center">Персональные данные</td>
@@ -1262,7 +1262,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 //console.log(result);
             }
 
-            $scope.SuccessFunc = function (message){
+            $scope.SuccessFunc = function (message) {
                 $scope.resultupload = $sce.trustAsHtml(message);
                 $scope.SM += $scope.resultupload;
                 $scope.ResUpload = $sce.trustAsHtml($scope.SM);
@@ -1355,22 +1355,24 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             //console.log($scope.progressjur);
                         });
                     } else {//если выбрали и зображение из архива
-                        let keys = Object.keys(scope.Data.common.files);
-                        //console.log(keys);
-                        for (var i = 0; i < keys.length; i++) {
-                            //console.log('Go JUR - ' + $scope.Data.common.files[keys[i]].file_ident);
-                            $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_file_upload_skip', {
-                                id_requisites: id_requisites,
-                                filetype_id: $scope.Data.common.files[keys[i]].filetype_id,
-                                file_ident: $scope.Data.common.files[keys[i]].file_ident,
-                                rep_ident: null
-                            }).then(function (responsejur) {
-                                $scope.SuccessFunc(responsejur.data.data);
-                            }, function (responsejur) {
-                                if (responsejur.status > 0) {
-                                    $scope.ErrorFunc('<p>Ошибка при сохранении ID изображений юридического лица, код ошибки: ' + responsejur.status + '</p><p> Сообщение: ' + responsejur.data + '</p>');
-                                }
-                            });
+                        if (!angular.isUndefined(scope.Data.common.files)){ //если ИП
+                            let keys = Object.keys(scope.Data.common.files);
+                            //console.log(keys);
+                            for (var i = 0; i < keys.length; i++) {
+                                //console.log('Go JUR - ' + $scope.Data.common.files[keys[i]].file_ident);
+                                $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_file_upload_skip', {
+                                    id_requisites: id_requisites,
+                                    filetype_id: $scope.Data.common.files[keys[i]].filetype_id,
+                                    file_ident: $scope.Data.common.files[keys[i]].file_ident,
+                                    rep_ident: null
+                                }).then(function (responsejur) {
+                                    $scope.SuccessFunc(responsejur.data.data);
+                                }, function (responsejur) {
+                                    if (responsejur.status > 0) {
+                                        $scope.ErrorFunc('<p>Ошибка при сохранении ID изображений юридического лица, код ошибки: ' + responsejur.status + '</p><p> Сообщение: ' + responsejur.data + '</p>');
+                                    }
+                                });
+                            }
                         }
                         check_jur = true;
                     }
