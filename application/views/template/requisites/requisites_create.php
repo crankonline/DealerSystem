@@ -409,7 +409,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </td>
                         </tr>
                         <tr ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
-                            <td style="width: 266px">Кыргызская сторона</td>
+                            <td style="width: 276px">Кыргызская сторона
+                                <label ng-show="Data.common.files.mu_file_kg">Изображение из архива
+                                    <input type="checkbox"
+                                           ng-model="jur_file_ch_kg"
+                                           ng-init="jur_file_ch_kg = (Data.common.files.mu_file_kg) ? true : false"/>
+                                </label>
+                            </td>
                             <td>
                                 <input type="file"
                                        class="form-control"
@@ -420,25 +426,31 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
                                        ngf-min-height="100"
-                                       ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch)"
-                                       ng-show="!Data.common.files.kg || !jur_file_ch">
+                                       ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_kg)"
+                                       ng-show="!Data.common.files.mu_file_kg || !jur_file_ch_kg">
                                 <img class="thumbnail"
                                      ng-show="mu_file_kg"
                                      ngf-src="mu_file_kg"
                                      width="50%">
 
                                 <img class="thumbnail"
-                                     ng-show="Data.common.files.kg && jur_file_ch"
+                                     ng-show="Data.common.files.mu_file_kg && jur_file_ch_kg"
                                      ng-src="{{JUR_File_kg}}"
                                      width="400">
                                 <div align="center"
-                                     ng-show="!Data.common.files.kg && jur_file_ch">
+                                     ng-show="!Data.common.files.mu_file_kg && jur_file_ch_kg">
                                     Документ отсутсвует
                                 </div>
                             </td>
                         </tr>
                         <tr ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
-                            <td>Русская сторона</td>
+                            <td>Русская сторона
+                                <label ng-show="Data.common.files.mu_file_ru">Изображение из архива
+                                    <input type="checkbox"
+                                           ng-model="jur_file_ch_ru"
+                                           ng-init="jur_file_ch_ru = (Data.common.files.mu_file_ru) ? true : false"/>
+                                </label>
+                            </td>
                             <td>
                                 <input type="file"
                                        class="form-control"
@@ -449,19 +461,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
                                        ngf-min-height="100"
-                                       ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch)"
-                                       ng-show="!Data.common.files || !jur_file_ch">
+                                       ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_ru)"
+                                       ng-show="!Data.common.files.mu_file_ru || !jur_file_ch_ru">
                                 <img class="thumbnail"
                                      ng-hide="!mu_file_ru"
                                      ngf-src="mu_file_ru"
                                      width="50%">
 
                                 <img class="thumbnail"
-                                     ng-show="Data.common.files.ru && jur_file_ch"
+                                     ng-show="Data.common.files.mu_file_ru && jur_file_ch_ru"
                                      ng-src="{{JUR_File_ru}}"
                                      width="400">
                                 <div align="center"
-                                     ng-show="!Data.common.files.ru && jur_file_ch">
+                                     ng-show="!Data.common.files.mu_file_ru && jur_file_ch_ru">
                                     Документ отсутсвует
                                 </div>
                             </td>
@@ -470,7 +482,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td colspan="2" align="center">Форма М2А</td>
                         </tr>
                         <tr>
-                            <td>Выписка (не обязательно)</td>
+                            <td>Выписка (не обязательно)
+                                <label ng-show="Data.common.files.mu_file_m2a">Изображение из архива
+                                    <input type="checkbox"
+                                           ng-model="jur_file_ch_m2a"
+                                           ng-init="jur_file_ch_m2a = (Data.common.files.mu_file_m2a) ? true : false"/>
+                                </label>
+                            </td>
                             <td>
                                 <input type="file"
                                        class="form-control"
@@ -480,30 +498,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
                                        ngf-min-height="100"
-                                       ng-show="!Data.common.files || !jur_file_ch">
+                                       ng-show="!Data.common.files.mu_file_m2a || !jur_file_ch_m2a">
                                 <img class="thumbnail"
                                      ng-hide="!m2a"
                                      ngf-src="m2a"
                                      width="50%">
 
                                 <img class="thumbnail"
-                                     ng-show="Data.common.files.m2a && jur_file_ch"
+                                     ng-show="Data.common.files.mu_file_m2a && jur_file_ch_m2a"
                                      ng-src="{{JUR_File_m2a}}"
                                      width="400">
-                                <div align="center"
-                                     ng-show="!Data.common.files.m2a && jur_file_ch">
-                                    Документ отсутсвует
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2" align="center">
-                                <label ng-show="Data.common.files">Использовать изображения из архива
-                                    <input class="form-"
-                                           type="checkbox"
-                                           ng-model="jur_file_ch"
-                                           ng-init="jur_file_ch = (Data.common.files.kg) ? true : false"/>
-                                </label>
                             </td>
                         </tr>
                         </tbody>
@@ -823,9 +827,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <?php endif; ?>
 </div>
 <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
 <script type="text/javascript">
     var RequisitesForm = angular.module('RequisitesForm', ['ngFileUpload', 'checklist-model']);
     RequisitesForm
@@ -1335,7 +1336,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                     $scope.SuccessFunc(responce.data.data);
 
-                    if ($scope.mu_file_kg) {
+                    let dataToSend = {};
+                    if (!angular.isUndefined($scope.mu_file_kg)) {
+                        dataToSend.mu_file_kg = $scope.mu_file_kg;
+                    }
+                    if (!angular.isUndefined($scope.mu_file_ru)) {
+                        dataToSend.mu_file_ru = $scope.mu_file_ru;
+                    }
+                    if (!angular.isUndefined($scope.m2a)) {
+                        dataToSend.m2a = $scope.m2a;
+                    }
+                    //console.log(Object.keys(dataToSend).length !== 0 );return ;
+
+                    if (Object.keys(dataToSend).length !== 0) {
                         Upload.upload({
                             url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
                                 + $scope.Data.common.inn + '/' + '1',
@@ -1346,38 +1359,48 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             }
                         }).then(function (responsejur) {
                             $scope.SuccessFunc(responsejur.data);
-                            check_jur = true;
-                            //console.log($sce.trustAsHtml($scope.resultupload));
+                            //--check_jur = true;
+                            //--console.log($sce.trustAsHtml($scope.resultupload));
                         }, function (responsejur) {
                             if (responsejur.status > 0) {
-                                $scope.ErrorFunc('<p>Ошибка при сохранении изображений юридического лица, код ошибки: ' + responsejur.status + '.</p><p> Сообщение: ' + responsejur.data + '</p>');
+                                $scope.ErrorFunc('<p>Ошибка при сохранении изображений юридического лица, код ошибки: '
+                                    + responsejur.status + '.</p><p> Сообщение: ' + responsejur.data + '</p>');
                             }
                         }, function (evt) {
                             $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                            //console.log($scope.progressjur);
+                            //--console.log($scope.progressjur);
                         });
-                    } else {//если выбрали и зображение из архива
-                        if (!angular.isUndefined(scope.Data.common.files)){ //если ИП
-                            let keys = Object.keys(scope.Data.common.files);
-                            //console.log(keys);
-                            for (var i = 0; i < keys.length; i++) {
-                                //console.log('Go JUR - ' + $scope.Data.common.files[keys[i]].file_ident);
-                                $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_file_upload_skip', {
-                                    id_requisites: id_requisites,
-                                    filetype_id: $scope.Data.common.files[keys[i]].filetype_id,
-                                    file_ident: $scope.Data.common.files[keys[i]].file_ident,
-                                    rep_ident: null
-                                }).then(function (responsejur) {
-                                    $scope.SuccessFunc(responsejur.data.data);
-                                }, function (responsejur) {
-                                    if (responsejur.status > 0) {
-                                        $scope.ErrorFunc('<p>Ошибка при сохранении ID изображений юридического лица, код ошибки: ' + responsejur.status + '</p><p> Сообщение: ' + responsejur.data + '</p>');
-                                    }
-                                });
-                            }
-                        }
-                        check_jur = true;
                     }
+
+                    if (!angular.isUndefined(scope.Data.common.files)) { //если есть архивные файлы
+                        //теперь надо удалить из объекта то что есть в массиве фалов на загрузку
+                        console.log(scope.Data.common.files);
+                        angular.forEach(dataToSend, function (value, key) {
+                            delete scope.Data.common.files[key];
+                        });
+                        console.log(scope.Data.common.files);
+                        let keys = Object.keys(scope.Data.common.files);
+                        console.log(keys.length);
+                        // if (keys.length != 0) {
+                        for (let i = 0; i < keys.length; i++) {
+                            //console.log('Go JUR - ' + $scope.Data.common.files[keys[i]].file_ident);
+                            $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_file_upload_skip', {
+                                id_requisites: id_requisites,
+                                filetype_id: $scope.Data.common.files[keys[i]].filetype_id,
+                                file_ident: $scope.Data.common.files[keys[i]].file_ident,
+                                rep_ident: null
+                            }).then(function (responsejur) {
+                                $scope.SuccessFunc(responsejur.data.data);
+                            }, function (responsejur) {
+                                if (responsejur.status > 0) {
+                                    $scope.ErrorFunc('<p>Ошибка при сохранении ID изображений юридического лица, код ошибки: '
+                                        + responsejur.status + '</p><p> Сообщение: ' + responsejur.data + '</p>');
+                                }
+                            });
+                        }
+                        // }
+                    }
+                    check_jur = true;
 
                     for (let i = 0; i < $scope.count; i++) {
                         if ($scope.passport_side_1[i]) {
@@ -1507,3 +1530,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
         };
     });
 </script>
+<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
