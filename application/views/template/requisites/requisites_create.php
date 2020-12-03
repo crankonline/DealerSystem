@@ -827,6 +827,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <?php endif; ?>
 </div>
 <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
 <script type="text/javascript">
     var RequisitesForm = angular.module('RequisitesForm', ['ngFileUpload', 'checklist-model']);
     RequisitesForm
@@ -1352,14 +1355,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         Upload.upload({
                             url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
                                 + $scope.Data.common.inn + '/' + '1',
-                            data: {
-                                mu_file_kg: $scope.mu_file_kg,
-                                mu_file_ru: $scope.mu_file_ru,
-                                m2a: $scope.m2a
-                            }
+                            data: dataToSend
                         }).then(function (responsejur) {
                             $scope.SuccessFunc(responsejur.data);
-                            //--check_jur = true;
+                            check_jur = true;
                             //--console.log($sce.trustAsHtml($scope.resultupload));
                         }, function (responsejur) {
                             if (responsejur.status > 0) {
@@ -1399,8 +1398,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             });
                         }
                         // }
+                        check_jur = true;
                     }
-                    check_jur = true;
+
 
                     for (let i = 0; i < $scope.count; i++) {
                         if ($scope.passport_side_1[i]) {
