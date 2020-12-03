@@ -604,9 +604,9 @@ class Requisites extends CI_Controller
                         //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
                         foreach ($files as $file) {
                             if ($rep->person->passport->number == $file->representative_ident) {//сделано в угоду старой вьюхи
-                                $file->filetype_id == 4 ? $rep->files['front'] = $file : null;
-                                $file->filetype_id == 5 ? $rep->files['back'] = $file : null;
-                                $file->filetype_id == 6 ? $rep->files['copy'] = $file : null;
+                                $file->filetype_id == 4 ? $rep->files['passport_side_1'] = $file : null;
+                                $file->filetype_id == 5 ? $rep->files['passport_side_2'] = $file : null;
+                                $file->filetype_id == 6 ? $rep->files['passport_copy'] = $file : null;
                             }
                         }
                     }
@@ -775,7 +775,7 @@ class Requisites extends CI_Controller
             $ident = $request->rep_ident; // passport number if this's a representative           
             $this->requisites_model->save_file_ident($file_struct_db, $ident);
 
-            $response_to_angular['data'] = '<p>Идентификаторы графических образов сохранены успешно.</p>';
+            $response_to_angular['data'] = "<p>Идентификаторы графических образов сохранены успешно - {$request->file_ident}.</p>";
             echo json_encode($response_to_angular);
             exit(1);
         } catch (Exception $ex) {
