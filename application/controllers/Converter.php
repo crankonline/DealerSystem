@@ -1,17 +1,20 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Converter extends CI_Controller {
+class Converter extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
         $this->load->model('requisites_model');
         $this->load->model('invoice_model');
         //$this->load->library('media_server');
     }
 
-    private function mediaupload($requisites_id, $file_type, $path, $ident = null) {
+    private function mediaupload($requisites_id, $file_type, $path, $ident = null)
+    {
         /* $file_struct
          * array(
          *  'part'=>phis_or_jur, //1 - phisical, 2 - juridical
@@ -51,7 +54,8 @@ class Converter extends CI_Controller {
         }
     }
 
-    public function convert(string $date) {
+    public function convert($date)
+    {
 
         /*
          * 1 сканируем директорию, выводим количество 
@@ -95,7 +99,7 @@ class Converter extends CI_Controller {
 //            var_dump(count($this->requisites_model->get_juridical_files_ident($invoce[0]->id_requisites)) );
 //            var_dump(count($this->requisites_model->get_representatives_files_ident($invoce[0]->id_requisites)) );
             if (count($this->requisites_model->get_juridical_files_ident($invoce[0]->id_requisites)) != 0 &&
-                    count($this->requisites_model->get_representatives_files_ident($invoce[0]->id_requisites)) != 0) {
+                count($this->requisites_model->get_representatives_files_ident($invoce[0]->id_requisites)) != 0) {
                 unset($dir_list[$key]); //4             
             }
         }
@@ -153,11 +157,51 @@ class Converter extends CI_Controller {
             }
             if ($jur_mark == true && $rep_mark == true) {
                 rename('uploads' . DIRECTORY_SEPARATOR . $dir, 'uploads' . DIRECTORY_SEPARATOR . $dir . '_uploaded');
-                echo $dir . ' - uploaded success' . PHP_EOL;  
+                echo $dir . ' - uploaded success' . PHP_EOL;
             } else {
                 echo $dir . ' - FAIL F*CK THIS SHIT' . PHP_EOL;
             }
         }
     }
 
+    public function analys()
+    {
+        $count_company_done = [];
+        $count_company_niht = [];
+        $count_rep_done = 0;
+        $count_rep_niht = 0;
+        $inns = [];
+        $handle = fopen("companies.csv", "r");
+        while (($data = fgetcsv($handle)) !== FALSE) {
+            array_push($inns, $data[0]);
+        }
+        fclose($handle);
+
+        echo 'Count = ' . count($inns) . PHP_EOL;
+        //var_dump($inns[0]);die;
+        for ($i = 0; $i < count($inns); $i++) {
+            $requisites = $this->requisites_model->get_requisites_by_inn($inns[$i]); //поиск в реквизитах
+            if ($requisites) {
+                foreach ($requisites->common->representatives as $representative) {//search of rep
+                    foreach ($representative->roles as $rol) {//search of role in rep
+                        if (in_array(1, (array)$rol)) {
+                            if ($representative->person->pin) {//search pin in in rep id role == header
+                                array_push($count_company_done, $requisites->common->inn);
+                            } else {
+                                array_push($count_company_niht, $requisites->common->inn);
+                            }
+                        }
+                    }
+                }
+            }
+            if ($i != 0) {
+                echo "\033[7D";      // Move 7 characters backward
+                echo str_pad(number_format($i / count($inns) * 100, 2 , '.',''), 5, ' ', STR_PAD_LEFT) . " %";    // Output is always 5 characters long
+            }
+        }
+        file_put_contents('filename.txt', print_r($count_company_niht, true));
+        echo 'Count DONE = '. count($count_company_done);
+        echo 'Count NIHT = '. count($count_company_niht);
+    }
 }
+
