@@ -688,7 +688,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td style="width: 266px">Cторона 1
-                                    <label ng-show="Data.common.representatives[key].files.passport_side_1">Изображение из архива
+                                    <label ng-show="Data.common.representatives[key].files.passport_side_1">Изображение
+                                        из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_1[key]"
                                                ng-init="rep_file_ch_passport_side_1[key] = (Data.common.representatives[key].files.passport_side_1) ? true : false"/>
@@ -718,7 +719,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td>Cторона 2
-                                    <label ng-show="Data.common.representatives[key].files.passport_side_2">Изображение из архива
+                                    <label ng-show="Data.common.representatives[key].files.passport_side_2">Изображение
+                                        из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_2[key]"
                                                ng-init="rep_file_ch_passport_side_2[key] = (Data.common.representatives[key].files.passport_side_2) ? true : false"/>
@@ -751,7 +753,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td>Нотариально заверенная копия
-                                    <label ng-show="Data.common.representatives[key].files.passport_copy">Изображение из архива
+                                    <label ng-show="Data.common.representatives[key].files.passport_copy">Изображение из
+                                        архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_copy[key]"
                                                ng-init="rep_file_ch_passport_copy[key] = (Data.common.representatives[key].files.passport_copy) ? true : false"/>
@@ -1317,6 +1320,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 let id_requisites = null;
                 let check_jur = false; //for redirect
                 let count_of_count = 0; //for redirect
+                let check_jur_files = false,
+                    check_jur_ident = false;
+                let check_rep_files = false,
+                    check_rep_ident = false;
+
                 if ($scope.SameAddress) {
                     $scope.Data.common.physicalAddress = $scope.Data.common.juristicAddress;
                 }
@@ -1347,15 +1355,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         dataToSend.m2a = $scope.m2a;
                     }
                     //console.log(Object.keys(dataToSend).length !== 0 );return ;
-
-                    if (Object.keys(dataToSend).length !== 0) {
+                    if (Object.keys(dataToSend).length !== 0) {//если есть что отправлять
                         Upload.upload({
                             url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
                                 + $scope.Data.common.inn + '/' + '1',
                             data: dataToSend
                         }).then(function (responsejur) {
                             $scope.SuccessFunc(responsejur.data);
-                            check_jur = true;
+                            check_jur_files = true;
                             //--console.log($sce.trustAsHtml($scope.resultupload));
                         }, function (responsejur) {
                             if (responsejur.status > 0) {
@@ -1366,6 +1373,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
                             //--console.log($scope.progressjur);
                         });
+                    } else { //если отправлять нечего нефиг проверять
+                        check_jur_files = true;
                     }
 
                     if (!angular.isUndefined(scope.Data.common.files)) { //если есть архивные файлы
@@ -1386,6 +1395,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 rep_ident: null
                             }).then(function (responsejur) {
                                 $scope.SuccessFunc(responsejur.data.data);
+                                check_jur_ident = true;
                             }, function (responsejur) {
                                 if (responsejur.status > 0) {
                                     $scope.ErrorFunc('<p>Ошибка при сохранении ID изображений юридического лица, код ошибки: '
@@ -1393,7 +1403,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 }
                             });
                         }
-                        check_jur = true;
+                    } else { //если нет архиных фалов то нефиг их проверять
+                        check_jur_ident = true;
                     }
 
                     for (let i = 0; i < $scope.count; i++) {
@@ -1408,7 +1419,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             dataToSendRep.passport_copy = $scope.passport_copy[i];
                         }
 
-                        if (Object.keys(dataToSendRep).length !== 0) {
+                        if (Object.keys(dataToSendRep).length !== 0) { //если нечего отпрвлять
                             Upload.upload({
                                 url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
                                     + $scope.Data.common.representatives[i].person.passport.number
@@ -1416,7 +1427,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 data: dataToSendRep
                             }).then(function (responsephy) {
                                 $scope.SuccessFunc(responsephy.data);
-                                //count_of_count++;
+                                check_rep_files = true;
                             }, function (responsephy) {
                                 if (responsephy.status > 0) {
                                     $scope.ErrorFunc('<p>Ошибка при сохранении изображений ответственных лиц, код ошибки: '
@@ -1425,9 +1436,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             }, function (evt) {
                                 $scope.progressphy = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
                             });
+                        } else { //если файлов нет то и шаг пропускаем
+                            check_rep_files = true;
                         }
 
-                        if(!angular.isUndefined(scope.Data.common.representatives[i].files)) {
+                        if (!angular.isUndefined(scope.Data.common.representatives[i].files)) {//если есть архив
                             angular.forEach(dataToSend, function (value, key) {
                                 delete scope.Data.common.representatives[i].files[key];
                             });
@@ -1441,21 +1454,31 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     file_ident: $scope.Data.common.representatives[i].files[keys[ii]].file_ident,
                                     rep_ident: $scope.Data.common.representatives[i].person.passport.number
                                 }).then(function (responsephy) {
-                                    $scope.SuccessFunc(responsephy.data);
+                                    $scope.SuccessFunc(responsephy.data.data);
+                                    check_rep_ident = true;
                                 }, function (responsephy) {
                                     if (responsephy.status > 0) {
                                         $scope.ErrorFunc('<p>Ошибка при сохранении ID изображений ответственных лиц, код ошибки: ' + responsephy.status + '.</p><p> Сообщение: ' + responsephy.data + '</p>');
                                     }
                                 });
                             }
+                        } else { //если нет архива
+                            check_rep_ident = true;
                         }
-                        count_of_count++;
                     }
                 }, function (response) {
                     $scope.ErrorFunc('<p>Ошибка при сохранении реквизитов, код ошибки: ' + response.status + '.</p><p> Сообщение: ' + response.data + '</p>');
                 });
 
                 setInterval(function () {
+                    if (check_jur_files == true && check_jur_ident == true) {
+                        check_jur = true;
+                    }
+                    if (check_rep_files == true && check_rep_ident == true){
+                        count_of_count++;
+                    }
+                    console.log(check_jur);
+                    console.log(count_of_count);
                     if (check_jur === true && $scope.count === count_of_count) {
                         $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
                     }
