@@ -595,18 +595,18 @@ class Requisites extends CI_Controller
                 if (!is_null($id_requisites)) {
                     $files = $this->read_files_v3(1, $id_requisites, null); //get arch juridical scans
                     foreach ($files as $key => &$file) { //сделано в угоду старой вьюхи
-                        $file->filetype_id == 1 ? $requisites->common->files['kg'] = $file : null;
-                        $file->filetype_id == 2 ? $requisites->common->files['ru'] = $file : null;
-                        $file->filetype_id == 3 ? $requisites->common->files['m2a'] = $file : null;
+                        $file->filetype_id == 1 ? $requisites->common->files['mu_file_kg'] = $file : null;
+                        $file->filetype_id == 2 ? $requisites->common->files['mu_file_ru'] = $file : null;
+                        $file->filetype_id == 3 ? $requisites->common->files['mu_file_m2a'] = $file : null;
                     }
                     $files = $this->read_files_v3(2, $id_requisites, null); //get arch physical scans
                     foreach ($requisites->common->representatives as &$rep) {
                         //$rep->files = $this->read_files_v3('Representatives', $rep->person->passport->series . $rep->person->passport->number);
                         foreach ($files as $file) {
                             if ($rep->person->passport->number == $file->representative_ident) {//сделано в угоду старой вьюхи
-                                $file->filetype_id == 4 ? $rep->files['front'] = $file : null;
-                                $file->filetype_id == 5 ? $rep->files['back'] = $file : null;
-                                $file->filetype_id == 6 ? $rep->files['copy'] = $file : null;
+                                $file->filetype_id == 4 ? $rep->files['passport_side_1'] = $file : null;
+                                $file->filetype_id == 5 ? $rep->files['passport_side_2'] = $file : null;
+                                $file->filetype_id == 6 ? $rep->files['passport_copy'] = $file : null;
                             }
                         }
                     }
@@ -736,12 +736,13 @@ class Requisites extends CI_Controller
             $config['allowed_types'] = 'jpg';
             $this->load->library('upload', $config);
 
-            $file_types = array('mu_file_kg' => 1,
+            $file_types = [
+                'mu_file_kg' => 1,
                 'mu_file_ru' => 2,
                 'm2a' => 3,
                 'passport_side_1' => 4,
                 'passport_side_2' => 5,
-                'passport_copy' => 6);
+                'passport_copy' => 6];
 
             foreach ($_FILES as $key => $value) {
                 $date = date_create();
@@ -774,7 +775,7 @@ class Requisites extends CI_Controller
             $ident = $request->rep_ident; // passport number if this's a representative           
             $this->requisites_model->save_file_ident($file_struct_db, $ident);
 
-            $response_to_angular['data'] = '<p>Идентификаторы графических образов сохранены успешно.</p>';
+            $response_to_angular['data'] = "<p>Идентификаторы графических образов сохранены успешно - {$request->file_ident}.</p>";
             echo json_encode($response_to_angular);
             exit(1);
         } catch (Exception $ex) {
