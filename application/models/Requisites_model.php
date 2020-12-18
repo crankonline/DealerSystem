@@ -397,7 +397,8 @@ class Requisites_model extends CI_Model {
                 SELECT id_requisites
                 FROM "Dealer_data".requisites
                 JOIN "Dealer_data".invoice ON requisites.requisites_invoice_id = invoice.id_invoice
-                JOIN "Dealer_images".files_juridical ON requisites.id_requisites = files_juridical.requisites_id
+                FULL JOIN "Dealer_images".files_juridical ON requisites.id_requisites = files_juridical.requisites_id
+                FULL JOIN "Dealer_images".files_representatives ON requisites.id_requisites = files_representatives.requisites_id
                 WHERE json -> 'common' ->> 'inn' = ?
                 ORDER BY id_requisites DESC
 SQL;
@@ -477,7 +478,7 @@ SQL;
          *  'representative_id'=> //if $file_type == 2
          *  'file_ident'); 
          */
-        if (in_array($file_struct['filetype_id'], [1, 2, 3])) {
+        if (in_array($file_struct['filetype_id'], [1, 2, 3, 7])) { //брать owner key - тут переделать
             $this->db->insert('"Dealer_images".files_juridical', $file_struct);
         } else {
             $file_struct['representative_ident'] = $ident;
