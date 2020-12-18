@@ -478,6 +478,41 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </div>
                             </td>
                         </tr>
+                        <tr ng-hide="Data.common.civilLegalStatus.name !== 'Физическое лицо'">
+                            <td>
+                                Свидетельство ИП
+                                <label ng-show="Data.common.files.ie_file">Изображение из архива
+                                    <input type="checkbox"
+                                           ng-model="ie_file_ch"
+                                           ng-init="ie_file_ch = (Data.common.files.ie_file) ? true : false"/>
+                                </label>
+                            </td>
+                            <td>
+                                <input type="file"
+                                       class="form-control"
+                                       required=""
+                                       ngf-select
+                                       ng-model="ie_file"
+                                       ngf-pattern="'image/*'"
+                                       ngf-accept="'.jpg'"
+                                       ngf-max-size="5MB"
+                                       ngf-min-height="100"
+                                       ng-disabled="(Data.common.civilLegalStatus.name !== 'Физическое лицо') || (ie_file_ch)"
+                                       ng-show="!Data.common.files.ie_file || !ie_file_ch">
+                                <img class="thumbnail"
+                                     ng-hide="!ie_file"
+                                     ngf-src="ie_file"
+                                     width="50%">
+                                <img class="thumbnail"
+                                     ng-show="Data.common.files.ie_file && ie_file_ch"
+                                     ng-src="{{IE_File_load}}"
+                                     width="400">
+                                <div align="center"
+                                     ng-show="!Data.common.files.ie_file && ie_file_ch">
+                                    Документ отсутсвует
+                                </div>
+                            </td>
+                        </tr>
                         <tr class="danger">
                             <td colspan="2" align="center">Форма М2А</td>
                         </tr>
@@ -996,6 +1031,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     item.filetype_id == 1 ? $scope.JUR_File_kg = response.data : null;
                     item.filetype_id == 2 ? $scope.JUR_File_ru = response.data : null;
                     item.filetype_id == 3 ? $scope.JUR_File_m2a = response.data : null;
+                    item.filetype_id == 7 ? $scope.IE_File_load = response.data : null;
                 }, function (response) {
                     console.log(response.data);
                 });
@@ -1014,8 +1050,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     });
                 });
             }
-            ;
-
             /*End load default reference*/
 
             $scope.loadLegalForm = function () { //загрузка спр. Организационно-правовая форма
@@ -1351,6 +1385,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     if (!angular.isUndefined($scope.mu_file_ru)) {
                         dataToSend.mu_file_ru = $scope.mu_file_ru;
                     }
+                    if (!angular.isUndefined($scope.ie_file)) {
+                        dataToSend.ie_file = $scope.ie_file;
+                    }
                     if (!angular.isUndefined($scope.m2a)) {
                         dataToSend.m2a = $scope.m2a;
                     }
@@ -1474,7 +1511,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     if (check_jur_files == true && check_jur_ident == true) {
                         check_jur = true;
                     }
-                    if (check_rep_files == true && check_rep_ident == true){
+                    if (check_rep_files == true && check_rep_ident == true) {
                         count_of_count++;
                     }
                     console.log(check_jur);

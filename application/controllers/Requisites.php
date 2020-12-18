@@ -598,6 +598,7 @@ class Requisites extends CI_Controller
                         $file->filetype_id == 1 ? $requisites->common->files['mu_file_kg'] = $file : null;
                         $file->filetype_id == 2 ? $requisites->common->files['mu_file_ru'] = $file : null;
                         $file->filetype_id == 3 ? $requisites->common->files['mu_file_m2a'] = $file : null;
+                        $file->filetype_id == 7 ? $requisites->common->files['ie_file'] = $file : null;
                     }
                     $files = $this->read_files_v3(2, $id_requisites, null); //get arch physical scans
                     foreach ($requisites->common->representatives as &$rep) {
@@ -739,6 +740,7 @@ class Requisites extends CI_Controller
             $file_types = [
                 'mu_file_kg' => 1,
                 'mu_file_ru' => 2,
+                'ie_file' =>7,
                 'm2a' => 3,
                 'passport_side_1' => 4,
                 'passport_side_2' => 5,
