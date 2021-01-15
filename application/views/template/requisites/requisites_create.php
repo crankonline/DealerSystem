@@ -1478,7 +1478,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         }
 
                         if (!angular.isUndefined(scope.Data.common.representatives[i].files)) {//если есть архив
-                            angular.forEach(dataToSend, function (value, key) {
+                            angular.forEach(dataToSendRep, function (value, key) {
                                 delete scope.Data.common.representatives[i].files[key];
                             });
                             let keys = Object.keys(scope.Data.common.representatives[i].files);
