@@ -71,7 +71,6 @@ class Invoice extends CI_Controller {
             if (!$this->session->userdata['logged_in']['Create_Invoice']) {
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
             }
-            $data['price_data'] = $this->price_model->get_price();
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
@@ -80,7 +79,7 @@ class Invoice extends CI_Controller {
 
         $this->load->view('template/header');
         $this->load->view('template/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
-        $this->load->view('template/invoice/invoice_create', $data); //в зависимости от авторизации
+        $this->load->view('template/invoice/invoice_create'); //в зависимости от авторизации
         $this->load->view('template/footer');
     }
 
@@ -160,6 +159,7 @@ class Invoice extends CI_Controller {
             $request = json_decode($postdata);
             $request->reference == 'price' ? $result = $this->price_model->get_price() : NULL;
             $request->reference == 'inn' ? $result = $this->invoice_model->get_companyname_by_inn($request->id) : NULL;
+            $request->reference == 'price_sochi' ? $result = $this->price_model->get_price(true) : NULL;
             echo json_encode($result);
         }
         catch(Exception $ex){

@@ -67,6 +67,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <td>Доступ к созданию счетов на оплату и регистрации заявки (оператор)</td>
                             <td><?php echo ($Create_Invoice == TRUE) ? "Да" : "Нет" ?></td>
                         </tr>
+                        <?php if ($Create_Invoice_Sochi == TRUE): ?>
+                        <tr class="success">
+                        <?php else: ?>
+                        <tr class="danger">
+                            <?php endif; ?>
+                            <td>Create_Invoice_Sochi</td>
+                            <td>Доступ к созданию счетов на оплату для поподнения баланcа Sochi (оператор)</td>
+                            <td><?php echo ($Create_Invoice_Sochi == TRUE) ? "Да" : "Нет" ?></td>
+                        </tr>
                         <?php if ($Change_Invoice == TRUE): ?>
                             <tr class="success">
                             <?php else: ?>

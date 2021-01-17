@@ -99,7 +99,15 @@ class Invoice_model extends CI_Model {
     public function get_companyname_by_inn($inn) {
         $this->db->select("inn")->
                 select("company_name")->
+                select("json->'common'->'juristicAddress'->'settlement'->>'name' as city")->
+                select("json->'common'->'juristicAddress'->>'street' as street")->
+                select("json->'common'->'juristicAddress'->>'building' as building")->
+                select("json->'common'->'juristicAddress'->>'apartment' as apartment")->
+                select("json->'common'->'bank'->>'id' as bankbik")->
+                select("json->'common'->'bank'->>'name' as bankname")->
+                select("json->'common'->>'bankAccount' as bankaccount")->
                 from('"Dealer_data".invoice')->
+                join('"Dealer_data".requisites', 'requisites.requisites_invoice_id = invoice.id_invoice')->
                 where('inn', $inn)->
                 order_by('creating_date_time', 'DESC')->
                 limit(1);
