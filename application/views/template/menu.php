@@ -49,6 +49,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <li><a href="<?php echo base_url(); ?>index.php/invoice/invoice_list_view/pay"><span class="glyphicon glyphicon-list"></span> Оплаченные</a></li>
                         <li><a href="<?php echo base_url(); ?>index.php/invoice/invoice_list_view/nonpay"><span class="glyphicon glyphicon-list"></span><span class="badge pull-right"><?php echo $this->invoice_model->menu_invoice_nonpay_count(); ?></span>  Не опплаченные</a></li>
                         <li><a href="<?php echo base_url(); ?>index.php/invoice/invoice_list_view/"><span class="glyphicon glyphicon-th-list"></span> Все</a></li>
+                        <li class="divider"></li>
+                        <?php if ($this->session->userdata['logged_in']['Create_Invoice_Sochi'] == true): ?>
+                            <li>
+                                <a href="<?php echo base_url(); ?>index.php/invoice_sochi/invoice_create_view/"><span class="glyphicon glyphicon-file"></span> Создать счет на оплату баланса Sochi</a>
+                            </li>
+                        <?php endif;?>
+                        <li><a href="<?php echo base_url(); ?>index.php/invoice_sochi/invoice_list_view/"><span class="glyphicon glyphicon-th-list"></span> Список счетов на оплату баланса Sochi</a></li>
                     </ul>
                 </li>
                 <li <?php echo (strripos($_SERVER['REQUEST_URI'], 'requisites')) ? 'class="active"' : NULL; ?> class="dropdown">

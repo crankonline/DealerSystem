@@ -8,14 +8,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             <strong>Oh snap! </strong> <?php echo $error_message; ?>
         </div>
     <?php else: ?>
-        <div class="alert alert-warning">
-            <strong>Памятка: </strong>Внимательно заполните поля ИНН, НАИМЕНОВАНИЕ КОМПАНИИ и ТОВАРОНО МЕТЕРИАЛЬНЫХ ЦЕННОСТЕЙ!!!
-        </div>
-        <form action="<?php echo base_url(); ?>index.php/invoice/invoice_create_save/" method="post">
+<!--        <div class="alert alert-warning">-->
+<!--            <strong>Памятка: </strong>Внимательно заполните поля ИНН, НАИМЕНОВАНИЕ КОМПАНИИ и ТОВАРОНО МЕТЕРИАЛЬНЫХ ЦЕННОСТЕЙ!!!-->
+<!--        </div>-->
+        <form action="<?php echo base_url(); ?>index.php/invoice_sochi/invoice_create_save/" method="post">
         <div ng-controller="IvoiceController">  
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h3 class="panel-title"><span class="glyphicon glyphicon-file"></span> Основные реквизиты</h3>
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-file"></span> Основные реквизиты баланс СОчИ</h3>
                 </div>
                 <div class="panel-body">
                     <div class="row">
@@ -52,11 +52,88 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">Введите</span>
+                                <input type="text"
+                                       class="form-control"
+                                       name="InvoiceCompanyBankBik"
+                                       placeholder="БИК - Не обязательно"
+                                       minlength="5"
+                                       maxlength="100"
+                                       ng-model="company_bankbik">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">Введите</span>
+                                <input type="text"
+                                       class="form-control"
+                                       name="InvoiceCompanyBankName"
+                                       placeholder="Наименование банка - Не обязательно"
+                                       minlength="5"
+                                       maxlength="100"
+                                       ng-model="company_bankname">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">Введите</span>
+                                <input type="text"
+                                       class="form-control"
+                                       name="InvoiceCompanyBankAccount"
+                                       placeholder="Расчетный счет - Не обязательно"
+                                       minlength="5"
+                                       maxlength="100"
+                                       ng-model="company_bankaccount">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">Введите</span>
+                                <input type="text"
+                                       class="form-control"
+                                       name="InvoiceCompanyCity"
+                                       placeholder="Населеный пункт"
+                                       required=""
+                                       minlength="5"
+                                       maxlength="100"
+                                       ng-model="company_city">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-2"></div>
+                        <div class="col-lg-8">
+                            <div class="input-group">
+                                <span class="input-group-addon">Введите</span>
+                                <input type="text"
+                                       class="form-control"
+                                       name="InvoiceCompanyAddress"
+                                       placeholder="Адрес - Улица, Дом, Квартира"
+                                       required=""
+                                       minlength="5"
+                                       maxlength="100"
+                                       ng-model="company_address">
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> Пречисление товарно материальных ценностей</h3>
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> Пречисление услуг</h3>
                     </div>
                     <div class="panel-body">
                         <table class="table">
@@ -64,7 +141,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <tr>
                                     <th>Позиция</th>
                                     <th>Наименование</th>
-                                    <th>Стоимость за 1 ед.</th>
+                                    <th>Стоимость за 1 месяц</th>
                                     <th>Количество</th>
                                     <th>Стоимость</th>
                                     <th></th>
@@ -110,7 +187,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         </div>
                     </div>
                 </div>
-                <div align="center" ng-hide="PriceAll == '0.00'" ><button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Создать счет на оплату</button></div>
+                <div align="center" ng-hide="PriceAll == '0.00'" >
+                    <button type="submit" class="btn btn-success"><span class="glyphicon glyphicon-save"></span> Создать счет на оплату</button>
+                </div>
             </div>
         </form>
     <?php endif; ?>
@@ -124,7 +203,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
             //$scope.inn = '1';
             //$scope.company_name = '1';
-            $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {reference: 'price'}).
+            $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {reference: 'price_sochi'}).
                     then(function (response) {
                         $scope.InventoryName = [{id_inventory: '0', inventory_name: 'Выберите значение', price: '0.00'}].concat(response.data);
                         $scope.dataInventory = $scope.InventoryName[$scope.InventoryName.findIndex(x => x.id_inventory == 0)];
@@ -132,18 +211,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
             $scope.dataCount = {
                 availableOptions: [
-                    {value: '1', name: 'Количество - 1'},
-                    {value: '2', name: 'Количество - 2'},
-                    {value: '3', name: 'Количество - 3'},
-                    {value: '4', name: 'Количество - 4'},
-                    {value: '5', name: 'Количество - 5'},
-                    {value: '6', name: 'Количество - 6'},
-                    {value: '7', name: 'Количество - 7'},
-                    {value: '8', name: 'Количество - 8'},
-                    {value: '9', name: 'Количество - 9'},
-                    {value: '10', name: 'Количество - 10'},
-                    {value: '11', name: 'Количество - 11'},
-                    {value: '12', name: 'Количество - 12'}
+                    {value: '1', name: '1 - месяц'},
+                    {value: '2', name: '2 - месяца'},
+                    {value: '3', name: '3 - месяца'},
+                    {value: '4', name: '4 - месяца'},
+                    {value: '5', name: '5 - месяцев'},
+                    {value: '6', name: '6 - месяцев'},
+                    {value: '7', name: '7 - месяцев'},
+                    {value: '8', name: '8 - месяцев'},
+                    {value: '9', name: '9 - месяцев'},
+                    {value: '10', name: '10 - месяцев'},
+                    {value: '11', name: '11 - месяцев'},
+                    {value: '12', name: '12 - месяцев'}
                 ],
                 selectedOption: {value: '1', name: 'Количество - 1'} //This sets the default value of the select in the ui
             };
@@ -218,6 +297,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                     $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {reference: 'inn', id: $scope.Inn}).
                     then(function (response) {                       
                         $scope.company_name = response.data.company_name;
+                        $scope.company_city = response.data.city;
+                        response.data.apartment = response.data.apartment == null ? '': ', '+response.data.apartment;
+                        $scope.company_address = response.data.street + ', ' + response.data.building +
+                            response.data.apartment ;
+                        $scope.company_bankbik = response.data.bankbik;
+                        $scope.company_bankname = response.data.bankname;
+                        $scope.company_bankaccount = response.data.bankaccount;
+
                     }, function (response){
                         
                     });
