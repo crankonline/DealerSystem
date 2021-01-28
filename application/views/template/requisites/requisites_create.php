@@ -692,7 +692,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     </p>
                                 </td>
                             </tr>
-                            <tr>
+                            <tr ng-hide="Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3">
                                 <td>
                                     Серийный номер РуТокен (<a href="" ng-click="getSerialNumber(key, 0)">Прочитать<a>)
                                 </td>
