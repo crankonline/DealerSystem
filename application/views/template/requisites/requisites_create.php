@@ -680,8 +680,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            required="" numbers-only
                                            ng-model="Data.common.representatives[key].phone"></td>
                             </tr>
-                            <tr ng-hide="Data.common.representatives[key].roles === undefined || Data.common.representatives[key].roles[0].id == 3 ||
-                                            Data.common.representatives[key].roles.length == 0">
+                            <tr ng-hide="Data.common.representatives[key].roles === undefined || Data.common.representatives[key].roles.length == 0 ||
+                                         (Data.common.representatives[key].roles != undefined && Data.common.representatives[key].roles.length == 1 &&
+                                           Data.common.representatives[key].roles[0].id == 3)">
                                 <td>Носитель ЭП</td>
                                 <td>
                                     <p data-ng-repeat="edsUsageModel in edsUsageModels track by edsUsageModel.id">
@@ -693,8 +694,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     </p>
                                 </td>
                             </tr>
-                            <tr ng-hide="Data.common.representatives[key].roles === undefined || Data.common.representatives[key].roles[0].id == 3 ||
-                                            Data.common.representatives[key].roles.length == 0">
+                            <tr ng-hide="Data.common.representatives[key].roles === undefined || Data.common.representatives[key].roles.length == 0 ||
+                                         (Data.common.representatives[key].roles != undefined && Data.common.representatives[key].roles.length == 1 &&
+                                           Data.common.representatives[key].roles[0].id == 3)">
                                 <td>
                                     Серийный номер РуТокен (<a href="" ng-click="getSerialNumber(key, 0)">Прочитать<a>)
                                 </td>
