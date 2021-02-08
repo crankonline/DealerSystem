@@ -1098,8 +1098,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 }).then(function (response) {
                     $scope.CivilLegalStatuses = [{id: '', name: 'Выберите значение'}].concat(response.data);
                     mObjNode('Data.common.civilLegalStatus', $scope);
-                    var defaultId = <?php echo (isset($requisites_json->common->civilLegalStatus->id)) ? $requisites_json->common->civilLegalStatus->id : 0; ?>;
-                    $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[defaultId];
+                    var defaultId = <?php echo (isset($requisites_json->common->civilLegalStatus->id)) ? $requisites_json->common->civilLegalStatus->id : "''"; ?>;
+                    $scope.Data.common.civilLegalStatus = $scope.CivilLegalStatuses[$scope.CivilLegalStatuses.findIndex(x => x.id == defaultId)];
                     $scope.Data.common.legalForm.ownershipForm = $scope.getOwnershimFormById(tmp);
                 });
             };
