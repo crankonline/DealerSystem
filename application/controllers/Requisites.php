@@ -741,7 +741,7 @@ class Requisites extends CI_Controller
                 'mu_file_kg' => 1,
                 'mu_file_ru' => 2,
                 'ie_file' =>7,
-                'm2a' => 3,
+                'mu_file_m2a' => 3,
                 'passport_side_1' => 4,
                 'passport_side_2' => 5,
                 'passport_copy' => 6];
