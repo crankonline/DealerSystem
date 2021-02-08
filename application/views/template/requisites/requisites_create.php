@@ -528,15 +528,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <input type="file"
                                        class="form-control"
                                        ngf-select
-                                       ng-model="m2a"
+                                       ng-model="mu_file_m2a"
                                        ngf-pattern="'image/*'"
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
                                        ngf-min-height="100"
                                        ng-show="!Data.common.files.mu_file_m2a || !jur_file_ch_m2a">
                                 <img class="thumbnail"
-                                     ng-hide="!m2a"
-                                     ngf-src="m2a"
+                                     ng-hide="!mu_file_m2a"
+                                     ngf-src="mu_file_m2a"
                                      width="50%">
 
                                 <img class="thumbnail"
@@ -1392,8 +1392,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     if (!angular.isUndefined($scope.ie_file)) {
                         dataToSend.ie_file = $scope.ie_file;
                     }
-                    if (!angular.isUndefined($scope.m2a)) {
-                        dataToSend.m2a = $scope.m2a;
+                    if (!angular.isUndefined($scope.mu_file_m2a)) {
+                        dataToSend.mu_file_m2a = $scope.mu_file_m2a;
                     }
                     //console.log(Object.keys(dataToSend).length !== 0 );return ;
                     if (Object.keys(dataToSend).length !== 0) {//если есть что отправлять
@@ -1518,8 +1518,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     if (check_rep_files == true && check_rep_ident == true) {
                         count_of_count++;
                     }
-                    console.log(check_jur);
-                    console.log(count_of_count);
+                    //console.log(check_jur);
+                    //console.log(count_of_count);
                     if (check_jur === true && $scope.count === count_of_count) {
                         $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
                     }
