@@ -893,6 +893,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 $scope.passport_side_1 = [];
                 $scope.passport_side_2 = [];
                 $scope.passport_copy = [];
+                $scope.rep_file_ch_passport_copy = [];
+                $scope.rep_file_ch_passport_side_2 = []; //не рекваиред
                 $scope.REP_File_front = [];
                 $scope.REP_File_back = [];
                 $scope.REP_File_copy = [];
@@ -1402,10 +1404,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         if (!angular.isUndefined($scope.ie_file)) {
                             dataToSend.ie_file = $scope.ie_file;
                         }
-                        if (!angular.isUndefined($scope.mu_file_m2a)) {
+                        if (!angular.isUndefined($scope.mu_file_m2a) ) {
                             dataToSend.mu_file_m2a = $scope.mu_file_m2a;
                         }
-                        //console.log(Object.keys(dataToSend).length !== 0 );return ;
                         if (Object.keys(dataToSend).length !== 0) {//если есть что отправлять
                             Upload.upload({
                                 url: '<?php echo base_url(); ?>index.php/requisites/requisites_file_upload/' + id_requisites + '/'
@@ -1414,7 +1415,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             }).then(function (responsejur) {
                                 $scope.SuccessFunc(responsejur.data);
                                 check_jur_files = true;
-                                //--console.log($sce.trustAsHtml($scope.resultupload));
                             }, function (responsejur) {
                                 if (responsejur.status > 0) {
                                     $scope.ErrorFunc('<p>Ошибка при сохранении изображений юридического лица, код ошибки: '
@@ -1422,7 +1422,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 }
                             }, function (evt) {
                                 $scope.progressjur = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-                                //--console.log($scope.progressjur);
                             });
                         } else { //если отправлять нечего нефиг проверять
                             check_jur_files = true;
@@ -1430,18 +1429,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                         if (!angular.isUndefined(scope.Data.common.files)) { //если есть архивные файлы
                             //теперь надо удалить из объекта то что есть в массиве фалов на загрузку
-                            //console.log(scope.Data.common.files);
                             angular.forEach(dataToSend, function (value, key) {
                                 delete scope.Data.common.files[key];
                             });
+                            if(!$scope.jur_file_ch_m2a){
+                                delete scope.Data.common.files['mu_file_m2a'];
+                            }
                             if (Object.keys(scope.Data.common.files).length == 0) {
                                 check_jur_ident = true;
                             } else {
-                                //console.log(scope.Data.common.files);
                                 let keys = Object.keys(scope.Data.common.files);
-                                //console.log(keys.length);
                                 for (let i = 0; i < keys.length; i++) {
-                                    //console.log('Go JUR - ' + $scope.Data.common.files[keys[i]].file_ident);
                                     $http.post('<?php echo base_url(); ?>index.php/requisites/requisites_file_upload_skip', {
                                         id_requisites: id_requisites,
                                         filetype_id: $scope.Data.common.files[keys[i]].filetype_id,
@@ -1499,6 +1497,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 angular.forEach(dataToSendRep, function (value, key) {
                                     delete scope.Data.common.representatives[i].files[key];
                                 });
+                                if(!$scope.rep_file_ch_passport_copy[i]){//кастыль
+                                    delete scope.Data.common.representatives[i].files['passport_copy'];
+                                }
+                                if(!$scope.rep_file_ch_passport_side_2[i]){//кастыль
+                                    delete scope.Data.common.representatives[i].files['passport_side_2'];
+                                }
                                 if (Object.keys(scope.Data.common.representatives[i].files).length == 0) {
                                     check_rep_ident = true;
                                 } else {
@@ -1536,8 +1540,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         if (check_rep_files == true && check_rep_ident == true) {
                             count_of_count++;
                         }
-                        //console.log('check_jur_files - ' + check_jur_files);
-                        //console.log('check_jur_ident - ' + check_jur_ident);
                         if (check_jur === true && $scope.count === count_of_count) {
                             $window.location.href = '<?php echo base_url() ?>index.php/requisites/requisites_show_view/' + id_requisites; //redirect
                         }
