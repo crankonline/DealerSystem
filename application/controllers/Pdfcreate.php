@@ -171,10 +171,10 @@ class Pdfcreate extends CI_Controller {
             return;
         }
 
-        if ($pay_invoice_version['id_pay_invoice_version'] == '3') { //временные акты и расходники
+        if ($pay_invoice_version['id_pay_invoice_version'] == '3') { //временные акты и расходники. Нет ничего постоянее чем ...
             $token = false;
             foreach ($data['data_invoice'] as $Record) {
-                $Record->id_inventory == 2 ? $token = true : null;
+                in_array($Record->id_inventory, [2,7])?$token = true : null;
             }
             if ($token) {
                 $html = $this->load->view('pdf/waybill', $data, true);
@@ -292,6 +292,20 @@ class Pdfcreate extends CI_Controller {
         }
     }
 
+    public function Invoice_sochi ($invoice){
+        $data['data'] = $this->pdfrender_model->get_invoice_sochi($invoice);
+        //var_dump($data['data']);die;
+        $data['data']['0']->creating_date_time = date("Y.m.d H:i:s", strtotime($data['data']['0']->creating_date_time));
+        $data['data']['0']->bank = $data['data']['0']->full_name . ", "
+            ."ИНН:" . $data['data']['0']->inn_distributor . ", "
+            . $data['data']['0']->address . ", "
+            . "БАНК:" . $data['data']['0']->bank_name . ", "
+            . "БИК:" . $data['data']['0']->bank_bik . ", "
+            . "Р/С:" . $data['data']['0']->bank_account;
+        $html = $this->load->view('pdf/invoice_sochi', $data, true); // render the view into HTML
+        $this->pdf->WriteHTML($html); // write the HTML into the PDF
+        $this->pdf->Output();
+    }
     /**
      * Возвращает сохраненную пдф из папки downloads
      * работает через прописанный роут config/routes.php

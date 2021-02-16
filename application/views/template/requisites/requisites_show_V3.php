@@ -340,6 +340,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td><strong>Дата выдачи</strong></td>
                                 <td><?php echo $person->person->passport->issuingDate; ?></td>
                             </tr>
+                            <tr>
+                                <td><strong>ПИН</strong></td>
+                                <td><?php echo isset($person->person->pin) ? $person->person->pin : 'отсутствует'; ?></td>
+                            </tr>
                         </tbody>
                     </table>
                     <?php //if ($person->deviceSerial != '0000000000'): ?>

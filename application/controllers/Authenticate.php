@@ -20,6 +20,7 @@ class Authenticate extends CI_Controller {
             'UserDistributorName' => $data->userdistributorname,
             'UserDistributorID' => $data->userdistributorid,
             'Create_Invoice' => $data->create_invoice,
+            'Create_Invoice_Sochi' => $data->create_invoice_sochi,
             'Show_Operator' => $data->show_operator,
             'Reassing_Invoice' => $data->reassing_invoice,
             'Payer_Invoce' => $data->payer_invoce,

@@ -21,6 +21,17 @@ class Pdfrender_model extends CI_Model {
         return $result->result();
     }
 
+    public function get_invoice_sochi($InvoiceSerialNumber) {
+        $result = $this->db->select()->
+        from('"Dealer_data".invoice_sochi')->
+        join('"Dealer_data".sell', 'sell.invoice_sochi_id = invoice_sochi.id_invoice_sochi', 'inner')->
+        join('"Dealer_data".inventory', 'sell.inventory_id = inventory.id_inventory', 'inner')->
+        join('"Dealer_data".users', 'invoice_sochi.users_id = users.id_users', 'inner')->
+        join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left')->
+        where('invoice_sochi_serial_number', $InvoiceSerialNumber)->get();
+        return $result->result();
+    }
+
     /**
      * @param $InvoiceSerialNumber
      * @return mixed

@@ -75,7 +75,8 @@ NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=4), false) AS Show_Statistics,
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=5), false) AS Change_Invoice,
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=6), false) AS Payer_Invoce,
-NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=7), false) AS Show_Statistics_Operators
+NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=7), false) AS Show_Statistics_Operators,
+NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=8), false) AS Create_Invoice_Sochi
 FROM
 "Dealer_data"."role"
 INNER JOIN "Dealer_data".users ON "Dealer_data".users.role_id = "Dealer_data"."role".id_role
@@ -103,7 +104,8 @@ NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=4), false) AS Show_Statistics,
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=5), false) AS Change_Invoice,
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=6), false) AS Payer_Invoce,
-NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=7), false) AS Show_Statistics_Operators
+NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=7), false) AS Show_Statistics_Operators,
+NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=8), false) AS Create_Invoice_Sochi
 FROM
 "Dealer_data"."role"
 INNER JOIN "Dealer_data".users ON "Dealer_data".users.role_id = "Dealer_data"."role".id_role
@@ -147,7 +149,8 @@ NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=4), false) AS Show_Statistics,
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=5), false) AS Change_Invoice,
 NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=6), false) AS Payer_Invoce,
-NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=7), false) AS Show_Statistics_Operators                
+NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=7), false) AS Show_Statistics_Operators,
+NULLIF((SELECT "access" FROM "Dealer_data".users_acl WHERE users_id=id_users AND acl_id=8), false) AS Create_Invoice_Sochi
 FROM
 "Dealer_data"."role"
 INNER JOIN "Dealer_data".users ON "Dealer_data".users.role_id = "Dealer_data"."role".id_role
