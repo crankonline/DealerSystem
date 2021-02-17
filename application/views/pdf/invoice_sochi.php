@@ -83,7 +83,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 <table class="details" style="width: 100%; margin-top: 10px;">
     <tr>
         <td width="20%" class="down">Поставщик</td>
-        <td width="50%"><b><?php echo $data['0']->bank; ?></b></td>
+        <td width="50%"><b><?php echo 'ОсОО "DOS TEK GROUP" (ОсОО "Дос Тэк Групп"), ИНН:00211200910051, г.Бишкек, ул.Коенкозова, д.8, БАНК: ЗАО "КИКБ", БИК:128001, Р/С:1280010015061112';//$data['0']->bank; ?></b></td>
     </tr>
     <tr>
         <td class="down">Покупатель</td>
