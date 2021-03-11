@@ -1,60 +1,66 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
+//var_dump($invoice_data);die;
 ?>
 <div class="container theme-showcase" role="main" ng-app="InvoiceShow">
-    <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере  ?>
-        <div class="alert alert-danger">
-            <strong>Oh snap!</strong> <?php echo $error_message; ?>
-        </div>
-    <?php else: ?>
-        <?php if (isset($message)): //сообщение ою изменениях?>
-            <div class="alert alert-info">
-                <strong>Cообщение:</strong> <?php echo $message; ?>
+    <div ng-controller="InvoiceShowController">
+        <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере  ?>
+            <div class="alert alert-danger">
+                <strong>Oh snap!</strong> <?php echo $error_message; ?>
             </div>
-        <?php endif; ?>
-        <div class="panel panel-primary" >
-            <div class="panel-heading">
-                <h3 class="panel-title"><span class="glyphicon glyphicon-list"></span> Просмотр счета на оплату</h3>
-            </div>
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <button type="button" class="btn btn-info" 
-                                onclick="window.open('<?php echo base_url() . "index.php/pdfcreate/invoice/" . $invoice_data[0]->invoice_serial_number . "/terminal/" ?>', '_blank')">
-                            <span class="glyphicon glyphicon-print"></span> Бланк оплаты через терминал
-                        </button>
-                    </div>
-                    <div class="col-lg-3">
-                        <button type="button" class="btn btn-info" 
-                                onclick="window.open('<?php echo base_url() . "index.php/pdfcreate/invoice/" . $invoice_data[0]->invoice_serial_number . "/bank/" ?>', '_blank')">
-                            <span class="glyphicon glyphicon-print"></span> Бланк оплаты через банк
-                        </button>
-                    </div>
-                    <div class="col-lg-3"></div>
-                    <div class="col-lg-3">
-                        <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE && $invoice_data[0]->pay_sum >= $invoice_data[0]->total_sum && $invoice_data[0]->requisites_invoice_id == NULL): //проверка доступа пользователя И оплаты для регистрации формы заявки И проверка на существование записи заявки для отображения кнопки регистрации  ?>
-                            <button onclick="window.location.href = '<?php echo base_url() . "index.php/requisites/requisites_create_view/" . $invoice_data[0]->id_invoice ?>'" type="button" class="btn btn-success"><span
-                                    class="glyphicon glyphicon-pencil"></span> Перейти к регистрации
-                            </button>
-                        <?php endif; ?>
-                        <?php if ($invoice_data[0]->requisites_invoice_id != NULL): //проверка на существование записи заявки для отображения кнопки ппросмотра связанной заявки (взаимоисключаемое условие с пред`идущим)?>
-                            <button onclick="window.location.href = '<?php echo base_url() . "index.php/requisites/requisites_show_view/" . $invoice_data[0]->id_requisites ?>'" type="button" class="btn btn-info"><span
-                                    class="glyphicon glyphicon-eye-open"></span> Просмотр формы заявки
-                            </button>
-                        <?php endif; ?>
-                        <?php if (($invoice_data[0]->delete_marker == "f") && $invoice_data[0]->pay_sum == 0.00) : //проверка на существование оплат, если оплаты нет можно удалять (взаимоисключаемое условие с пред`идущим)?> 
-                            <button onclick="window.location.href = '<?php echo base_url() . "index.php/invoice/invoice_delete/" . $invoice_data[0]->invoice_serial_number ?>'" type="button" class="btn btn-danger"><span
-                                    class = "glyphicon glyphicon-trash"></span> Удалить счет на оплату
-                            </button>
-                        <?php endif; ?>
-                        <?php if ($invoice_data[0]->delete_marker == "t"):?>
-                            <span class="label label-danger">Счет на оплату был удален</span>
-                        <?php endif;?>
-                    </div>
+        <?php else: ?>
+            <?php if (isset($message)): //сообщение ою изменениях?>
+                <div class="alert alert-info">
+                    <strong>Cообщение:</strong> <?php echo $message; ?>
                 </div>
-                <p></p>
-                <table class="table">
-                    <tbody>
+            <?php endif; ?>
+
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-list"></span> Просмотр счета на оплату</h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <button type="button" class="btn btn-info"
+                                    onclick="window.open('<?php echo base_url() . "index.php/pdfcreate/invoice/" . $invoice_data[0]->invoice_serial_number . "/terminal/" ?>', '_blank')">
+                                <span class="glyphicon glyphicon-print"></span> Бланк оплаты через терминал
+                            </button>
+                        </div>
+                        <div class="col-lg-3">
+                            <button type="button" class="btn btn-info"
+                                    onclick="window.open('<?php echo base_url() . "index.php/pdfcreate/invoice/" . $invoice_data[0]->invoice_serial_number . "/bank/" ?>', '_blank')">
+                                <span class="glyphicon glyphicon-print"></span> Бланк оплаты через банк
+                            </button>
+                        </div>
+                        <div class="col-lg-3"></div>
+                        <div class="col-lg-3">
+                            <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE && $invoice_data[0]->pay_sum >= $invoice_data[0]->total_sum && $invoice_data[0]->requisites_invoice_id == NULL): //проверка доступа пользователя И оплаты для регистрации формы заявки И проверка на существование записи заявки для отображения кнопки регистрации  ?>
+                                <button ng-click="validateForm()"
+                                        type="button" class="btn btn-success"><span
+                                            class="glyphicon glyphicon-pencil"></span> Перейти к регистрации
+                                </button>
+                            <?php endif; ?>
+                            <?php if ($invoice_data[0]->requisites_invoice_id != NULL): //проверка на существование записи заявки для отображения кнопки ппросмотра связанной заявки (взаимоисключаемое условие с пред`идущим)?>
+                                <button onclick="window.location.href = '<?php echo base_url() . "index.php/requisites/requisites_show_view/" . $invoice_data[0]->id_requisites ?>'"
+                                        type="button" class="btn btn-info"><span
+                                            class="glyphicon glyphicon-eye-open"></span> Просмотр формы заявки
+                                </button>
+                            <?php endif; ?>
+                            <?php if (($invoice_data[0]->delete_marker == "f") && $invoice_data[0]->pay_sum == 0.00) : //проверка на существование оплат, если оплаты нет можно удалять (взаимоисключаемое условие с пред`идущим)?>
+                                <button onclick="window.location.href = '<?php echo base_url() . "index.php/invoice/invoice_delete/" . $invoice_data[0]->invoice_serial_number ?>'"
+                                        type="button" class="btn btn-danger"><span
+                                            class="glyphicon glyphicon-trash"></span> Удалить счет на оплату
+                                </button>
+                            <?php endif; ?>
+                            <?php if ($invoice_data[0]->delete_marker == "t"): ?>
+                                <span class="label label-danger">Счет на оплату был удален</span>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <p></p>
+                    <table class="table">
+                        <tbody>
                         <tr>
                             <td><h4>Номер счета на оплату</h4></td>
                             <td><h4><?php echo $invoice_data[0]->invoice_serial_number; ?></h4></td>
@@ -64,20 +70,26 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <tr>
                                 <td><h4>ИНН</h4></td>
                                 <td>
-                                    <form action="<?php echo base_url() . "index.php/invoice/invoice_update/inn" ?>" method="post">
-                                        <input name="inn" 
-                                               type="text" 
-                                               class="form-control" 
-                                               value="<?php echo $invoice_data[0]->inn; ?>" 
-                                               required="" 
-                                               minlength="14" 
-                                               maxlength="14" 
-                                               ng-model="val" 
+                                    <form action="<?php echo base_url() . "index.php/invoice/invoice_update/inn" ?>"
+                                          method="post">
+                                        <input name="inn"
+                                               type="text"
+                                               class="form-control"
+                                               value="<?php echo $invoice_data[0]->inn; ?>"
+                                               required=""
+                                               minlength="14"
+                                               maxlength="14"
+                                               ng-model="val"
                                                numbers-only>
-                                        <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
-                                        </td>
-                                        <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td> 
-                                    </form>
+                                        <input name="invoice_serial_number" type="text" hidden=""
+                                               value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
+                                </td>
+                                <td>
+                                    <button type="submit" class="btn btn-warning"><span
+                                                class="glyphicon glyphicon-pencil"></span> Изменить
+                                    </button>
+                                </td>
+                                </form>
                             </tr>
                         <?php else: ?>
                             <tr>
@@ -96,18 +108,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <h4>Наименование компании</h4>
                                 </td>
                                 <td>
-                                    <form action="<?php echo base_url() . "index.php/invoice/invoice_update/company_name" ?>" method="post">
-                                        <input name="company_name" 
+                                    <form action="<?php echo base_url() . "index.php/invoice/invoice_update/company_name" ?>"
+                                          method="post">
+                                        <input name="company_name"
                                                type="text"
                                                class="form-control"
                                                minlength="5"
                                                maxlength="100"
                                                value='<?php echo $invoice_data[0]->company_name; ?>'
                                                required="">
-                                        <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
-                                        </td>
-                                        <td><button id="CM" type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
-                                    </form>
+                                        <input name="invoice_serial_number" type="text" hidden=""
+                                               value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
+                                </td>
+                                <td>
+                                    <button id="CM" type="submit" class="btn btn-warning"><span
+                                                class="glyphicon glyphicon-pencil"></span> Изменить
+                                    </button>
+                                </td>
+                                </form>
                             </tr>
                         <?php else: ?>
                             <tr>
@@ -122,7 +140,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <?php endif; ?>
                         <tr>
                             <td><h4>Дата создания</h4></td>
-                            <td><h4><?php echo date_format(date_create($invoice_data[0]->creating_date_time), 'd.m.Y H:i:s'); ?></h4></td>
+                            <td>
+                                <h4><?php echo date_format(date_create($invoice_data[0]->creating_date_time), 'd.m.Y H:i:s'); ?></h4>
+                            </td>
                             <td></td>
                         </tr>
                         <tr>
@@ -133,9 +153,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <tr>
                             <td><h4>Внесенная оплата</h4></td>
                             <?php if ($invoice_data[0]->pay_sum < $invoice_data[0]->total_sum): ?>
-                                <td class="text-danger"> 
+                            <td class="text-danger">
                                 <?php else: ?>
-                                <td class="text-success">
+                            <td class="text-success">
                                 <?php endif; ?>
                                 <h4><strong><?php echo $invoice_data[0]->pay_sum; ?></strong></h4>
                             </td>
@@ -144,14 +164,16 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                         <?php if ($invoice_data[0]->pay_sum != 0): //вывод строки даты оплаты если оплата произведена  ?>
                             <tr>
                                 <td><h4>Дата оплаты</h4></td>
-                                <td><h4><?php echo date_format(date_create($invoice_data[0]->pay_date_time), 'd.m.Y H:i:s'); ?></h4></td>
+                                <td>
+                                    <h4><?php echo date_format(date_create($invoice_data[0]->pay_date_time), 'd.m.Y H:i:s'); ?></h4>
+                                </td>
                             </tr>
                         <?php endif; ?>
-                    </tbody>
-                </table>
-                <h3 align="center"><strong>Состав счета на оплату</strong></h3>
-                <table class="table">
-                    <thead>
+                        </tbody>
+                    </table>
+                    <h3 align="center"><strong>Состав счета на оплату</strong></h3>
+                    <table class="table">
+                        <thead>
                         <tr>
                             <th>#</th>
                             <th>Наименование ТМЦ</th>
@@ -159,8 +181,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                             <th>Стоимость за единицу</th>
                             <th>Сумма</th>
                         </tr>
-                    </thead>
-                    <tbody>
+                        </thead>
+                        <tbody>
                         <?php
                         $i = 1;
                         foreach ($invoice_data as $invoice_item):
@@ -169,23 +191,65 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                 <td><?php echo $i++; ?></td>
                                 <td><?php echo $invoice_item->inventory_name; ?></td>
                                 <td><?php echo $invoice_item->count; ?></td>
-        <!--                                <td><?php //echo $invoice_item->price;   ?></td>Переписать  модель-->
+                                <!--                                <td><?php //echo $invoice_item->price;
+                                ?></td>Переписать  модель-->
                                 <td><?php echo number_format($invoice_item->price_count / $invoice_item->count, 2, '.', ''); ?></td>
                                 <td><?php echo $invoice_item->price_count; ?></td>
                             </tr>
                         <?php endforeach; ?>
-                    </tbody>
-                </table>
+                        </tbody>
+                    </table>
+                    <?php if ($invoice_data[0]->requisites_invoice_id == NULL): ?>
+                        <h3 align="center"><strong>Введите ПИН получателей ЭП</strong></h3>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>ПИН</th>
+                                <th>ФИО</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="key in range(0, count_eds)">
+                                <td>{{key + 1}}</td>
+                                <td>
+                                    <input class="form-control"
+                                           type="text"
+                                           ng-model="enteredPin[key]"
+                                           ng-change="filterItems(key)"
+                                           numbers-only=""
+                                           minlength="5"
+                                           maxlength="14"/>
+                                    <div class="choices"
+                                         ng-show="isVisible[key].suggestions">
+                                        <div class="form-control"
+                                             ng-repeat="choice in filteredChoices"
+                                             ng-click="selectItem(choice.pin, key)">
+                                            {{choice.pin + ' - ' + choice.fio}}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text"
+                                           class="form-control"
+                                           value=""
+                                           required=""
+                                           ng-model="enteredFio[key]">
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
             </div>
-        </div>
-        <div class="panel panel-success" >
-            <div class="panel-heading">
-                <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> История оплаты</h3>
-            </div>
-            <div class="panel-body">
-                <?php if (!empty($pay_log)): ?>
-                    <table class="table">
-                        <tbody>
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> История оплаты</h3>
+                </div>
+                <div class="panel-body">
+                    <?php if (!empty($pay_log)): ?>
+                        <table class="table">
+                            <tbody>
                             <tr>
                                 <td><b>#</b></td>
                                 <td><b>Наименование сервиса</b></td>
@@ -201,120 +265,244 @@ defined('BASEPATH') OR exit('No direct script access allowed');
                                     <td><?php echo date_format(date_create($pay_item->DateTime), 'd.m.Y H:i:s'); ?></td>
                                 </tr>
                             <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                <?php else: ?>
-                    <h4>Оплаты не было</h4>
-                <?php endif; ?>
-            </div>
-        </div>
-        <?php if (($this->session->userdata['logged_in']['Payer_Invoce'] == TRUE) && ($invoice_data[0]->requisites_invoice_id == NULL)): //вывод панели оплаты счета на оплату если у пользователя есть доступ ?>
-            <div class="panel panel-danger">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> Оплата счета на оплату</h3>
+                            </tbody>
+                        </table>
+                    <?php else: ?>
+                        <h4>Оплаты не было</h4>
+                    <?php endif; ?>
                 </div>
-                <div class="panel-body">
-                    <table class="table">
-                        <tbody></tbody>
-                            <?php //if ($invoice_data[0]->pay_sum != 0): //если счет оплачен вывод строки со свойством сервиса оплаты     ?>
-<!--                                <tr>
-                                    <td><h4>Наименование сервиса через которого прошла оплата</h4></td>
-                                    <td><h4>Сервис платежей временно не доступен!</h4></td>
-                                    <td></td>
-                                </tr>-->
-                            <?php //endif; ?>
-                            <?php //if ($invoice_data[0]->pay_sum < $invoice_data[0]->total_sum): //если счет не оплачен даем возможность заплатить   ?>      
-                                <tr>
-                                    <td><h4>Изменить сумму оплаты согласно платежному поручению</h4></td>
-                                <form action="<?php echo base_url() . "index.php/invoice/invoice_update/pay_sum" ?>" method="post">
+            </div>
+            <?php if (($this->session->userdata['logged_in']['Payer_Invoce'] == TRUE) && ($invoice_data[0]->requisites_invoice_id == NULL)): //вывод панели оплаты счета на оплату если у пользователя есть доступ ?>
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-usd"></span> Оплата счета на оплату
+                        </h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table">
+                            <tbody></tbody>
+                            <tr>
+                                <td><h4>Изменить сумму оплаты согласно платежному поручению</h4></td>
+                                <form action="<?php echo base_url() . "index.php/invoice/invoice_update/pay_sum" ?>"
+                                      method="post">
                                     <td>
-                                        <input name="pay_sum" 
-                                               type="text" 
-                                               class="form-control" 
-                                               placeholder="<?php echo 'Сумма к оплате - ' . ($invoice_data[0]->total_sum - $invoice_data[0]->pay_sum); ?>" 
-                                               required="" maxlength="9" 
-                                               ng-model="val2" 
+                                        <input name="pay_sum"
+                                               type="text"
+                                               class="form-control"
+                                               placeholder="<?php echo 'Сумма к оплате - ' . ($invoice_data[0]->total_sum - $invoice_data[0]->pay_sum); ?>"
+                                               required="" maxlength="9"
+                                               ng-model="val2"
                                                numbers-only>
-                                        <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
+                                        <input name="invoice_serial_number" type="text" hidden=""
+                                               value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
                                     </td>
-                                    <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
+                                    <td>
+                                        <button type="submit" class="btn btn-warning"><span
+                                                    class="glyphicon glyphicon-pencil"></span> Изменить
+                                        </button>
+                                    </td>
                                 </form>
-                                </tr>
+                            </tr>
                             <?php //endif; ?>
-                    </table>
+                        </table>
+                    </div>
                 </div>
-            </div>
             <?php endif; ?>
 
             <?php if ($this->session->userdata['logged_in']['Reassing_Invoice'] == TRUE): //вывод панели свойств счета на оплату если у пользователя есть доступ?>
                 <div class="panel panel-warning">
                     <div class="panel-heading">
-                        <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Оператор создавший счета на оплату</h3>
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Оператор создавший счета
+                            на оплату</h3>
                     </div>
                     <div class="panel-body">
                         <table class="table">
                             <tr>
                                 <td><h4>Пользователь создавший счет на оплату</h4></td>
-                                <td><h4><?php echo $invoice_data[0]->surname . " " . $invoice_data[0]->name . " " . $invoice_data[0]->patronymic_name; ?></h4></td>
+                                <td>
+                                    <h4><?php echo $invoice_data[0]->surname . " " . $invoice_data[0]->name . " " . $invoice_data[0]->patronymic_name; ?></h4>
+                                </td>
                                 <td></td>
                             </tr>
                             <?php if ($invoice_data[0]->id_requisites == 0): //если нет связаного реквизита даем возможность переназначить оператора ?>
                                 <tr>
                                     <td><h4>Переназначить счет на оплату на оператора</h4></td>
-                                <form action="<?php echo base_url() . "index.php/invoice/invoice_update/user" ?>" method="post">
-                                    <td>
-                                        <select name="user" class="form-control" required="">
-                                            <option value="" selected="selected">Выберите оператора</option>
-                                            <?php $users_data = $this->invoice_model->enum_operators(); //переписать на angular?>
-                                            <?php foreach ($users_data as $user_data_item): ?>
-                                                <option value="<?php echo $user_data_item->id_users ?>">
-                                                    <?php echo $user_data_item->surname . " " . $user_data_item->name . " " . $user_data_item->patronymic_name; ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                        <input name="invoice_serial_number" type="text" hidden="" value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
-                                    </td>
-                                    <td><button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon-pencil"></span> Изменить</button></td>
-                                    </tr>
+                                    <form action="<?php echo base_url() . "index.php/invoice/invoice_update/user" ?>"
+                                          method="post">
+                                        <td>
+                                            <select name="user" class="form-control" required="">
+                                                <option value="" selected="selected">Выберите оператора</option>
+                                                <?php $users_data = $this->invoice_model->enum_operators(); //переписать на angular?>
+                                                <?php foreach ($users_data as $user_data_item): ?>
+                                                    <option value="<?php echo $user_data_item->id_users ?>">
+                                                        <?php echo $user_data_item->surname . " " . $user_data_item->name . " " . $user_data_item->patronymic_name; ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                            <input name="invoice_serial_number" type="text" hidden=""
+                                                   value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
+                                        </td>
+                                        <td>
+                                            <button type="submit" class="btn btn-warning"><span
+                                                        class="glyphicon glyphicon-pencil"></span> Изменить
+                                            </button>
+                                        </td>
+                                </tr>
                                 </form>
                             <?php endif; ?>
                         </table>
-                        <?php //if ($invoice_data[0]->pay_sum == 0): //если присутствует хоть какая то оплата то нам сохранять нечего     ?>
-                        <!--                        <div align="center">
-                                                    <button type="button" class="btn btn-success"><span class="glyphicon glyphicon-save"></span>
-                                                        Сохранить
-                                                    </button>
-                                                </div>-->
-                        <?php //endif; ?>
                     </div>
                 </div>
             <?php endif; ?>
         <?php endif; ?>
     </div>
+</div>
+<script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
+<script type="text/javascript">
 
-    <script type="text/javascript">
+    var app = angular.module('InvoiceShow', ['ngCookies']);
+    app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
+        window.scope = $scope;
+        window.cookies = $cookies;
 
-        var app = angular.module('InvoiceShow', []);
+        let id_invoice = <?php echo $invoice_data[0]->id_invoice?>;
+        $scope.filteredChoices = [];
+        $scope.isVisible = [];
 
-        app.directive('numbersOnly', function () {
-            return {
-                require: 'ngModel',
-                link: function (scope, element, attr, ngModelCtrl) {
-                    scope.val = '<?php echo $invoice_data[0]->inn; ?>';
-                    function fromUser(text) {
-                        if (text) {
-                            var transformedInput = text.replace(/[^0-9.,-]/g, '');
-
-                            if (transformedInput !== text) {
-                                ngModelCtrl.$setViewValue(transformedInput);
-                                ngModelCtrl.$render();
-                            }
-                            return transformedInput;
-                        }
-                        return undefined;
-                    }
-                    ngModelCtrl.$parsers.push(fromUser);
-                }
-            };
+        $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {
+            reference: 'count_eds',
+            id: '<?php echo $invoice_data[0]->id_invoice; ?>'
+        }).then(function (response) {
+            $scope.count_eds = parseInt(response.data.eds_count);
+            for (let i = 0; i < $scope.count_eds; i++) {
+                $scope.isVisible.push({
+                    suggestions: false
+                });
+            }
         });
-    </script>
+
+        $scope.enteredFio = [];
+        $scope.enteredPin = [];
+
+        $scope.choices = [];
+        $scope.items = [];
+
+        $scope.text = '';
+        $scope.minlength = 5;
+        $scope.selected = {};
+
+        $scope.pinSearch = function (pin) {
+            if (pin.length >= 5) {
+                $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {
+                    reference: 'search_rep_by_pin',
+                    id: pin
+                }).then(function (response) {
+                    $scope.choices = response.data;
+                    $scope.items = $scope.choices;
+                });
+            }
+        };
+
+        $scope.range = function (min, max, step) {
+            step = step || 1;
+            let input = [];
+            for (let i = min; i < max; i += step) {
+                input.push(i);
+            }
+            return input;
+        };
+
+        $scope.filterItems = function (key) {
+            if ($scope.minlength <= $scope.enteredPin[key].length) {
+                $scope.filteredChoices = querySearch($scope.enteredPin[key]);
+                $scope.isVisible[key].suggestions = $scope.filteredChoices.length > 0 ? true : false;
+            } else {
+                $scope.isVisible[key].suggestions = false;
+            }
+        };
+
+        /**
+         * Takes one based index to save selected choice object
+         */
+        $scope.selectItem = function (index, key) {
+            $scope.selected = $scope.choices [$scope.choices.findIndex(x => x.pin == index)];
+            $scope.enteredPin[key] = $scope.selected.pin;
+            $scope.enteredFio[key] = $scope.selected.fio;
+            $scope.isVisible[key].suggestions = false;
+        };
+
+        /**
+         * Search for states... use $timeout to simulate
+         * remote dataservice call.
+         */
+        function querySearch(query) {
+            //returns list of filtered items
+            $scope.pinSearch(query);
+            if (scope.choices == "null") {
+                return [];
+            } else {
+                return query ? $scope.choices.filter(createFilterFor(query)) : [];
+            }
+        }
+
+        /**
+         * Create filter function for a query string
+         */
+        function createFilterFor(query) {
+            let lowercaseQuery = query;//angular.lowercase(query);
+            return function filterFn(item) {
+                // Check if the given item matches for the given query
+                let label = item.pin;//angular.lowercase(item.label);
+                return (label.indexOf(lowercaseQuery) === 0);
+            };
+        }
+
+        $scope.validateForm = function () {
+            /* делаем из массивов объект, конено можно было сделать в момент формирования, но код уже написан, рефакториг */
+            if ($scope.enteredPin && $scope.enteredPin.length > 0 ) {
+                let objects_pin = {
+                    id_invoice: id_invoice,
+                    pins: []
+                };
+                for (let i=0; i < $scope.enteredPin.length; i++) {
+                    objects_pin.pins.push({
+                        pin: $scope.enteredPin[i],
+                        fio: $scope.enteredFio[i]
+                    });
+                }
+                $cookies.putObject('objects_pin', objects_pin);
+            }
+            /* -----------*/
+
+            window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
+
+            // } else {
+            //     alert('Вы не заполненли ПИН представителя');
+            //
+            // }
+        }
+    }]);
+
+    app.directive('numbersOnly', function () {
+        return {
+            require: 'ngModel',
+            link: function (scope, element, attr, ngModelCtrl) {
+                scope.val = '<?php echo $invoice_data[0]->inn; ?>';
+
+                function fromUser(text) {
+                    if (text) {
+                        let transformedInput = text.replace(/[^0-9.,-]/g, '');
+
+                        if (transformedInput !== text) {
+                            ngModelCtrl.$setViewValue(transformedInput);
+                            ngModelCtrl.$render();
+                        }
+                        return transformedInput;
+                    }
+                    return undefined;
+                }
+                ngModelCtrl.$parsers.push(fromUser);
+            }
+        }
+    });
+</script>

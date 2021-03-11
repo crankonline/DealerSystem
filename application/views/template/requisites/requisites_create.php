@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+//var_dump($this->session->userdata);die;
 ?>
 <div class="container theme-showcase" role="main" ng-app="RequisitesForm" ng-controller="RequisitesFormData">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере    ?>
@@ -867,10 +868,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 </div>
 <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
 <script type="text/javascript">
-    var RequisitesForm = angular.module('RequisitesForm', ['ngFileUpload', 'checklist-model']);
+    var RequisitesForm = angular.module('RequisitesForm', ['ngFileUpload', 'checklist-model', 'ngCookies']);
     RequisitesForm
         .factory('mObjNode', [function () {
             return function (node, scope) {
@@ -884,9 +886,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 }
             };
         }])
-        .controller('RequisitesFormData', ['$scope', '$http', 'mObjNode', 'Upload', '$interval', '$sce', '$window',
-            function ($scope, $http, mObjNode, Upload, $interval, $sce, $window) {
+        .controller('RequisitesFormData', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval', '$sce', '$window',
+            function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData) {
                 window.scope = $scope;
+                window.cookies = $cookies;
+                console.log(shareData.getData());
                 /*Load default reference*/
                 $scope.requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''"); ?>;
                 $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
@@ -1404,7 +1408,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         if (!angular.isUndefined($scope.ie_file)) {
                             dataToSend.ie_file = $scope.ie_file;
                         }
-                        if (!angular.isUndefined($scope.mu_file_m2a) ) {
+                        if (!angular.isUndefined($scope.mu_file_m2a)) {
                             dataToSend.mu_file_m2a = $scope.mu_file_m2a;
                         }
                         if (Object.keys(dataToSend).length !== 0) {//если есть что отправлять
@@ -1432,7 +1436,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             angular.forEach(dataToSend, function (value, key) {
                                 delete scope.Data.common.files[key];
                             });
-                            if(!$scope.jur_file_ch_m2a){
+                            if (!$scope.jur_file_ch_m2a) {
                                 delete scope.Data.common.files['mu_file_m2a'];
                             }
                             if (Object.keys(scope.Data.common.files).length == 0) {
@@ -1497,16 +1501,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 angular.forEach(dataToSendRep, function (value, key) {
                                     delete scope.Data.common.representatives[i].files[key];
                                 });
-                                if(!$scope.rep_file_ch_passport_copy[i]){//кастыль
+                                if (!$scope.rep_file_ch_passport_copy[i]) {//кастыль
                                     delete scope.Data.common.representatives[i].files['passport_copy'];
                                 }
-                                if(!$scope.rep_file_ch_passport_side_2[i]){//кастыль
+                                if (!$scope.rep_file_ch_passport_side_2[i]) {//кастыль
                                     delete scope.Data.common.representatives[i].files['passport_side_2'];
                                 }
                                 if (Object.keys(scope.Data.common.representatives[i].files).length == 0) {
                                     check_rep_ident = true;
                                 } else {
-                                      let keys = Object.keys(scope.Data.common.representatives[i].files);
+                                    let keys = Object.keys(scope.Data.common.representatives[i].files);
                                     //console.log(keys);
                                     for (let ii = 0; ii < keys.length; ii++) {
                                         //console.log('Go JUR - ' + $scope.Data.common.representatives[i].files[keys[ii]].file_ident);

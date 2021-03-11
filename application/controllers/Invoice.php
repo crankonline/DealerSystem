@@ -13,6 +13,7 @@ class Invoice extends CI_Controller {
 
         $this->load->model('invoice_model');
         $this->load->model('price_model');
+        $this->load->model('requisites_model');
         $this->load->library('pagination');
     }
 
@@ -160,6 +161,8 @@ class Invoice extends CI_Controller {
             $request->reference == 'price' ? $result = $this->price_model->get_price() : NULL;
             $request->reference == 'inn' ? $result = $this->invoice_model->get_companyname_by_inn($request->id) : NULL;
             $request->reference == 'price_sochi' ? $result = $this->price_model->get_price(true) : NULL;
+            $request->reference == 'count_eds' ? $result = $this->requisites_model->get_invoice_data_by_id($request->id) : null;
+            $request->reference == 'search_rep_by_pin' ? $result = $this->requisites_model->get_rep_by_pin($request->id) : null;
             echo json_encode($result);
         }
         catch(Exception $ex){
