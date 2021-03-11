@@ -1,8 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-//var_dump($invoice_data);die;
 ?>
-<div class="container theme-showcase" role="main" ng-app="InvoiceShow">
+<div class="container theme-showcase" role="main" ng-app="DealerSystem">
     <div ng-controller="InvoiceShowController">
         <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере  ?>
             <div class="alert alert-danger">
@@ -75,11 +74,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         <input name="inn"
                                                type="text"
                                                class="form-control"
-                                               value="<?php echo $invoice_data[0]->inn; ?>"
                                                required=""
                                                minlength="14"
                                                maxlength="14"
-                                               ng-model="val"
+                                               ng-model="input_inn"
+                                               ng-init="input_inn='<?php echo $invoice_data[0]->inn; ?>'"
                                                numbers-only>
                                         <input name="invoice_serial_number" type="text" hidden=""
                                                value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
@@ -357,152 +356,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <?php endif; ?>
     </div>
 </div>
+    
+<script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/DealerSystem/app_init.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/DealerSystem/InvoiceShowController.js"); ?>"></script>
+
 <script type="text/javascript">
-
-    var app = angular.module('InvoiceShow', ['ngCookies']);
-    app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
-        window.scope = $scope;
-        window.cookies = $cookies;
-
-        let id_invoice = <?php echo $invoice_data[0]->id_invoice?>;
-        $scope.filteredChoices = [];
-        $scope.isVisible = [];
-
-        $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {
-            reference: 'count_eds',
-            id: '<?php echo $invoice_data[0]->id_invoice; ?>'
-        }).then(function (response) {
-            $scope.count_eds = parseInt(response.data.eds_count);
-            for (let i = 0; i < $scope.count_eds; i++) {
-                $scope.isVisible.push({
-                    suggestions: false
-                });
-            }
-        });
-
-        $scope.enteredFio = [];
-        $scope.enteredPin = [];
-
-        $scope.choices = [];
-        $scope.items = [];
-
-        $scope.text = '';
-        $scope.minlength = 5;
-        $scope.selected = {};
-
-        $scope.pinSearch = function (pin) {
-            if (pin.length >= 5) {
-                $http.post('<?php echo base_url(); ?>index.php/invoice/invoice_reference', {
-                    reference: 'search_rep_by_pin',
-                    id: pin
-                }).then(function (response) {
-                    $scope.choices = response.data;
-                    $scope.items = $scope.choices;
-                });
-            }
-        };
-
-        $scope.range = function (min, max, step) {
-            step = step || 1;
-            let input = [];
-            for (let i = min; i < max; i += step) {
-                input.push(i);
-            }
-            return input;
-        };
-
-        $scope.filterItems = function (key) {
-            if ($scope.minlength <= $scope.enteredPin[key].length) {
-                $scope.filteredChoices = querySearch($scope.enteredPin[key]);
-                $scope.isVisible[key].suggestions = $scope.filteredChoices.length > 0 ? true : false;
-            } else {
-                $scope.isVisible[key].suggestions = false;
-            }
-        };
-
-        /**
-         * Takes one based index to save selected choice object
-         */
-        $scope.selectItem = function (index, key) {
-            $scope.selected = $scope.choices [$scope.choices.findIndex(x => x.pin == index)];
-            $scope.enteredPin[key] = $scope.selected.pin;
-            $scope.enteredFio[key] = $scope.selected.fio;
-            $scope.isVisible[key].suggestions = false;
-        };
-
-        /**
-         * Search for states... use $timeout to simulate
-         * remote dataservice call.
-         */
-        function querySearch(query) {
-            //returns list of filtered items
-            $scope.pinSearch(query);
-            if (scope.choices == "null") {
-                return [];
-            } else {
-                return query ? $scope.choices.filter(createFilterFor(query)) : [];
-            }
-        }
-
-        /**
-         * Create filter function for a query string
-         */
-        function createFilterFor(query) {
-            let lowercaseQuery = query;//angular.lowercase(query);
-            return function filterFn(item) {
-                // Check if the given item matches for the given query
-                let label = item.pin;//angular.lowercase(item.label);
-                return (label.indexOf(lowercaseQuery) === 0);
-            };
-        }
-
-        $scope.validateForm = function () {
-            /* делаем из массивов объект, конено можно было сделать в момент формирования, но код уже написан, рефакториг */
-            if ($scope.enteredPin && $scope.enteredPin.length > 0 ) {
-                let objects_pin = {
-                    id_invoice: id_invoice,
-                    pins: []
-                };
-                for (let i=0; i < $scope.enteredPin.length; i++) {
-                    objects_pin.pins.push({
-                        pin: $scope.enteredPin[i],
-                        fio: $scope.enteredFio[i]
-                    });
-                }
-                $cookies.putObject('objects_pin', objects_pin);
-            }
-            /* -----------*/
-
-            window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
-
-            // } else {
-            //     alert('Вы не заполненли ПИН представителя');
-            //
-            // }
-        }
-    }]);
-
-    app.directive('numbersOnly', function () {
-        return {
-            require: 'ngModel',
-            link: function (scope, element, attr, ngModelCtrl) {
-                scope.val = '<?php echo $invoice_data[0]->inn; ?>';
-
-                function fromUser(text) {
-                    if (text) {
-                        let transformedInput = text.replace(/[^0-9.,-]/g, '');
-
-                        if (transformedInput !== text) {
-                            ngModelCtrl.$setViewValue(transformedInput);
-                            ngModelCtrl.$render();
-                        }
-                        return transformedInput;
-                    }
-                    return undefined;
-                }
-                ngModelCtrl.$parsers.push(fromUser);
-            }
-        }
-    });
+    let id_invoice = <?php echo $invoice_data[0]->id_invoice; ?>;
 </script>
