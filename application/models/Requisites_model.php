@@ -1,15 +1,17 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Requisites_model extends CI_Model {
+class Requisites_model extends CI_Model
+{
 
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
 
-    private function requisites_client() {
+    private function requisites_client()
+    {
         $wsdl = (ENVIRONMENT == 'production') ?
-                getenv('SOAP_REQUISITES_PROD') : //prod
-                getenv('SOAP_REQUISITES_DEV'); //dev
+            getenv('SOAP_REQUISITES_PROD') : //prod
+            getenv('SOAP_REQUISITES_DEV'); //dev
         $user = array(
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -24,10 +26,11 @@ class Requisites_model extends CI_Model {
         return new SoapClient($wsdl, $user);
     }
 
-    private function reference_client() {
+    private function reference_client()
+    {
         $wsdl = (ENVIRONMENT == 'production') ?
-                getenv('SOAP_REQUISITES_META_PROD') : //prod
-                getenv('SOAP_REQUISITES_META_DEV'); //dev
+            getenv('SOAP_REQUISITES_META_PROD') : //prod
+            getenv('SOAP_REQUISITES_META_DEV'); //dev
         $user = array(
             'location' => str_replace('?wsdl', '', $wsdl),
             'login' => 'api-' . date('z') . '-user',
@@ -36,10 +39,11 @@ class Requisites_model extends CI_Model {
         return new SoapClient($wsdl, $user);
     }
 
-    private function pki_dtg_client() {
+    private function pki_dtg_client()
+    {
         $wsdl = (ENVIRONMENT == 'production') ?
-                getenv('SOAP_PKI_PROD') : //prod
-                getenv('SOAP_PKI_DEV'); //dev
+            getenv('SOAP_PKI_PROD') : //prod
+            getenv('SOAP_PKI_DEV'); //dev
         $options = [
             'soap_version' => SOAP_1_1,
             'exceptions' => true,
@@ -51,7 +55,8 @@ class Requisites_model extends CI_Model {
         return new SoapClient($wsdl, $options);
     }
 
-    private function sf_inninfo() {
+    private function sf_inninfo()
+    {
         $wsdl = getenv('ELEED');
         $options = [
             'trace' => TRUE,
@@ -61,22 +66,24 @@ class Requisites_model extends CI_Model {
         return new SoapClient($wsdl, $options);
     }
 
-    private function soap_1c_client() {
-            $wsdl = (ENVIRONMENT == 'production') ?
-                    getenv('SOAP_1C_PROD') : //prod
-                    getenv('SOAP_1C_DEV'); //dev
+    private function soap_1c_client()
+    {
+        $wsdl = (ENVIRONMENT == 'production') ?
+            getenv('SOAP_1C_PROD') : //prod
+            getenv('SOAP_1C_DEV'); //dev
 
-            $user = array(
-                'login' => getenv('1C_LOGIN'),
-                'password' => getenv('1C_PASSWORD'),
-                'trace' => 1,
-                'exceptions' => true,
-                'connection_timeout' => 5
-            );
-            return new SoapClient($wsdl, $user);
+        $user = array(
+            'login' => getenv('1C_LOGIN'),
+            'password' => getenv('1C_PASSWORD'),
+            'trace' => 1,
+            'exceptions' => true,
+            'connection_timeout' => 5
+        );
+        return new SoapClient($wsdl, $user);
     }
 
-    private function mu_info($inn) {
+    private function mu_info($inn)
+    {
         $URL_MJ = getenv('MINJUST');
 
         $type = 'tin';
@@ -167,7 +174,8 @@ class Requisites_model extends CI_Model {
         }
     }
 
-    private function media_service_push() {
+    private function media_service_push()
+    {
         $url = getenv('MEDIA_SERVER');
         $fields = [
             'image' => new \CurlFile('index.jpeg', 'image/png', 'index.jpeg'),
@@ -184,7 +192,8 @@ class Requisites_model extends CI_Model {
         return curl_exec($ch);
     }
 
-    public function get_mu_reference($inn) {
+    public function get_mu_reference($inn)
+    {
         try {
             $result = $this->mu_info($inn);
             if (empty($result)) {
@@ -199,10 +208,11 @@ class Requisites_model extends CI_Model {
         }
     }
 
-    public function get_sf_reference($inn) {
+    public function get_sf_reference($inn)
+    {
         try {
             $client = $this->sf_inninfo();
-            $result = $client->GetPayersInfo((object) ['SearchField' => 'INN', 'values' => [$inn]])->GetPayersInfoResult;
+            $result = $client->GetPayersInfo((object)['SearchField' => 'INN', 'values' => [$inn]])->GetPayersInfoResult;
             if (!isset($result->PayerInfo)) {
                 return [];
             } else {
@@ -211,20 +221,22 @@ class Requisites_model extends CI_Model {
         } catch (SoapFault $ex) {
             log_message('error', 'Запрос в службу социального фонда -> ' . $ex->getMessage());
             \Sentry\captureException($ex);
-            return[];
+            return [];
         }
     }
 
-    public function record_count() {
+    public function record_count()
+    {
         $this->db->join('"Dealer_data".invoice', 'invoice.id_invoice = requisites.requisites_invoice_id', 'left')->
-                join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left')->
-                join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left');
+        join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left')->
+        join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'left');
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
-                        $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']); ///проверяем на доступ
+            $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']); ///проверяем на доступ
         return $this->db->count_all_results('"Dealer_data".requisites');
     }
 
-    public function get_reference_by_id($reference) {
+    public function get_reference_by_id($reference)
+    {
         $ApiRequestSubscriberToken = $this->ApiRequestSubscriberToken_DTG;
         $client = $this->reference_client();
         ($reference['reference'] == 'getCommonOwnershipFormById') ? $result = $client->getCommonOwnershipFormById($ApiRequestSubscriberToken, $reference['id']) : NULL; //?? php 7.0
@@ -258,14 +270,16 @@ class Requisites_model extends CI_Model {
         return $result;
     }
 
-    public function get_requisites_by_inn($inn) {
+    public function get_requisites_by_inn($inn)
+    {
         $token_DTG = $this->ApiRequestSubscriberToken_DTG;
         $client = $this->requisites_client();
         return $client->getByInn($token_DTG, $inn);
         //Exceptions has catched by calling function (that faster)
     }
 
-    public function get_person_by_passport($series, $number) {
+    public function get_person_by_passport($series, $number)
+    {
         $client = $this->requisites_client();
         $result = $client->getPersonByPassport($this->ApiRequestSubscriberToken_DTG, $series, $number);
         if (empty($result)) {
@@ -274,7 +288,8 @@ class Requisites_model extends CI_Model {
         return $result;
     }
 
-    public function requisites_saver($json) {
+    public function requisites_saver($json)
+    {
         $token_DTG = $this->ApiRequestSubscriberToken_DTG;
         $client = $this->requisites_client();
         try {
@@ -294,7 +309,8 @@ class Requisites_model extends CI_Model {
         return $result_dtg;
     }
 
-    public function create_pay_invoice($invoice_Serial_number) {
+    public function create_pay_invoice($invoice_Serial_number)
+    {
         $array = ['_id' => $invoice_Serial_number];
 //        $client = $this->soap_1c_client();
 //        $result = $client->GetNumberSF($array);
@@ -316,54 +332,57 @@ class Requisites_model extends CI_Model {
         return $this->db->insert_id();
     }
 
-    public function get_requisites_all($limit, $offset) {
+    public function get_requisites_all($limit, $offset)
+    {
         $this->db->select('requisites.id_requisites')->
-                select('invoice.inn')->
-                select('invoice.company_name')->
-                select('to_char(requisites.requisites_creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
-                select('pay_invoice.serial')->
-                select('pay_invoice.number')->
-                select('users."name" AS username')->
-                from('"Dealer_data".requisites')->
-                join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice', 'left')->
-                join('Dealer_data".pay_invoice', 'requisites.pay_invoice_id = id_pay_invoice', 'left')->
-                join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left');
+        select('invoice.inn')->
+        select('invoice.company_name')->
+        select('to_char(requisites.requisites_creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
+        select('pay_invoice.serial')->
+        select('pay_invoice.number')->
+        select('users."name" AS username')->
+        from('"Dealer_data".requisites')->
+        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice', 'left')->
+        join('Dealer_data".pay_invoice', 'requisites.pay_invoice_id = id_pay_invoice', 'left')->
+        join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left');
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
-                        $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']); ///проверяем на доступ
+            $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']); ///проверяем на доступ
         //$this->db->order_by('requisites.requisites_creating_date_time', 'DESC');
         $this->db->limit($limit)->offset($offset);
         return $this->db->order_by('requisites.requisites_creating_date_time', 'DESC')->get()->result();
     }
 
-    public function get_requisites_search($search) {
+    public function get_requisites_search($search)
+    {
         $this->db->select('requisites.id_requisites')->
-                select('invoice.inn')->
-                select('invoice.company_name')->
-                select('to_char(requisites.requisites_creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
-                select('pay_invoice.serial')->
-                select('pay_invoice.number')->
-                select('users."name" AS username')->
-                from('"Dealer_data".requisites')->
-                join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice', 'left')->
-                join('Dealer_data".pay_invoice', 'requisites.pay_invoice_id = id_pay_invoice', 'left')->
-                join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left');
+        select('invoice.inn')->
+        select('invoice.company_name')->
+        select('to_char(requisites.requisites_creating_date_time,\'DD.MM.YYYY HH24:MI\') AS creatingdatetime')->
+        select('pay_invoice.serial')->
+        select('pay_invoice.number')->
+        select('users."name" AS username')->
+        from('"Dealer_data".requisites')->
+        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice', 'left')->
+        join('Dealer_data".pay_invoice', 'requisites.pay_invoice_id = id_pay_invoice', 'left')->
+        join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'left');
         ($this->session->userdata['logged_in']['Show_Operator']) ? $this->db->where('users.distributor_id', $this->session->userdata['logged_in']['UserDistributorID']) :
-                        $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']); ///проверяем на доступ
+            $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']); ///проверяем на доступ
         //$this->db->order_by('requisites.requisites_creating_date_time', 'DESC');
         $this->db->group_start()->
-                like('invoice.inn', $search)->
-                or_like('invoice.company_name', $search)->
-                or_like('invoice.invoice_serial_number', $search)->
-                group_end()->
-                order_by('requisites.requisites_creating_date_time', 'DESC');
+        like('invoice.inn', $search)->
+        or_like('invoice.company_name', $search)->
+        or_like('invoice.invoice_serial_number', $search)->
+        group_end()->
+        order_by('requisites.requisites_creating_date_time', 'DESC');
         //var_dump($this->db->get_compiled_select());
         return $this->db->get()->result();
     }
 
-    public function create_requisites($data) {
+    public function create_requisites($data)
+    {
         $result = $this->db->select('id_requisites')->
-                        from('"Dealer_data".requisites')->
-                        where('requisites_invoice_id', $data['requisites_invoice_id'])->get()->row();
+        from('"Dealer_data".requisites')->
+        where('requisites_invoice_id', $data['requisites_invoice_id'])->get()->row();
         if (!$result) {
             $this->db->insert('"Dealer_data".requisites', $data);
             return $this->db->insert_id();
@@ -372,27 +391,29 @@ class Requisites_model extends CI_Model {
         }
     }
 
-    public function get_requisites($id_requisites) {
+    public function get_requisites($id_requisites)
+    {
         //добавить проверку но пользователя создавшего и дистрибьютора
         $result = $this->db->select('invoice.inn')->
-                select('requisites.id_requisites')->
-                select('invoice.invoice_serial_number')->
-                select('requisites.json')->
-                select('to_char(requisites.requisites_creating_date_time, \'DD.MM.YYYY HH24:MI\') AS requisites_creating_date_time')->
-                select('CONCAT(pay_invoice.serial, \' \',pay_invoice."number") AS pay_invoice_serial_number')->
-                select('CONCAT (users.surname, \' \',users."name",\' \',users.patronymic_name) AS user_name')->
-                select('distributor.full_name')->
-                select('json_version_id')->
-                //join('"Dealer_data".requisites.json_version_id = json_version.id_json_version')->
-                join('"Dealer_data".pay_invoice', 'requisites.pay_invoice_id = pay_invoice.id_pay_invoice', 'inner')->
-                join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice', 'inner')->
-                join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'inner')->
-                join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'inner')->
-                get_where('"Dealer_data".requisites', array('id_requisites' => $id_requisites));
+        select('requisites.id_requisites')->
+        select('invoice.invoice_serial_number')->
+        select('requisites.json')->
+        select('to_char(requisites.requisites_creating_date_time, \'DD.MM.YYYY HH24:MI\') AS requisites_creating_date_time')->
+        select('CONCAT(pay_invoice.serial, \' \',pay_invoice."number") AS pay_invoice_serial_number')->
+        select('CONCAT (users.surname, \' \',users."name",\' \',users.patronymic_name) AS user_name')->
+        select('distributor.full_name')->
+        select('json_version_id')->
+        //join('"Dealer_data".requisites.json_version_id = json_version.id_json_version')->
+        join('"Dealer_data".pay_invoice', 'requisites.pay_invoice_id = pay_invoice.id_pay_invoice', 'inner')->
+        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice', 'inner')->
+        join('"Dealer_data".users', 'invoice.users_id = users.id_users', 'inner')->
+        join('"Dealer_data".distributor', 'users.distributor_id = distributor.id_distributor', 'inner')->
+        get_where('"Dealer_data".requisites', array('id_requisites' => $id_requisites));
         return $result->row();
     }
 
-    public function get_requisites_ID($inn) { // ищет id у которых есть файлы
+    public function get_requisites_ID($inn)
+    { // ищет id у которых есть файлы
         $sql = <<<SQL
                 SELECT id_requisites
                 FROM "Dealer_data".requisites
@@ -410,7 +431,8 @@ SQL;
         }
     }
 
-    public function get_requisites_JSON($inn) {
+    public function get_requisites_JSON($inn)
+    {
         $sql = <<<SQL
                 SELECT json
                 FROM "Dealer_data".requisites
@@ -425,15 +447,45 @@ SQL;
         }
     }
 
-    public function get_invoice_data_by_id($id_invoice) {
-        return $this->db->select('invoice.inn')->
-                        select('invoice.invoice_serial_number')->
-                        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3 OR inventory_id =5 OR inventory_id =6)),\'0\') AS eds_count')->
-                        from('"Dealer_data".invoice')->
-                        where(array('id_invoice' => $id_invoice))->get()->row();
+    public function get_rep_by_pin($pin)
+    {
+        $pin = $pin . '%';
+        $sql = <<<SQL
+SELECT 
+    distinct (t.FIO),
+    t.pin
+FROM(
+SELECT
+    Rep -> 'person' ->> 'pin' as pin,   
+    CONCAT(Rep -> 'person' ->> 'surname', ' ', Rep -> 'person' ->> 'name', ' ',  Rep -> 'person' ->> 'middleName') as fio
+FROM
+    "Dealer_data".requisites Ddr,
+    json_array_elements(Ddr.json->'common'->'representatives') Rep
+WHERE
+    Rep -> 'person' ->> 'pin' LIKE ?
+ORDER BY
+    Ddr.requisites_creating_date_time desc
+     ) t
+SQL;
+        $result = $this->db->query($sql, $pin)->result();
+        if (!empty($result)) {
+            return $result;
+        } else {
+            return null;
+        }
     }
 
-    public function get_certificates($serachWord) {
+    public function get_invoice_data_by_id($id_invoice)
+    {
+        return $this->db->select('invoice.inn')->
+        select('invoice.invoice_serial_number')->
+        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3 OR inventory_id =5 OR inventory_id =6)),\'0\') AS eds_count')->
+        from('"Dealer_data".invoice')->
+        where(array('id_invoice' => $id_invoice))->get()->row();
+    }
+
+    public function get_certificates($serachWord)
+    {
         try {
             $client_dtg = $this->pki_dtg_client();
             $result = $client_dtg->search($serachWord);
@@ -444,7 +496,8 @@ SQL;
         }
     }
 
-    public function register_client_to1c($json_register) {
+    public function register_client_to1c($json_register)
+    {
         try {
             $parameters = new \stdClass();
             $parameters->data = json_encode($json_register, JSON_UNESCAPED_UNICODE);
@@ -456,18 +509,20 @@ SQL;
         }
     }
 
-    public function get_inn_list_by_date($date_start, $date_finish, $UserID = NULL) {
+    public function get_inn_list_by_date($date_start, $date_finish, $UserID = NULL)
+    {
         $this->db->select('DISTINCT(inn) as inn')->
-                from('"Dealer_data".requisites')->
-                join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice')->
-                where('requisites_creating_date_time >=', $date_start)->
-                where('requisites_creating_date_time <=', $date_finish);
+        from('"Dealer_data".requisites')->
+        join('"Dealer_data".invoice', 'requisites.requisites_invoice_id = invoice.id_invoice')->
+        where('requisites_creating_date_time >=', $date_start)->
+        where('requisites_creating_date_time <=', $date_finish);
         !is_null($UserID) ? $this->db->join('"Dealer_data".users', 'invoice.users_id = users.id_users')->
-                                where('id_users', $UserID) : NULL;
+        where('id_users', $UserID) : NULL;
         return $this->db->get()->result();
     }
 
-    public function save_file_ident($file_struct, $ident = null) {
+    public function save_file_ident($file_struct, $ident = null)
+    {
         /*
          * $file_type = //1,2,3,4
          * $part = //1 - phisical, 2 - juridical
@@ -486,27 +541,29 @@ SQL;
         }
     }
 
-    public function get_juridical_files_ident($ident) {
+    public function get_juridical_files_ident($ident)
+    {
         return $this->db->select('filetype_id')->
-                        select('file_ident')->
-                        select('timestamp')->
-                        from('"Dealer_data".requisites')->
-                        join('"Dealer_images".files_juridical',
-                                'files_juridical.requisites_id = requisites.id_requisites')->
-                        where('id_requisites', $ident)->
-                        order_by('filetype_id')->get()->result();
+        select('file_ident')->
+        select('timestamp')->
+        from('"Dealer_data".requisites')->
+        join('"Dealer_images".files_juridical',
+            'files_juridical.requisites_id = requisites.id_requisites')->
+        where('id_requisites', $ident)->
+        order_by('filetype_id')->get()->result();
     }
 
-    public function get_representatives_files_ident($ident) {
+    public function get_representatives_files_ident($ident)
+    {
         return $this->db->select('representative_ident')->
-                        select('filetype_id')->
-                        select('file_ident')->
-                        select("'timestamp'")->
-                        from('"Dealer_data".requisites')->
-                        join('"Dealer_images".files_representatives',
-                                'files_representatives.requisites_id = requisites.id_requisites')->
-                        where('id_requisites', $ident)->
-                        order_by('filetype_id')->get()->result();
+        select('filetype_id')->
+        select('file_ident')->
+        select("'timestamp'")->
+        from('"Dealer_data".requisites')->
+        join('"Dealer_images".files_representatives',
+            'files_representatives.requisites_id = requisites.id_requisites')->
+        where('id_requisites', $ident)->
+        order_by('filetype_id')->get()->result();
     }
 
 }

@@ -493,6 +493,7 @@ class Requisites extends CI_Controller
 
     public function requisites_show_view($id_requisites = NULL)
     {
+        $this->session->unset_userdata('to_required');
         !is_null($id_requisites) ?: show_error('Получены не верные параметры', 500, $heading = 'Произошла ошибка');
         try {
             $RequisitesData = $this->requisites_model->get_requisites($id_requisites);            //print_r($RequisitesData);die;
@@ -613,7 +614,9 @@ class Requisites extends CI_Controller
                     }
                 }
                 $data['requisites_json'] = $requisites;
-                //$data['json_original'] = json_encode($requisites, JSON_UNESCAPED_UNICODE);
+                if ($this->session->userdata['to_required']) {
+                    $data['object_pins'] = $this->session->userdata['to_required'];
+                }
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
             } else {// если нет нигде берем из внешних источников
                 $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ 
@@ -740,7 +743,7 @@ class Requisites extends CI_Controller
             $file_types = [
                 'mu_file_kg' => 1,
                 'mu_file_ru' => 2,
-                'ie_file' =>7,
+                'ie_file' => 7,
                 'mu_file_m2a' => 3,
                 'passport_side_1' => 4,
                 'passport_side_2' => 5,
