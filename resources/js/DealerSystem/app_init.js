@@ -1,4 +1,5 @@
 let app = angular.module('DealerSystem', ['ngFileUpload', 'checklist-model', 'ngCookies']);
+
 app.directive('gkedMask', function () {
     return {
         require: 'ngModel',
@@ -19,6 +20,7 @@ app.directive('gkedMask', function () {
         }
     };
 });
+
 app.directive('numbersOnly', function () {
     return {
         require: 'ngModel',
@@ -39,6 +41,7 @@ app.directive('numbersOnly', function () {
         }
     };
 });
+
 app.directive('upperCase', function () {
     return {
         require: 'ngModel',
@@ -62,4 +65,20 @@ app.directive('upperCase', function () {
             upperCaseFunc(scope[attrs.ngModel]);
         }
     };
+});
+
+app.service('shareData', function () {
+    return {
+        setData: setData,
+        getData: getData,
+        shared_data: {}
+    }
+
+    function setData(data) {
+        this.shared_data = data
+    }
+
+    function getData() {
+        return this.shared_data
+    }
 });

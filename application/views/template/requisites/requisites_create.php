@@ -2,7 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 //var_dump($this->session->userdata);die;
 ?>
-<div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesRegisterForm">
+<div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesRegisterController">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере    ?>
         <div class="alert alert-danger">
             <h3 align="center"><strong>Произошла ошибка!<br>Регистрация невозможна!</strong></h3>
@@ -710,7 +710,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            numbers-only
                                            required=""
                                            ng-model="Data.common.representatives[key].deviceSerial"
-                                           ng-disabled="Data.common.representatives[key].edsUsageModel.id == 2 || (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)">
+                                           ng-disabled="Data.common.representatives[key].edsUsageModel.id == 2 ||
+                                           (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)">
 
                                 </td>
                             </tr>
@@ -732,13 +733,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_1[key]"
-                                               ng-init="rep_file_ch_passport_side_1[key] = (Data.common.representatives[key].files.passport_side_1) ? true : false"/>
+                                               ng-init="rep_file_ch_passport_side_1[key] =
+                                               (Data.common.representatives[key].files.passport_side_1) ? true : false"/>
                                     </label>
                                 </td>
                                 <td>
                                     <input type="file"
                                            class="form-control"
-                                           required=""
+                                           ng-required="get_require_pin(Data.common.representatives[key].person.pin)"
                                            ngf-select
                                            ng-model="passport_side_1[key]"
                                            ngf-pattern="'image/*'" ngf-accept="'.jpg'"
@@ -873,7 +875,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/DealerSystem//app_init.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterForm_controller.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterController.js"); ?>"></script>
 
 <script type="text/javascript">
     /* Инициализация переменных для справочников и дефаулт значений для RequisitesRegisterForm контроллера */
@@ -899,4 +901,5 @@ defined('BASEPATH') or exit('No direct script access allowed');
         $requisites_json->common->civilLegalStatus->id : "''"; ?>;
     let settlement_id = <?php echo (isset($requisites_json->common->juristicAddress->settlement->id)) ?
         $requisites_json->common->juristicAddress->settlement->id : "''"; ?>;
+    let object_pins = <?php  echo json_encode(isset($object_pins) ? $object_pins : "''"); ?>;
 </script>

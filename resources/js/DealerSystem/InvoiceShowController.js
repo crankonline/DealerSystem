@@ -1,4 +1,4 @@
-app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', function ($scope, $http, $cookies) {
+app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareData', function ($scope, $http, $cookies, shareData) {
     window.scope = $scope;
     window.cookies = $cookies;
 
@@ -106,11 +106,20 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', function
                     fio: $scope.enteredFio[i]
                 });
             }
-            $cookies.putObject('objects_pin', objects_pin);
+            $http.post('/index.php/invoice/invoice_reference', {
+                reference: 'insert_session_data',
+                id: objects_pin
+            }).then(function (response) {
+                //console.log(response.data);
+                window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
+            });
+            //$cookies.putObject('objects_pin', objects_pin);
+            //shareData.setData(objects_pin);
+        } else {
+            window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
         }
         /* -----------*/
 
-        window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
 
         // } else {
         //     alert('Вы не заполненли ПИН представителя');

@@ -10,7 +10,7 @@ app.factory('mObjNode', [function () {
         }
     };
 }])
-    .controller('RequisitesRegisterForm', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval', '$sce', '$window',
+    .controller('RequisitesRegisterController', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval', '$sce', '$window', 'shareData',
         function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData) {
             window.scope = $scope;
             window.cookies = $cookies;
@@ -32,6 +32,8 @@ app.factory('mObjNode', [function () {
             $scope.EM = '';
             $scope.SM = '';
             $scope.toggle = true;
+
+            $scope.object_pins = object_pins;
 
             $http.post('/index.php/requisites/reference_load', {
                 reference: 'getCommonCapitalForms',
@@ -427,9 +429,23 @@ app.factory('mObjNode', [function () {
             $scope.getSerialNumber = function (key, tokenIndex) {
                 //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
                 //$scope.Data.common.representatives[key].deviceSerial =
-                var result = $scope.pluginManager.getDeviceSerial(tokenIndex);
+                let result = $scope.pluginManager.getDeviceSerial(tokenIndex);
                 //console.log(result);
             }
+
+            $scope.get_require_pin = function (pin) {
+                if ($scope.object_pins != "''") {
+                    let result = $scope.object_pins.pins[$scope.object_pins.pins.findIndex(x => x.pin == pin)];
+                    if (angular.isUndefined(result)) {
+                        return false;
+                    } else {
+                        return (result.pin == pin) ? true : false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+
 
             $scope.SuccessFunc = function (message) {
                 $scope.resultupload = $sce.trustAsHtml(message);
@@ -661,10 +677,11 @@ app.factory('mObjNode', [function () {
 
             $scope.range = function (min, max, step) {
                 step = step || 1;
-                var input = [];
+                let input = [];
                 for (var i = min; i < max; i += step) {
                     input.push(i);
                 }
                 return input;
             };
-        }]);
+        }])
+;
