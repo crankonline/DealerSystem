@@ -614,8 +614,9 @@ class Requisites extends CI_Controller
                     }
                 }
                 $data['requisites_json'] = $requisites;
-                isset($this->session->userdata['to_required']) ?
-                    $data['object_pins'] = $this->session->userdata['to_required'] : null;
+                if ($this->session->userdata['to_required']) {
+                    $data['object_pins'] = $this->session->userdata['to_required'];
+                }
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
             } else {// если нет нигде берем из внешних источников
                 $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ 

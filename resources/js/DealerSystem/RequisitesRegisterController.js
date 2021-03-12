@@ -1,8 +1,8 @@
 app.factory('mObjNode', [function () {
     return function (node, scope) {
-        var Nodes = node.split('.');
-        var Current = scope;
-        for (var i = 0; i < Nodes.length; i++) {
+        let Nodes = node.split('.');
+        let Current = scope;
+        for (let i = 0; i < Nodes.length; i++) {
             if (!Current[Nodes[i]]) {
                 Current[Nodes[i]] = {};
             }
@@ -206,7 +206,7 @@ app.factory('mObjNode', [function () {
                 if (typeof id === 'object') {
                     id = id.id;
                 }
-                for (var i = 0; i < $scope.OwnershipForms.length; i++) {
+                for (let i = 0; i < $scope.OwnershipForms.length; i++) {
                     if ($scope.OwnershipForms[i].id === id)
                         return $scope.OwnershipForms[i];
                 }
@@ -214,7 +214,7 @@ app.factory('mObjNode', [function () {
             };
 
             $scope.loadCivilLegalStatuses = function () {
-                var tmp = $scope.Data.common.legalForm.ownershipForm;
+                let tmp = $scope.Data.common.legalForm.ownershipForm;
                 if ($scope.Data.common.legalForm.id === '') { //loadLegalForm меняет  $scope.Data.common.legalForm и срабатывает ng-change="loadCivilLegalStatuses()" (((
                     return;
                 }
@@ -280,7 +280,7 @@ app.factory('mObjNode', [function () {
                 region = $scope.currentphysicalregion.id;
                 district = $scope.currentphysicaldistrict;
                 //console.log(district);
-                var districtid = $scope.currentphysicaldistrict ? (district.id || null) : null;
+                let districtid = $scope.currentphysicaldistrict ? (district.id || null) : null;
                 if (region === 'none' && !district) {
                     region = null;
                     districtid = null;
@@ -330,7 +330,7 @@ app.factory('mObjNode', [function () {
                 region = $scope.currentjuristicregion.id;
                 district = $scope.currentjuristicdistrict;
                 //console.log(district);
-                var districtid = $scope.currentjuristicdistrict ? (district.id || null) : null;
+                let districtid = $scope.currentjuristicdistrict ? (district.id || null) : null;
                 if (region === 'none' && !district) {
                     region = null;
                     districtid = null;
@@ -376,8 +376,8 @@ app.factory('mObjNode', [function () {
                     $scope.role_2 = true;
                     $scope.role_3 = true;
                     $scope.role_6 = true;
-                    for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
-                        for (var ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
+                    for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
+                        for (let ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
                             ($scope.Data.common.representatives[i].roles[ii].id == 1) ? $scope.role_1 = false : null;
                             ($scope.Data.common.representatives[i].roles[ii].id == 2) ? $scope.role_2 = false : null;
                             ($scope.Data.common.representatives[i].roles[ii].id == 3) ? $scope.role_3 = false : null;
@@ -483,7 +483,7 @@ app.factory('mObjNode', [function () {
                     $scope.Data.common.managementForm = null;
                     $scope.Data.common.rnmj = null;
                 }
-                for (var i = 0; i < $scope.Data.common.representatives.length; i++) {
+                for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
                     if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
                         $scope.Data.common.representatives[i].deviceSerial = null;
                         $scope.Data.common.representatives[i].edsUsageModel = null;
@@ -678,7 +678,7 @@ app.factory('mObjNode', [function () {
             $scope.range = function (min, max, step) {
                 step = step || 1;
                 let input = [];
-                for (var i = min; i < max; i += step) {
+                for (let i = min; i < max; i += step) {
                     input.push(i);
                 }
                 return input;

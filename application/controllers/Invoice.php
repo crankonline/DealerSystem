@@ -45,12 +45,10 @@ class Invoice extends CI_Controller {
     private function insert_session_data($data){
         try {
             $this->session->set_userdata('to_required', ($data));
-            return 'OK';
         }
         catch (Exception $ex){
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
-            return $ex->getMessage();
         }
 
     }

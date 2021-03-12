@@ -10,11 +10,7 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         id: id_invoice
     }).then(function (response) {
         $scope.count_eds = parseInt(response.data.eds_count);
-        for (let i = 0; i < $scope.count_eds; i++) {
-            $scope.isVisible.push({
-                suggestions: false
-            });
-        }
+        $scope.isVisible = [...new Array($scope.count_eds)].map(v=>({suggestions: false}));
     });
 
     $scope.enteredFio = [];
@@ -118,12 +114,5 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         } else {
             window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
         }
-        /* -----------*/
-
-
-        // } else {
-        //     alert('Вы не заполненли ПИН представителя');
-        //
-        // }
     }
 }]);
