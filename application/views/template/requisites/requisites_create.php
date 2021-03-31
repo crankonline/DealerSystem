@@ -69,8 +69,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </td>
                         </tr>
                         <tr>
-                            <td>Наименование организации</td>
-                            <td><textarea maxlength="255"
+                            <td>Наименование организации (сокращенное)</td>
+                            <td><textarea maxlength="64"
                                           class="form-control noresize"
                                           style="resize: vertical"
                                           placeholder="Наименование юридического лица"

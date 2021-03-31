@@ -614,7 +614,7 @@ class Requisites extends CI_Controller
                     }
                 }
                 $data['requisites_json'] = $requisites;
-                if ($this->session->userdata['to_required']) {
+                if (isset($this->session->userdata['to_required'])) {
                     $data['object_pins'] = $this->session->userdata['to_required'];
                 }
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
