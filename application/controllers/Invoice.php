@@ -55,16 +55,6 @@ class Invoice extends CI_Controller
         }
     }
 
-    private function delete_session_data()
-    {
-        try {
-
-        } catch (Exception $ex) {
-            \Sentry\captureException($ex);
-            log_message('error', $ex->getMessage());
-        }
-    }
-
     public function invoice_list_view($search = NULL)
     { //$message для вывода сообщений из др. методов
         try {
