@@ -1,4 +1,4 @@
-app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareData', function ($scope, $http, $cookies, shareData) {
+app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareData', '$interval', function ($scope, $http, $cookies, shareData, $interval) {
     window.scope = $scope;
     window.cookies = $cookies;
 
@@ -10,7 +10,7 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         id: id_invoice
     }).then(function (response) {
         $scope.count_eds = parseInt(response.data.eds_count);
-        $scope.isVisible = [...new Array($scope.count_eds)].map(v=>({suggestions: false}));
+        $scope.isVisible = [...new Array($scope.count_eds)].map(v => ({suggestions: false}));
     });
 
     $scope.enteredFio = [];
@@ -23,18 +23,6 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
     $scope.minlength = 5;
     $scope.selected = {};
 
-    $scope.pinSearch = function (pin) {
-        if (pin.length >= 5) {
-            $http.post('/index.php/invoice/invoice_reference', {
-                reference: 'search_rep_by_pin',
-                id: pin
-            }).then(function (response) {
-                $scope.choices = response.data;
-                $scope.items = $scope.choices;
-            });
-        }
-    };
-
     $scope.range = function (min, max, step) {
         step = step || 1;
         let input = [];
@@ -46,8 +34,11 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
 
     $scope.filterItems = function (key) {
         if ($scope.minlength <= $scope.enteredPin[key].length) {
-            $scope.filteredChoices = querySearch($scope.enteredPin[key]);
-            $scope.isVisible[key].suggestions = $scope.filteredChoices.length > 0 ? true : false;
+            let queryPromise = querySearch($scope.enteredPin[key]);
+            queryPromise.then(function(result){
+                $scope.filteredChoices = result;
+                $scope.isVisible[key].suggestions = $scope.filteredChoices.length > 0 ? true : false;
+            });
         } else {
             $scope.isVisible[key].suggestions = false;
         }
@@ -69,12 +60,17 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
      */
     function querySearch(query) {
         //returns list of filtered items
-        $scope.pinSearch(query);
-        if (scope.choices == "null") {
+        return $http.post('/index.php/invoice/invoice_reference', {
+            reference: 'search_rep_by_pin',
+            id: query
+        }).then(function (response) {
+            $scope.choices = response.data;
+            $scope.items = $scope.choices;
+            return $scope.choices.filter(createFilterFor(query));
+        }, function (response) {
+            console.log("Error: " + response.data);
             return [];
-        } else {
-            return query ? $scope.choices.filter(createFilterFor(query)) : [];
-        }
+        });
     }
 
     /**
@@ -106,7 +102,6 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
                 reference: 'insert_session_data',
                 id: objects_pin
             }).then(function (response) {
-                //console.log(response.data);
                 window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
             });
             //$cookies.putObject('objects_pin', objects_pin);

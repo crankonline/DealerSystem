@@ -34,7 +34,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </div>
                         <div class="col-lg-3"></div>
                         <div class="col-lg-3">
-                            <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE && $invoice_data[0]->pay_sum >= $invoice_data[0]->total_sum && $invoice_data[0]->requisites_invoice_id == NULL): //проверка доступа пользователя И оплаты для регистрации формы заявки И проверка на существование записи заявки для отображения кнопки регистрации  ?>
+                            <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE &&
+                                $invoice_data[0]->pay_sum >= $invoice_data[0]->total_sum && $invoice_data[0]->requisites_invoice_id == NULL):
+                                //проверка доступа пользователя И оплаты для регистрации формы заявки И проверка на существование записи заявки для отображения кнопки регистрации  ?>
                                 <button ng-click="validateForm()"
                                         type="button" class="btn btn-success"><span
                                             class="glyphicon glyphicon-pencil"></span> Перейти к регистрации
@@ -198,7 +200,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <?php if ($invoice_data[0]->requisites_invoice_id == NULL): ?>
+                    <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE &&
+                        $invoice_data[0]->pay_sum >= $invoice_data[0]->total_sum &&
+                        $invoice_data[0]->requisites_invoice_id == NULL): ?>
                         <h3 align="center"><strong>Введите ПИН получателей ЭП</strong></h3>
                         <table class="table">
                             <thead>
@@ -356,7 +360,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <?php endif; ?>
     </div>
 </div>
-    
+
 <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
