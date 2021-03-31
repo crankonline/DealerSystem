@@ -18,6 +18,7 @@ app.factory('mObjNode', [function () {
             /*Load default reference*/
             $scope.requisites_json = requisites_json;
             $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
+            $scope.eds_count = eds_count;
             $scope.passport_side_1 = [];
             $scope.passport_side_2 = [];
             $scope.passport_copy = [];
@@ -434,7 +435,9 @@ app.factory('mObjNode', [function () {
             }
 
             $scope.get_require_pin = function (pin) {
-                if ($scope.object_pins != "''") {
+                if ($scope.eds_count == 0) {
+                    return false;
+                } else if ($scope.object_pins != "''") {
                     let result = $scope.object_pins.pins[$scope.object_pins.pins.findIndex(x => x.pin == pin)];
                     if (angular.isUndefined(result)) {
                         return false;
@@ -501,13 +504,15 @@ app.factory('mObjNode', [function () {
                         }
                     });
                 }
-                if (object_pins.length != 0) {
-                    let message = "<p>Необходима регистация указанных лиц:</p>";
-                    angular.forEach(object_pins, function (item) {
-                        message += "<p>ФИО - " + item.fio + " ПИН - " + item.pin + "</p>";
-                    });
-                    $scope.ErrorFunc(message);
-                    return;
+                if (!angular.isUndefined(object_pins)) {
+                    if (object_pins.length != 0) {
+                        let message = "<p>Необходима регистация указанных лиц:</p>";
+                        angular.forEach(object_pins, function (item) {
+                            message += "<p>ФИО - " + item.fio + " ПИН - " + item.pin + "</p>";
+                        });
+                        $scope.ErrorFunc(message);
+                        return;
+                    }
                 }
                 /* end checks */
 

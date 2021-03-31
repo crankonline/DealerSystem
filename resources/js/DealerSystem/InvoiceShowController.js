@@ -5,13 +5,8 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
     $scope.filteredChoices = [];
     $scope.isVisible = [];
 
-    $http.post('/index.php/invoice/invoice_reference', {
-        reference: 'count_eds',
-        id: id_invoice
-    }).then(function (response) {
-        $scope.count_eds = parseInt(response.data.eds_count);
-        $scope.isVisible = [...new Array($scope.count_eds)].map(v => ({suggestions: false}));
-    });
+    $scope.count_eds = eds_count;
+    $scope.isVisible = [...new Array($scope.count_eds)].map(v => ({suggestions: false}));
 
     $scope.enteredFio = [];
     $scope.enteredPin = [];

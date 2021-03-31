@@ -112,6 +112,7 @@ class Invoice extends CI_Controller
             }
             $data['invoice_data'] = $InvoiceData;
             $data['pay_log'] = $this->invoice_model->pay_log($InvoiceSerialNumber);
+            $data['eds_count']=$this->requisites_model->get_invoice_data_by_id($InvoiceData[0]->id_invoice)->eds_count;
             $data['message'] = $message;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);

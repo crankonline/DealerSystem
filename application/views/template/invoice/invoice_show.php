@@ -202,7 +202,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     </table>
                     <?php if ($this->session->userdata['logged_in']['Create_Invoice'] == TRUE &&
                         $invoice_data[0]->pay_sum >= $invoice_data[0]->total_sum &&
-                        $invoice_data[0]->requisites_invoice_id == NULL): ?>
+                        $invoice_data[0]->requisites_invoice_id == NULL && $eds_count != 0) : ?>
                         <h3 align="center"><strong>Введите ПИН получателей ЭП</strong></h3>
                         <table class="table">
                             <thead>
@@ -368,5 +368,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <script src="<?php echo base_url("resources/js/DealerSystem/InvoiceShowController.js"); ?>"></script>
 
 <script type="text/javascript">
-    let id_invoice = <?php echo $invoice_data[0]->id_invoice; ?>;
+    let eds_count = <?php echo $eds_count; ?>;
+    let id_invoice = <?php echo $invoice_data[0]->id_invoice; ?>
 </script>

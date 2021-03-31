@@ -902,4 +902,5 @@ defined('BASEPATH') or exit('No direct script access allowed');
     let settlement_id = <?php echo (isset($requisites_json->common->juristicAddress->settlement->id)) ?
         $requisites_json->common->juristicAddress->settlement->id : "''"; ?>;
     let object_pins = <?php  echo json_encode(isset($object_pins) ? $object_pins : "''"); ?>;
+    let eds_count = <?php echo (isset($invoice_data) ? $invoice_data->eds_count : 0 )?>
 </script>
