@@ -1,16 +1,19 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Authenticate extends CI_Controller {
+class Authenticate extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         $this->load->model('authenticate_model');
     }
 
-    private function create_session_data($data) {
+    private function create_session_data($data)
+    {
         $session_data = array(//надо перенести в класс
             'UserName' => $data->username,
             'UserShortName' => $data->usershortname,
@@ -31,7 +34,8 @@ class Authenticate extends CI_Controller {
         return $session_data;
     }
 
-    public function user_login_process_token() {
+    public function user_login_process_token()
+    {
         try {
             if (!$this->authenticate_model->check_token($this->input->post('token_number'))) { // проверка номера токена пользователя
                 throw new Exception('Токен с серийным номером: ' . $this->input->post('token_number') . ' незарегистрирован. Доступ запрещен!');
@@ -56,7 +60,8 @@ class Authenticate extends CI_Controller {
         }
     }
 
-    public function user_login_process_cloud() {
+    public function user_login_process_cloud()
+    {
         try {
             $certSubject = $this->authenticate_model->check_cert_cloud($this->input->post('inn'), $this->input->post('pin'));
             if (!$certSubject->SystemIsAccessible) { // проверка сертификата пользователя на отзыв
@@ -77,7 +82,8 @@ class Authenticate extends CI_Controller {
         }
     }
 
-    public function user_login_process() {
+    public function user_login_process()
+    {
         $data = array(
             'UserLogin' => $this->input->post('username'),
             'UserPassword' => sha1($this->input->post('password'))
@@ -91,8 +97,8 @@ class Authenticate extends CI_Controller {
                 $session_data = $this->create_session_data($result);
                 $this->session->set_userdata('logged_in', $session_data);
                 $this->session->userdata['logged_in']['UserRoleID'] == '1' ?
-                                redirect(base_url('index.php/admin/')) :
-                                redirect(base_url('index.php/dash/'));
+                    redirect(base_url('index.php/admin/')) :
+                    redirect(base_url('index.php/dash/'));
                 //redirect(base_url() . 'index.php/dash/');
             }
         } else { // если не нашли редирект на авторизацию
@@ -104,25 +110,29 @@ class Authenticate extends CI_Controller {
         }
     }
 
-    public function index() {
+    public function index()
+    {
         empty($this->session->userdata['logged_in']) ?
-                        //$this->load->view('template/authenticate/main') :
-                        redirect(base_url() . 'index.php/authenticate/auth_login') :
-                        redirect(base_url() . 'index.php/dash/');
+            //$this->load->view('template/authenticate/main') :
+            redirect(base_url() . 'index.php/authenticate/auth_login') :
+            redirect(base_url() . 'index.php/dash/');
     }
 
-    public function auth_token() {
+    public function auth_token()
+    {
         $this->load->view('template/authenticate/authenticate_token');
     }
 
-    public function auth_cloud() {
+    public function auth_cloud()
+    {
         $this->load->view('template/authenticate/authenticate_cloud');
     }
 
-    public function auth_login() {
+    public function auth_login()
+    {
         !empty($this->session->userdata['logged_in']) ?
-                        redirect(base_url() . 'index.php/dash/') :
-                        NULL;
+            redirect(base_url() . 'index.php/dash/') :
+            NULL;
         $allovedIp = explode(',', getenv('IP_AUTH'));
         $ip = $this->input->ip_address();
         if (in_array($ip, $allovedIp)) {
@@ -135,9 +145,11 @@ class Authenticate extends CI_Controller {
         }
     }
 
-    public function logout() {
+    public function logout()
+    {
         // Removing session data
         $this->session->unset_userdata('logged_in');
+        $this->session->unset_userdata('to_required');
         $data = array(
             'error_message' => 'Выход осуществлен'
         );
@@ -146,7 +158,8 @@ class Authenticate extends CI_Controller {
         $this->load->view('template/authenticate/authenticate_login', $data);
     }
 
-    public function get_pay_invoice_status($token, $InvoiceSerialNumber) {
+    public function get_pay_invoice_status($token, $InvoiceSerialNumber)
+    {
         try {
             if (base64_decode($token) != "SepperSecretTokenKey2") {
                 throw new Exception("Authentticate fault");
@@ -196,8 +209,8 @@ class Authenticate extends CI_Controller {
                     ));
                 }
                 if (array_search('Электронная подпись', array_column($sales, 'name')) !== false ||
-                        array_search('Электронная подпись (по тендеру)', array_column($sales, 'name')) !== false ||
-                        array_search('Электронная подпись для бюджетных орг-й', array_column($sales, 'name')) !== false) {
+                    array_search('Электронная подпись (по тендеру)', array_column($sales, 'name')) !== false ||
+                    array_search('Электронная подпись для бюджетных орг-й', array_column($sales, 'name')) !== false) {
                     $certificates = $this->requisites_model->get_certificates($InvoiceData[0]->inn);
                     if ($certificates) {
                         if (strtotime($InvoiceData[0]->pay_date_time) <= strtotime($certificates[0]->DateStart)) {
