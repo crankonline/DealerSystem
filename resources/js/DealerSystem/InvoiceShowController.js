@@ -1,4 +1,5 @@
-app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareData', '$interval', function ($scope, $http, $cookies, shareData, $interval) {
+app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareData', '$interval',
+    function ($scope, $http, $cookies, shareData, $interval) {
     window.scope = $scope;
     window.cookies = $cookies;
 
