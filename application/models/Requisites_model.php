@@ -4,6 +4,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Requisites_model extends CI_Model
 {
+    const
+        inventory_type_eds = 1,
+        inventory_type_token = 2,
+        inventory_type_sochi = 3;
 
     private $ApiRequestSubscriberToken_DTG = '72bba1692ed5afdc303d415caa19c4259670ca9a23910f4797d783c2bfbe41e9';
 
@@ -479,7 +483,11 @@ SQL;
     {
         return $this->db->select('invoice.inn')->
         select('invoice.invoice_serial_number')->
-        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id =1 OR inventory_id =3 OR inventory_id =5 OR inventory_id =6)),\'0\') AS eds_count')->
+        select('COALESCE((SELECT "count" FROM "Dealer_data".sell WHERE invoice_id=id_invoice AND (inventory_id IN (
+        select id_inventory
+        from "Dealer_data".inventory
+        join "Dealer_data".inventory_type on inventory.inventory_type_id = inventory_type.id_inventory_type
+        where inventory_type_id ='. self::inventory_type_eds .'))),\'0\') AS eds_count')->
         from('"Dealer_data".invoice')->
         where(array('id_invoice' => $id_invoice))->get()->row();
     }
