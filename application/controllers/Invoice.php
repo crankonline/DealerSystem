@@ -1,10 +1,12 @@
 <?php
 
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Invoice extends CI_Controller {
+class Invoice extends CI_Controller
+{
 
-    public function __construct() {
+    public function __construct()
+    {
         parent::__construct();
 
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
@@ -13,12 +15,14 @@ class Invoice extends CI_Controller {
 
         $this->load->model('invoice_model');
         $this->load->model('price_model');
+        $this->load->model('requisites_model');
         $this->load->library('pagination');
     }
 
     private $per_page = 20;
 
-    private function pagination_gen() {
+    private function pagination_gen()
+    {
         $config['base_url'] = base_url() . '/index.php/invoice/invoice_list_view/';
         $config['per_page'] = $this->per_page;
         $config['num_links'] = 10;
@@ -41,7 +45,18 @@ class Invoice extends CI_Controller {
         return $this->pagination->create_links();
     }
 
-    public function invoice_list_view($search = NULL) { //$message для вывода сообщений из др. методов
+    private function insert_session_data($data)
+    {
+        try {
+            $this->session->set_userdata('to_required', ($data));
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+        }
+    }
+
+    public function invoice_list_view($search = NULL)
+    { //$message для вывода сообщений из др. методов
         try {
             /* ужасная конструкция в php 7.0 было бы интереснее */
             empty($this->input->post('search_field')) ? $InvoiceData = NULL : $InvoiceData = $this->invoice_model->get_invoice_search_v2($this->input->post('search_field')); //запрос из формы
@@ -66,7 +81,8 @@ class Invoice extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function invoice_create_view() {
+    public function invoice_create_view()
+    {
         try {
             if (!$this->session->userdata['logged_in']['Create_Invoice']) {
                 throw new Exception('У Вас недостаточно привилегий для просмотра данного модуля. Доступ запрещен.');
@@ -83,7 +99,9 @@ class Invoice extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function invoice_show_view($InvoiceSerialNumber = NULL, $message = NULL) { //$message для вывода сообщений из др. методов
+    public function invoice_show_view($InvoiceSerialNumber = NULL, $message = NULL)
+    { //$message для вывода сообщений из др. методов
+        $this->session->unset_userdata('to_required');
         try {
             if (is_null($InvoiceSerialNumber)) {
                 throw new Exception('Получены не верные параметры');
@@ -93,7 +111,8 @@ class Invoice extends CI_Controller {
                 throw new Exception("Запрошенный счет на оплату не найден");
             }
             $data['invoice_data'] = $InvoiceData;
-	    $data['pay_log'] = $this->invoice_model->pay_log($InvoiceSerialNumber);
+            $data['pay_log'] = $this->invoice_model->pay_log($InvoiceSerialNumber);
+            $data['eds_count']=$this->requisites_model->get_invoice_data_by_id($InvoiceData[0]->id_invoice)->eds_count;
             $data['message'] = $message;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -106,7 +125,8 @@ class Invoice extends CI_Controller {
         $this->load->view('template/footer');
     }
 
-    public function invoice_update($reference = NULL) {
+    public function invoice_update($reference = NULL)
+    {
         /* Чаво будем апдейтить
          * $reference: inn, company_name, pay_sum, user
          */
@@ -126,12 +146,13 @@ class Invoice extends CI_Controller {
         }
     }
 
-    public function invoice_create_save() {
+    public function invoice_create_save()
+    {
         try {
             if (is_null($this->input->post())) {
                 throw new Exception('Получены не верные параметры');
             }
-            redirect(base_url() . "index.php/invoice/invoice_show_view/". $this->invoice_model->invoice_create($this->input->post()));
+            redirect(base_url() . "index.php/invoice/invoice_show_view/" . $this->invoice_model->invoice_create($this->input->post()));
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
@@ -139,7 +160,8 @@ class Invoice extends CI_Controller {
         }
     }
 
-    public function invoice_delete($InvoiceSerialNumber = NULL) {
+    public function invoice_delete($InvoiceSerialNumber = NULL)
+    {
         try {
             if (is_null($InvoiceSerialNumber)) {
                 throw new Exception("Получены не верные параметры.");
@@ -153,16 +175,18 @@ class Invoice extends CI_Controller {
         }
     }
 
-    public function invoice_reference(){
+    public function invoice_reference()
+    {
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
             $request->reference == 'price' ? $result = $this->price_model->get_price() : NULL;
             $request->reference == 'inn' ? $result = $this->invoice_model->get_companyname_by_inn($request->id) : NULL;
-            $request->reference == 'price_sochi' ? $result = $this->price_model->get_price(true) : NULL;
+            $request->reference == 'count_eds' ? $result = $this->requisites_model->get_invoice_data_by_id($request->id) : null;
+            $request->reference == 'search_rep_by_pin' ? $result = $this->requisites_model->get_rep_by_pin($request->id) : null;
+            $request->reference == 'insert_session_data' ? $result = $this->insert_session_data($request->id) : null;
             echo json_encode($result);
-        }
-        catch(Exception $ex){
+        } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);//???
