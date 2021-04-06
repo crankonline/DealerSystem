@@ -15,14 +15,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <h3><strong>Внимание: </strong><?php echo $message; ?></h3>
                 </div>
             <?php endif; ?>
-            <div class="panel panel-danger">
+            <div class="panel panel-warning">
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-book"></span> Реквизиты юридического лица
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-star"></span> Основные
-                            сведения</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-star"></span> Основные
+                        сведения</h4>
                     <table class="table">
                         <tbody>
                         <tr>
@@ -167,14 +167,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </tr>
                         </tbody>
                     </table>
-
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-euro"></span>
-                            Банковские реквизиты</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-euro"></span>
+                        Банковские реквизиты</h4>
                     <table class="table">
                         <tbody>
                         <tr>
                             <td colspan="2" align="center">
-                                <label class="btn btn-danger">
+                                <label class="btn btn-warning">
                                     <input type="checkbox"
                                            ng-model="Bank_else"
                                            ng-init="Bank_else = true"> Присутствуют
@@ -220,12 +219,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </tr>
                         </tbody>
                     </table>
-
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-globe"></span> Адресные
-                            данные</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-globe"></span> Адресные
+                        данные</h4>
                     <table class="table">
                         <tbody>
-                        <tr class="danger" align="center">
+                        <tr class="warning" align="center">
                             <td colspan="2">Юридический адрес</td>
                         </tr>
                         <tr>
@@ -294,11 +292,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ng-model="Data.common.juristicAddress.apartment">
                             </td>
                         </tr>
-                        <tr class="danger" align="center">
+                        <tr class="warning" align="center">
                             <td colspan="2">Физический адрес</td>
                         </tr>
                         <tr>
-                            <td colspan="2" align="center"><label class="btn btn-danger">
+                            <td colspan="2" align="center"><label class="btn btn-warning">
                                     <input type="checkbox"
                                            ng-model="SameAddress"
                                            ng-init="SameAddress = true"> совпадает с юридическим</label>
@@ -357,8 +355,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </tbody>
                     </table>
 
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-edit"></span> Данные об
-                            отчетности</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-edit"></span> Данные об
+                        отчетности</h4>
                     <table class="table">
                         <tbody>
                         <tr>
@@ -396,15 +394,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                                 </tr>-->
                         </tbody>
                     </table>
-                    <div class="page-header">
-                        <h3 align="center">
-                            <span class="glyphicon glyphicon-picture"></span> Сканированные изображения юридического
-                            лица
-                        </h3>
-                    </div>
+
+                    <h4 align="center">
+                        <span class="glyphicon glyphicon-picture"></span> Сканированные изображения юридического
+                        лица
+                    </h4>
                     <table class="table">
                         <tbody>
-                        <tr class="danger" ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
+                        <tr class="warning" ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
                             <td colspan="2" align="center">Свидетельство о государственной регистрации Министерсва
                                 Юстиции
                             </td>
@@ -436,8 +433,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_kg && jur_file_ch_kg"
-                                     ng-src="{{JUR_File_kg}}"
-                                     width="400">
+                                     ng-src="{{JUR_File_kg}}">
                                 <div align="center"
                                      ng-show="!Data.common.files.mu_file_kg && jur_file_ch_kg">
                                     Документ отсутсвует
@@ -471,8 +467,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_ru && jur_file_ch_ru"
-                                     ng-src="{{JUR_File_ru}}"
-                                     width="400">
+                                     ng-src="{{JUR_File_ru}}">
                                 <div align="center"
                                      ng-show="!Data.common.files.mu_file_ru && jur_file_ch_ru">
                                     Документ отсутсвует
@@ -506,15 +501,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                      width="50%">
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.ie_file && ie_file_ch"
-                                     ng-src="{{IE_File_load}}"
-                                     width="400">
+                                     ng-src="{{IE_File_load}}">
                                 <div align="center"
                                      ng-show="!Data.common.files.ie_file && ie_file_ch">
                                     Документ отсутсвует
                                 </div>
                             </td>
                         </tr>
-                        <tr class="danger">
+                        <tr class="warning">
                             <td colspan="2" align="center">Форма М2А</td>
                         </tr>
                         <tr>
@@ -755,8 +749,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_side_1 && rep_file_ch_passport_side_1[key]"
-                                         ng-src="{{REP_File_front[key]}}"
-                                         width="400">
+                                         ng-src="{{REP_File_front[key]}}">
                                 </td>
                             </tr>
                             <tr>
@@ -784,8 +777,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_side_2 && rep_file_ch_passport_side_2[key]"
-                                         ng-src="{{REP_File_back[key]}}"
-                                         width="400">
+                                         ng-src="{{REP_File_back[key]}}">
                                 </td>
                             </tr>
                             <tr class="success">
@@ -819,8 +811,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_copy && rep_file_ch_passport_copy[key]"
-                                         ng-src="{{REP_File_copy[key]}}"
-                                         width="400">
+                                         ng-src="{{REP_File_copy[key]}}">
                                 </td>
                             </tr>
                             </tbody>
@@ -902,5 +893,5 @@ defined('BASEPATH') or exit('No direct script access allowed');
     let settlement_id = <?php echo (isset($requisites_json->common->juristicAddress->settlement->id)) ?
         $requisites_json->common->juristicAddress->settlement->id : "''"; ?>;
     let object_pins = <?php  echo json_encode(isset($object_pins) ? $object_pins : "''"); ?>;
-    let eds_count = <?php echo (isset($invoice_data) ? $invoice_data->eds_count : 0 )?>
+    let eds_count = <?php echo(isset($invoice_data) ? $invoice_data->eds_count : 0)?>
 </script>
