@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-//var_dump($this->session->userdata);die;
+var_dump($requisites_json->common->juristicAddress->settlement); //var_dump($requisites_json->common->physicalAddress->settlement);die
 ?>
 <div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesRegisterController">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере    ?>
@@ -248,15 +248,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             ng-options="option.name disable when option.id === null for option in JuristicRegions track by option.id"
                                             ng-change="loadJuristicDistricts()"></select>
                                 </div>
-                                <div style="display: none"
-                                     ng-style="(currentjuristicregion.id == 'none' || currentjuristicregion.id == '') && { display: 'none' }">
+                                <div ng-hide="(currentjuristicregion.id == 'none' || currentjuristicregion.id == '')">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-not-empty" required
                                             ng-model="currentjuristicdistrict"
                                             ng-options="option.name disable when option.id === null for option in JuristicDistricts track by option.id"
                                             ng-change="loadJuristicSettlements()"></select>
                                 </div>
-                                <div style="display: none"
-                                     ng-style="(currentjuristicregion.id == 'none' || (currentjuristicdistrict.id != null && currentjuristicdistrict.id != '')) && { display: 'block' }">
+                                <div ng-hide="(currentjuristicregion.id == 'none' && currentjuristicdistrict.id == '' && currentjuristicdistrict.id == null)">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-empty" required
                                             ng-model="Data.common.juristicAddress.settlement"
                                             ng-options="option.name disable when option.id === null for option in JuristicSettlements track by option.id"></select>
@@ -384,14 +382,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         ng-options="option.name disable when option.id === null for option in STIRegions track by option.id">
                                 </select></td>
                         </tr>
-                        <!--                        <tr>
-                                                    <td>Система отчетности</td>
-                                                    <td><select  class="form-control" required="">
-                                                            <option value="">Выберите значение</option>
-                                                            <option value="1">Cоциальный фонд</option>
-                                                            <option value="2">ЕНОТ ЮБР</option>
-                                                        </select></td>
-                                                </tr>-->
                         </tbody>
                     </table>
 
@@ -873,9 +863,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
     let requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''");//json с предыдущей регистрацией ?>;
     let ownershipForm_id = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ?
         $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
-    let juristicAddress = <?php echo (isset($requisites_json->common->juristicAddress)) ?
-        (isset($requisites_json->common->juristicAddress->settlement->region) ?
-            $requisites_json->common->juristicAddress->settlement->region->id : "'none'") : "''"; ?>;
+    let juristicAddress = <?php
+        echo isset($requisites_json->common->juristicAddress) ?
+            (isset($requisites_json->common->juristicAddress->settlement->region) ?
+                $requisites_json->common->juristicAddress->settlement->region->id :
+                (isset($requisites_json->common->juristicAddress->settlement->district) ?
+                    $requisites_json->common->juristicAddress->settlement->district->region->id : "'none'"
+                )) : "''";
+        ?>;
     let chiefBasis_id = <?php echo (isset($requisites_json->common->chiefBasis->id)) ?
         $requisites_json->common->chiefBasis->id : "''"; ?>;
     let tariff_id = <?php echo (isset($requisites_json->sf->tariff->id)) ?

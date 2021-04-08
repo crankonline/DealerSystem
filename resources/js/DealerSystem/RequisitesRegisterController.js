@@ -320,11 +320,21 @@ app.factory('mObjNode', [function () {
                     $scope.JuristicDistricts = [
                         {id: '', name: 'Выберите район'},
                         {id: 'none', name: 'Областного подчинения'}].concat(response.data);
-                    $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
+                    if ($scope.requisites_json.common.juristicAddress.settlement.district != null) {
+                        let defualtId = $scope.requisites_json.common.juristicAddress.settlement.district.id;
+                        $scope.currentjuristicdistrict =
+                            $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id == defualtId)];
+                    } else if ($scope.requisites_json.common.juristicAddress.settlement.region != null) {
+                        //let defualtId = $scope.requisites_json.common.juristicAddress.settlement.region.id;
+                        $scope.currentjuristicdistrict = $scope.JuristicDistricts[1];
+                            //$scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.region == defualtId)];
+                    } else {
+                        $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
+                    }
+                    $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
                 });
             };
             $scope.loadJuristicSettlements = function (region, district) {
-                //console.log($scope.currentjuristicdistrict);
                 if ($scope.currentjuristicdistrict === '') {
                     return;
                 }
@@ -355,8 +365,6 @@ app.factory('mObjNode', [function () {
                     //console.log(response.data);
                     mObjNode('Data.common.juristicAddress.settlement', $scope);
                     let defaultId = settlement_id;
-                    //console.log(defaultId);
-                    //console.log($scope.JuristicSettlements.findIndex(x => x.id == defaultId));//без условное сравнение
                     $scope.Data.common.juristicAddress.settlement =
                         $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
                 });
