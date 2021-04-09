@@ -253,7 +253,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             ng-options="option.name disable when option.id === null for option in JuristicDistricts track by option.id"
                                             ng-change="loadJuristicSettlements()"></select>
                                 </div>
-                                <div ng-hide="(currentjuristicregion.id == 'none' && currentjuristicdistrict.id == '' && currentjuristicdistrict.id == null)">
+                                <div ng-hide="(currentjuristicregion.id == '' && (currentjuristicdistrict.id == '' || currentjuristicdistrict.id == null))">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-empty" required
                                             ng-model="Data.common.juristicAddress.settlement"
                                             ng-options="option.name disable when option.id === null for option in JuristicSettlements track by option.id"></select>
@@ -863,12 +863,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
     let ownershipForm_id = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ?
         $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
     let juristicAddress = <?php
-        echo isset($requisites_json->common->juristicAddress) ?
+        echo isset($requisites_json->common->juristicAddress->settlement) ?
             (isset($requisites_json->common->juristicAddress->settlement->region) ?
                 $requisites_json->common->juristicAddress->settlement->region->id :
                 (isset($requisites_json->common->juristicAddress->settlement->district) ?
-                    $requisites_json->common->juristicAddress->settlement->district->region->id : "'none'"
-                )) : "''";
+                    $requisites_json->common->juristicAddress->settlement->district->region->id : "'none'")
+            ) : "''";
         ?>;
     let chiefBasis_id = <?php echo (isset($requisites_json->common->chiefBasis->id)) ?
         $requisites_json->common->chiefBasis->id : "''"; ?>;
