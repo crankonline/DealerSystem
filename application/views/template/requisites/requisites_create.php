@@ -1,6 +1,5 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-var_dump($requisites_json->common->juristicAddress->settlement);
 ?>
 <div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesRegisterController">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере    ?>
