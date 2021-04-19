@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+var_dump($requisites_json->common->juristicAddress->settlement);
 ?>
 <div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesRegisterController">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере    ?>
@@ -919,7 +920,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <p></p>
             <div class="alert alert-danger" ng-hide="ReqCreateForm.$valid">
                <!-- {{ReqCreateForm.$error}}-->
-                Форма содержит ошибки или не заполненый поля.
+                Форма содержит ошибки или не заполненые поля.
             </div>
         </form>
 

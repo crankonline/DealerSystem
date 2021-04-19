@@ -294,7 +294,9 @@ app.factory('mObjNode', [function () {
                     if ($scope.requisites_json.common.physicalAddress.settlement.district != null) {
                         let defualtId = $scope.requisites_json.common.physicalAddress.settlement.district.id;
                         $scope.currentphysicaldistrict =
-                            $scope.PhysicalDistricts[$scope.PhysicalDistricts.findIndex(x => x.id == defualtId)];
+                            angular.isUndefined($scope.PhysicalDistricts[$scope.PhysicalDistricts.findIndex(x => x.id == defualtId)]) ?
+                                {id: '', name: 'Выберите район'} :
+                                $scope.PhysicalDistricts[$scope.PhysicalDistricts.findIndex(x => x.id == defualtId)];
                     } else if ($scope.requisites_json.common.physicalAddress.settlement.region != null) {
                         $scope.currentphysicaldistrict = $scope.PhysicalDistricts[1];
                     } else {
@@ -335,7 +337,9 @@ app.factory('mObjNode', [function () {
                     mObjNode('Data.common.physicalAddress.settlement', $scope);
                     let defaultId = settlement_phy_id;
                     $scope.Data.common.physicalAddress.settlement =
-                        $scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)];
+                        angular.isUndefined($scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)]) ?
+                            {id: '', name: 'Выберите населенный пункт'} :
+                            $scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)];
                 });
             };
 
@@ -355,21 +359,26 @@ app.factory('mObjNode', [function () {
                         {id: 'none', name: 'Областного подчинения'}].concat(response.data);
 
                     if (Object.keys($scope.requisites_json.common.juristicAddress).length == 0) {
-                        $scope.requisites_json.common.juristicAddress.settlement = {
-                            district: null
+                        $scope.requisites_json.common.juristicAddress = {
+                            settlement: {
+                                district: null
+                            }
                         }
                     }
-
                     if ($scope.requisites_json.common.juristicAddress.settlement.district != null) {
                         let defualtId = $scope.requisites_json.common.juristicAddress.settlement.district.id;
                         $scope.currentjuristicdistrict =
-                            $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id == defualtId)];
+                            angular.isUndefined($scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id == defualtId)]) ?
+                                {id: '', name: 'Выберите район'} :
+                                $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id == defualtId)];
                     } else if ($scope.requisites_json.common.juristicAddress.settlement.region != null) {
                         $scope.currentjuristicdistrict = $scope.JuristicDistricts[1];
                     } else {
                         $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
                     }
                     $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
+                }, function (response){
+                    $scope.currentjuristicdistrict ={id: '', name: 'Выберите район'};
                 });
             };
             $scope.loadJuristicSettlements = function (region, district) {
@@ -389,7 +398,6 @@ app.factory('mObjNode', [function () {
                 if (districtid !== null) {
                     region = null;
                 }
-
                 $http.post('/index.php/requisites/reference_load', {
                     reference: 'getCommonSettlements',
                     id_region: region,
@@ -399,11 +407,14 @@ app.factory('mObjNode', [function () {
                         id: '',
                         name: 'Выберите населенный пункт'
                     }].concat(response.data);
-                    //console.log(response.data);
                     mObjNode('Data.common.juristicAddress.settlement', $scope);
                     let defaultId = settlement_id;
                     $scope.Data.common.juristicAddress.settlement =
-                        $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
+                        angular.isUndefined($scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)]) ?
+                            {id: '', name: 'Выберите населенный пункт'} :
+                            $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
+                }, function (response){
+                    $scope.currentjuristicdistrict ={id: '', name: 'Выберите район'};
                 });
             };
             $scope.addNewRepresentative = function () {
