@@ -745,8 +745,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                                ng-value="edsUsageModel"
                                                ng-disabled="Data.common.representatives[key].roles.length == 1 &&
                                                Data.common.representatives[key].roles[0].id == 3"
-                                               ng-required="!(Data.common.representatives[key].roles.length == 1 &&
-                                               Data.common.representatives[key].roles[0].id == 3)">
+                                            >
                                         {{edsUsageModel.name}}
                                     </p>
                                 </td>
