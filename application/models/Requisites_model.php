@@ -558,7 +558,7 @@ SQL;
         join('"Dealer_images".files_juridical',
             'files_juridical.requisites_id = requisites.id_requisites')->
         where('id_requisites', $ident)->
-        order_by('filetype_id')->get()->result();
+        order_by('timestamp')->get()->result();
     }
 
     public function get_representatives_files_ident($ident)
@@ -566,7 +566,7 @@ SQL;
         return $this->db->select('representative_ident')->
         select('filetype_id')->
         select('file_ident')->
-        select("'timestamp'")->
+        select('timestamp')->
         from('"Dealer_data".requisites')->
         join('"Dealer_images".files_representatives',
             'files_representatives.requisites_id = requisites.id_requisites')->

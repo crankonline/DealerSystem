@@ -1,6 +1,6 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
-//var_dump($this->session->userdata);die;
+var_dump($requisites_json->common->juristicAddress->settlement);
 ?>
 <div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesRegisterController">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере    ?>
@@ -9,20 +9,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <?php echo $error_message; ?>
         </div>
     <?php else: ?>
-        <form ng-submit="Upload()" ng-show="toggle">
+        <form ng-submit="UploadForm()" ng-show="toggle" name="ReqCreateForm">
             <?php if (isset($message)): ?>
                 <div class="alert alert-warning" align="center">
                     <h3><strong>Внимание: </strong><?php echo $message; ?></h3>
                 </div>
             <?php endif; ?>
-            <div class="panel panel-danger">
+            <div class="panel panel-warning">
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-book"></span> Реквизиты юридического лица
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-star"></span> Основные
-                            сведения</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-star"></span> Основные
+                        сведения</h4>
                     <table class="table">
                         <tbody>
                         <tr>
@@ -55,6 +55,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        class="form-control"
                                        placeholder="12 цифр"
                                        minlength="12" maxlength="12"
+                                       name="data_common_rnsf"
                                        required=""
                                        numbers-only
                                        ng-model="Data.common.rnsf">
@@ -64,18 +65,29 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td>Рег. номер Министерства Юстиции</td>
                             <td><input type="text" class="form-control" placeholder="XXXXXX-YYYY-ZZZ" required=""
                                        maxlength="15"
+                                       trim-validator
+                                       name="data_common_rnmj"
                                        ng-model="Data.common.rnmj"
-                                       ng-disabled="Data.common.civilLegalStatus.name === 'Физическое лицо'">
+                                       ng-disabled="Data.common.civilLegalStatus.name === 'Физическое лицо'"
+                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'">
                             </td>
                         </tr>
                         <tr>
-                            <td>Наименование организации (сокращенное)</td>
-                            <td><textarea maxlength="64"
-                                          class="form-control noresize"
-                                          style="resize: vertical"
-                                          placeholder="Наименование юридического лица"
-                                          required=""
-                                          ng-model="Data.common.name"></textarea>
+                            <td>Наименование организации (сокращенное, 64 символа)</td>
+                            <td><input type="text"
+                                       class="form-control"
+                                       placeholder="Наименование юридического лица"
+                                       maxlength="64"
+                                       required
+                                       trim-validator
+                                       name="data_common_name"
+                                       ng-model="Data.common.name">
+                                <p></p>
+                                <div class="alert alert-danger"
+                                     ng-show="ReqCreateForm.data_common_name.$error.maxlength">
+                                    Сокращенное наименование не должно превышать 64 символа, текущая днина -
+                                    {{ReqCreateForm.data_common_name.$viewValue.length}}
+                                </div>
                             </td>
                         </tr>
                         <tr>
@@ -115,6 +127,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td>Форма собственности</td>
                             <td><select required
                                         class="form-control"
+                                        name="data_common_legalForm_ownershipForm"
                                         ng-model="Data.common.legalForm.ownershipForm"
                                         ng-options="option.name disable when option.id === null for option in OwnershipForms track by option.id"
                                         ng-change="loadLegalForm()"></select>
@@ -139,20 +152,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </tr>
                         <tr ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
                             <td>Форма участия в капитале</td>
-                            <td><select required
-                                        class="form-control"
+                            <td><select class="form-control"
+                                        name="data_common_capitalForm"
                                         ng-model="Data.common.capitalForm"
                                         ng-options="option.name disable when option.id === null for option in CapitalForms track by option.id"
-                                        ng-disabled="Data.common.civilLegalStatus.name === 'Физическое лицо'"></select>
+                                        ng-disabled="Data.common.civilLegalStatus.name === 'Физическое лицо'"
+                                        ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'"></select>
                             </td>
                         </tr>
                         <tr ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
                             <td>Форма управления</td>
-                            <td><select required
-                                        class="form-control"
+                            <td><select class="form-control"
+                                        name="data_common_managementForm"
                                         ng-model="Data.common.managementForm"
                                         ng-options="option.name disable when option.id === null for option in ManagementForms track by option.id"
-                                        ng-disabled="Data.common.civilLegalStatus.name === 'Физическое лицо'"></select>
+                                        ng-disabled="Data.common.civilLegalStatus.name === 'Физическое лицо'"
+                                        ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'"></select>
                             </td>
                         </tr>
                         <tr>
@@ -167,14 +182,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         </tr>
                         </tbody>
                     </table>
-
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-euro"></span>
-                            Банковские реквизиты</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-euro"></span>
+                        Банковские реквизиты</h4>
                     <table class="table">
                         <tbody>
                         <tr>
                             <td colspan="2" align="center">
-                                <label class="btn btn-danger">
+                                <label class="btn btn-warning">
                                     <input type="checkbox"
                                            ng-model="Bank_else"
                                            ng-init="Bank_else = true"> Присутствуют
@@ -188,11 +202,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        class="form-control"
                                        placeholder="6 цифр"
                                        maxlength="6"
-                                       required=""
                                        numbers-only
+                                       name="data_common_bank_id"
                                        ng-model="Data.common.bank.id"
                                        ng-change="loadBankName()"
-                                       ng-disabled="!Bank_else">
+                                       ng-disabled="!Bank_else"
+                                       ng-required="Bank_else">
                             </td>
                         </tr>
                         <tr ng-hide="!Bank_else">
@@ -200,9 +215,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td><input type="text"
                                        class="form-control"
                                        placeholder="Введите БИК ячейкой выше"
-                                       required=""
+                                       trim-validator
+                                       name="data_common_bank_name"
                                        ng-model="Data.common.bank.name"
-                                       ng-disabled="!Data.common.bank.id || !Bank_else">
+                                       ng-disabled="!Data.common.bank.id || !Bank_else"
+                                       ng-required="Bank_else">
                             </td>
                         </tr>
                         <tr ng-hide="!Bank_else">
@@ -212,20 +229,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        placeholder="16 цифр"
                                        minlength="16"
                                        maxlength="16"
-                                       required=""
                                        numbers-only
+                                       name="data_common_bankAccount"
                                        ng-model="Data.common.bankAccount"
-                                       ng-disabled="(!Data.common.bank || !Data.common.bank.name) || !Bank_else">
+                                       ng-disabled="(!Data.common.bank || !Data.common.bank.name) || !Bank_else"
+                                       ng-required="Bank_else">
                             </td>
                         </tr>
                         </tbody>
                     </table>
-
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-globe"></span> Адресные
-                            данные</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-globe"></span> Адресные
+                        данные</h4>
                     <table class="table">
                         <tbody>
-                        <tr class="danger" align="center">
+                        <tr class="warning" align="center">
                             <td colspan="2">Юридический адрес</td>
                         </tr>
                         <tr>
@@ -250,16 +267,17 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             ng-options="option.name disable when option.id === null for option in JuristicRegions track by option.id"
                                             ng-change="loadJuristicDistricts()"></select>
                                 </div>
-                                <div style="display: none"
-                                     ng-style="(currentjuristicregion.id == 'none' || currentjuristicregion.id == '') && { display: 'none' }">
+                                <div ng-hide="(currentjuristicregion.id == 'none' || currentjuristicregion.id == '')">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-not-empty" required
+                                            name="currentjuristicdistrict"
                                             ng-model="currentjuristicdistrict"
                                             ng-options="option.name disable when option.id === null for option in JuristicDistricts track by option.id"
-                                            ng-change="loadJuristicSettlements()"></select>
+                                            ng-change="loadJuristicSettlements()"
+                                            ng-required="!(currentjuristicregion.id == 'none' || currentjuristicregion.id == '')"></select>
                                 </div>
-                                <div style="display: none"
-                                     ng-style="(currentjuristicregion.id == 'none' || (currentjuristicdistrict.id != null && currentjuristicdistrict.id != '')) && { display: 'block' }">
+                                <div ng-hide="(currentjuristicregion.id == '' && (currentjuristicdistrict.id == '' || currentjuristicdistrict.id == null))">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-empty" required
+                                            name="data_common_juristicAddress_settlement"
                                             ng-model="Data.common.juristicAddress.settlement"
                                             ng-options="option.name disable when option.id === null for option in JuristicSettlements track by option.id"></select>
                                 </div>
@@ -272,6 +290,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        placeholder="Улица / Микрорайон"
                                        maxlength="50"
                                        required=""
+                                       trim-validator
                                        ng-model="Data.common.juristicAddress.street">
                             </td>
                         </tr>
@@ -282,6 +301,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        placeholder="Дом / Строение"
                                        required=""
                                        maxlength="4"
+                                       trim-validator
                                        ng-model="Data.common.juristicAddress.building">
                             </td>
                         </tr>
@@ -291,14 +311,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        class="form-control"
                                        placeholder="Квартира"
                                        maxlength="4"
+                                       trim-validator
                                        ng-model="Data.common.juristicAddress.apartment">
                             </td>
                         </tr>
-                        <tr class="danger" align="center">
+                        <tr class="warning" align="center">
                             <td colspan="2">Физический адрес</td>
                         </tr>
                         <tr>
-                            <td colspan="2" align="center"><label class="btn btn-danger">
+                            <td colspan="2" align="center"><label class="btn btn-warning">
                                     <input type="checkbox"
                                            ng-model="SameAddress"
                                            ng-init="SameAddress = true"> совпадает с юридическим</label>
@@ -314,25 +335,28 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <tr ng-hide="SameAddress">
                             <td>Населенный пункт</td>
                             <td>
-                                <div style="display: block"><select class="form-control" required
-                                                                    ng-model="currentphysicalregion"
-                                                                    ng-disabled="SameAddress"
-                                                                    ng-options="option.name disable when option.id === null for option in PhysicalRegions track by option.id"
-                                                                    ng-change="loadPhysicalDistricts()"
-                                                                    ng-disabled="SameAddress">
-                                    </select></div>
-                                <div style="display: none"
-                                     ng-style="(currentphysicalregion.id == 'none' || currentphysicalregion.id == '') && { display: 'none' }">
+                                <div style="display: block">
+                                    <select class="form-control"
+                                            ng-model="currentphysicalregion"
+                                            ng-disabled="SameAddress"
+                                            ng-options="option.name disable when option.id === null for option in PhysicalRegions track by option.id"
+                                            ng-change="loadPhysicalDistricts()"
+                                            ng-disabled="SameAddress"
+                                            ng-required="!SameAddress">
+                                    </select>
+                                </div>
+                                <div ng-hide="(currentphysicalregion.id == 'none' || currentphysicalregion.id == '')">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-not-empty" required
                                             ng-model="currentphysicaldistrict"
                                             ng-options="option.name disable when option.id === null for option in PhysicalDistricts track by option.id"
-                                            ng-change="loadPhysicalSettlements()">
+                                            ng-change="loadPhysicalSettlements()"
+                                            ng-required="!(currentphysicalregion.id == 'none' || currentphysicalregion.id == '')">
                                     </select></div>
-                                <div style="display: none"
-                                     ng-style="(currentphysicalregion.id == 'none' || (currentphysicaldistrict.id != null && currentphysicaldistrict.id != '')) && { display: 'block' }">
-                                    <select class="form-control ng-pristine ng-untouched ng-valid ng-empty" required
+                                <div ng-hide="(currentphysicalregion.id == '' && (currentphysicaldistrict.id == '' || currentphysicaldistrict.id == null))">
+                                    <select class="form-control ng-pristine ng-untouched ng-valid ng-empty"
                                             ng-model="Data.common.physicalAddress.settlement"
-                                            ng-options="option.name disable when option.id === null for option in PhysicalSettlements track by option.id">
+                                            ng-options="option.name disable when option.id === null for option in PhysicalSettlements track by option.id"
+                                            ng-required="!SameAddress">
                                     </select></div>
                             </td>
                         </tr>
@@ -340,25 +364,31 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td>Улица / Микрорайон</td>
                             <td>
                                 <input type="text" class="form-control" placeholder="Улица / Микрорайон" maxlength="50"
-                                       required="" ng-model="Data.common.physicalAddress.street"
+                                       ng-required="!SameAddress"
+                                       trim-validator
+                                       ng-model="Data.common.physicalAddress.street"
                                        ng-disabled="SameAddress"></td>
                         </tr>
                         <tr ng-hide="SameAddress">
                             <td>Дом / Строение</td>
                             <td><input type="text" class="form-control" placeholder="Дом / Строение" maxlength="4"
-                                       required="" ng-model="Data.common.physicalAddress.building"
+                                       ng-required="!SameAddress"
+                                       trim-validator
+                                       ng-model="Data.common.physicalAddress.building"
                                        ng-disabled="SameAddress"></td>
                         <tr ng-hide="SameAddress">
                             <td>Квартира</td>
                             <td><input type="text" class="form-control" placeholder="Квартира" maxlength="4"
                                        ng-model="Data.common.physicalAddress.apartment" ng-disabled="SameAddress"
-                                       ng-init="Data.common.physicalAddress.apartmen = null" required=""></td>
+                                       trim-validator
+                                       ng-required="!SameAddress">
+                            </td>
                         </tr>
                         </tbody>
                     </table>
 
-                    <div class="page-header"><h3 align="center"><span class="glyphicon glyphicon-edit"></span> Данные об
-                            отчетности</h3></div>
+                    <h4 align="center"><span class="glyphicon glyphicon-edit"></span> Данные об
+                        отчетности</h4>
                     <table class="table">
                         <tbody>
                         <tr>
@@ -386,25 +416,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         ng-options="option.name disable when option.id === null for option in STIRegions track by option.id">
                                 </select></td>
                         </tr>
-                        <!--                        <tr>
-                                                    <td>Система отчетности</td>
-                                                    <td><select  class="form-control" required="">
-                                                            <option value="">Выберите значение</option>
-                                                            <option value="1">Cоциальный фонд</option>
-                                                            <option value="2">ЕНОТ ЮБР</option>
-                                                        </select></td>
-                                                </tr>-->
                         </tbody>
                     </table>
-                    <div class="page-header">
-                        <h3 align="center">
-                            <span class="glyphicon glyphicon-picture"></span> Сканированные изображения юридического
-                            лица
-                        </h3>
-                    </div>
+
+                    <h4 align="center">
+                        <span class="glyphicon glyphicon-picture"></span> Сканированные изображения юридического
+                        лица
+                    </h4>
                     <table class="table">
                         <tbody>
-                        <tr class="danger" ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
+                        <tr class="warning" ng-hide="Data.common.civilLegalStatus.name === 'Физическое лицо'">
                             <td colspan="2" align="center">Свидетельство о государственной регистрации Министерсва
                                 Юстиции
                             </td>
@@ -420,15 +441,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <td>
                                 <input type="file"
                                        class="form-control"
-                                       required=""
+                                       name="mu_file_kg"
                                        ngf-select
-                                       ng-model="mu_file_kg"
                                        ngf-pattern="'image/*'"
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
-                                       ngf-min-height="100"
+                                       ngf-model-invalid="errorFile"
+                                       ng-model="mu_file_kg"
                                        ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_kg)"
-                                       ng-show="!Data.common.files.mu_file_kg || !jur_file_ch_kg">
+                                       ng-show="!Data.common.files.mu_file_kg || !jur_file_ch_kg"
+                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'">
+                                <p></p>
+                                <div class="alert alert-danger" ng-show="ReqCreateForm.mu_file_kg.$error.maxSize">
+                                    Файл слишком большой {{errorFile.size / 1000000 | number:1}}MB,
+                                    максимальный разрешенный размер 5MB
+                                </div>
                                 <img class="thumbnail"
                                      ng-show="mu_file_kg"
                                      ngf-src="mu_file_kg"
@@ -436,8 +463,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_kg && jur_file_ch_kg"
-                                     ng-src="{{JUR_File_kg}}"
-                                     width="400">
+                                     ng-src="{{JUR_File_kg}}">
                                 <div align="center"
                                      ng-show="!Data.common.files.mu_file_kg && jur_file_ch_kg">
                                     Документ отсутсвует
@@ -454,16 +480,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </td>
                             <td>
                                 <input type="file"
+                                       name="mu_file_ru"
                                        class="form-control"
-                                       required=""
                                        ngf-select
                                        ng-model="mu_file_ru"
                                        ngf-pattern="'image/*'"
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
-                                       ngf-min-height="100"
+                                       ngf-model-invalid="mu_file_ru_errorFile"
                                        ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_ru)"
-                                       ng-show="!Data.common.files.mu_file_ru || !jur_file_ch_ru">
+                                       ng-show="!Data.common.files.mu_file_ru || !jur_file_ch_ru"
+                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'">
+                                <p></p>
+                                <div class="alert alert-danger" ng-show="ReqCreateForm.mu_file_ru.$error.maxSize">
+                                    Файл слишком большой {{mu_file_ru_errorFile.size / 1000000 | number:1}}MB,
+                                    максимальный разрешенный размер 5M
+                                </div>
                                 <img class="thumbnail"
                                      ng-hide="!mu_file_ru"
                                      ngf-src="mu_file_ru"
@@ -471,8 +503,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_ru && jur_file_ch_ru"
-                                     ng-src="{{JUR_File_ru}}"
-                                     width="400">
+                                     ng-src="{{JUR_File_ru}}">
                                 <div align="center"
                                      ng-show="!Data.common.files.mu_file_ru && jur_file_ch_ru">
                                     Документ отсутсвует
@@ -490,31 +521,37 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </td>
                             <td>
                                 <input type="file"
+                                       name="ie_file"
                                        class="form-control"
-                                       required=""
                                        ngf-select
                                        ng-model="ie_file"
                                        ngf-pattern="'image/*'"
                                        ngf-accept="'.jpg'"
-                                       ngf-max-size="5MB"
+                                       ngf-max-size="4MB"
                                        ngf-min-height="100"
+                                       ngf-model-invalid="ie_file_errorFile"
+                                       ng-required="Data.common.civilLegalStatus.name === 'Физическое лицо'"
                                        ng-disabled="(Data.common.civilLegalStatus.name !== 'Физическое лицо') || (ie_file_ch)"
                                        ng-show="!Data.common.files.ie_file || !ie_file_ch">
+                                <p></p>
+                                <div class="alert alert-danger" ng-show="ReqCreateForm.ie_file.$error.maxSize">
+                                    Файл слишком большой {{ie_file_errorFile.size / 1000000 | number:1}}MB,
+                                    максимальный разрешенный размер 5M
+                                </div>
                                 <img class="thumbnail"
                                      ng-hide="!ie_file"
                                      ngf-src="ie_file"
                                      width="50%">
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.ie_file && ie_file_ch"
-                                     ng-src="{{IE_File_load}}"
-                                     width="400">
+                                     ng-src="{{IE_File_load}}">
                                 <div align="center"
                                      ng-show="!Data.common.files.ie_file && ie_file_ch">
                                     Документ отсутсвует
                                 </div>
                             </td>
                         </tr>
-                        <tr class="danger">
+                        <tr class="warning">
                             <td colspan="2" align="center">Форма М2А</td>
                         </tr>
                         <tr>
@@ -527,6 +564,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </td>
                             <td>
                                 <input type="file"
+                                       name="mu_file_m2a"
                                        class="form-control"
                                        ngf-select
                                        ng-model="mu_file_m2a"
@@ -534,7 +572,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ngf-accept="'.jpg'"
                                        ngf-max-size="5MB"
                                        ngf-min-height="100"
+                                       ngf-model-invalid="mu_file_m2a_errorFile"
                                        ng-show="!Data.common.files.mu_file_m2a || !jur_file_ch_m2a">
+                                <p></p>
+                                <div class="alert alert-danger" ng-show="ReqCreateForm.mu_file_m2a.$error.maxSize">
+                                    Файл слишком большой {{mu_file_m2a_errorFile.size / 1000000 | number:1}}MB,
+                                    максимальный разрешенный размер 5M
+                                </div>
                                 <img class="thumbnail"
                                      ng-hide="!mu_file_m2a"
                                      ngf-src="mu_file_m2a"
@@ -579,6 +623,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            maxlength="4"
                                            required=""
                                            upper-case
+                                           passport-only
                                            ng-model="Data.common.representatives[key].person.passport.series"
                                            ng-change="Get_person(Data.common.representatives[key].person.passport.series, Data.common.representatives[key].person.passport.number, key)">
                                 </td>
@@ -600,6 +645,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <td>
                                     <input type="text" class="form-control" placeholder="до 20 символов" maxlength="20"
                                            required=""
+                                           trim-validator
                                            ng-model="Data.common.representatives[key].person.passport.issuingAuthority">
                                 </td>
                             </tr>
@@ -610,19 +656,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            placeholder="ДД.ММ.ГГГГ"
                                            maxlength="10"
                                            required=""
-                                           gked-mask
+                                           date-mask
                                            ng-model="Data.common.representatives[key].person.passport.issuingDate"></td>
                             </tr>
                             <tr>
                                 <td>ПИН</td>
                                 <td><input type="text"
+                                           name="pin_{{key}}"
                                            class="form-control"
                                            placeholder="Персональный идентификационный номер"
                                            minlength="14"
                                            maxlength="14"
                                            required
                                            numbers-only
-                                           ng-model="Data.common.representatives[key].person.pin"></td>
+                                           ng-model="Data.common.representatives[key].person.pin"">
+                                </td>
                             </tr>
                             <tr class="success">
                                 <td colspan="2" align="center">Персональные данные</td>
@@ -630,16 +678,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <tr>
                                 <td>Фамилия</td>
                                 <td><input type="text" class="form-control" placeholder="" maxlength="25" required=""
+                                           fio-mask
                                            ng-model="Data.common.representatives[key].person.surname"></td>
                             </tr>
                             <tr>
                                 <td>Имя</td>
                                 <td><input type="text" class="form-control" placeholder="" maxlength="20" required=""
+                                           fio-mask
                                            ng-model="Data.common.representatives[key].person.name"></td>
                             </tr>
                             <tr>
                                 <td>Отчество</td>
                                 <td><input type="text" class="form-control" placeholder="" maxlength="25"
+                                           fio-mask
                                            ng-model="Data.common.representatives[key].person.middleName"></td>
                             </tr>
                             <tr>
@@ -659,17 +710,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         <input type="checkbox"
                                                data-checklist-model="Data.common.representatives[key].roles"
                                                data-checklist-value="role"
-                                               ng-disabled="(role.id == 1 && !role_1 && !checked) || (role.id == 2 && !role_2 && !checked) || (role.id == 3 && !role_3 && !checked) || (role.id == 6 && !role_6 && !checked)"
+                                               ng-disabled="(role.id == 1 && !role_1 && !checked) ||
+                                               (role.id == 2 && !role_2 && !checked) ||
+                                               (role.id == 3 && !role_3 && !checked) ||
+                                               (role.id == 6 && !role_6 && !checked)"
                                                ng-click="Checked_role(role)">
                                         {{role.name}}
                                     </p>
                                 </td>
                             </tr>
-                            <tr ng-hide="role_1">
+                            <tr ng-hide="Check_chief(key)">
                                 <td>Основание занимаемой должности</td>
                                 <td>
                                     <select class="form-control"
-                                            require
+                                            ng-require="!Check_chief(key)"
                                             ng-model="Data.common.chiefBasis"
                                             ng-options="option.name disable when option.id === null for option in ChiefBasises track by option.id">
                                     </select>
@@ -690,8 +744,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                         <input type="radio"
                                                ng-model="Data.common.representatives[key].edsUsageModel"
                                                ng-value="edsUsageModel"
-                                               ng-disabled="Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3">
-                                        {{edsUsageModel.name }}
+                                               ng-disabled="Data.common.representatives[key].roles.length == 1 &&
+                                               Data.common.representatives[key].roles[0].id == 3"
+                                               ng-required="!(Data.common.representatives[key].roles.length == 1 &&
+                                               Data.common.representatives[key].roles[0].id == 3)">
+                                        {{edsUsageModel.name}}
                                     </p>
                                 </td>
                             </tr>
@@ -708,11 +765,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            minlength="10"
                                            maxlength="10"
                                            numbers-only
-                                           required=""
                                            ng-model="Data.common.representatives[key].deviceSerial"
                                            ng-disabled="Data.common.representatives[key].edsUsageModel.id == 2 ||
                                            (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)">
-
                                 </td>
                             </tr>
                             </tbody>
@@ -739,6 +794,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </td>
                                 <td>
                                     <input type="file"
+                                           name="passport_side_1_{{key}}"
                                            class="form-control"
                                            ng-required="get_require_pin(Data.common.representatives[key].person.pin)"
                                            ngf-select
@@ -746,8 +802,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            ngf-pattern="'image/*'" ngf-accept="'.jpg'"
                                            ngf-max-size="5MB"
                                            ngf-min-height="100"
+                                           ngf-model-invalid="passport_side_1errorFile[key]"
                                            ng-disabled="rep_file_ch_passport_side_1[key]"
                                            ng-show="!Data.common.representatives[key].files.passport_side_1 || !rep_file_ch_passport_side_1[key]">
+                                    <p></p>
+                                    <div class="alert alert-danger"
+                                         ng-show="ReqCreateForm.passport_side_1_{{key}}.$error.maxSize">
+                                        Файл слишком большой
+                                        {{passport_side_1errorFile[key].size / 1000000 | number:1}}MB,
+                                        максимальный разрешенный размер 5M
+                                    </div>
                                     <img class="thumbnail"
                                          ng-hide="!passport_side_1[key]"
                                          ngf-src="passport_side_1[key]"
@@ -755,8 +819,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_side_1 && rep_file_ch_passport_side_1[key]"
-                                         ng-src="{{REP_File_front[key]}}"
-                                         width="400">
+                                         ng-src="{{REP_File_front[key]}}">
                                 </td>
                             </tr>
                             <tr>
@@ -770,13 +833,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </td>
                                 <td>
                                     <input type="file"
+                                           name="passport_side_2_{{key}}"
                                            class="form-control"
                                            ngf-select
                                            ng-model="passport_side_2[key]"
                                            ngf-pattern="'image/*'" ngf-accept="'.jpg'"
                                            ngf-max-size="5MB"
                                            ngf-min-height="100"
+                                           ngf-model-invalid="passport_side_2errorFile[key]"
                                            ng-show="!Data.common.representatives[key].files.passport_side_2 || !rep_file_ch_passport_side_2[key]">
+                                    <p></p>
+                                    <div class="alert alert-danger"
+                                         ng-show="ReqCreateForm.passport_side_2_{{key}}.$error.maxSize">
+                                        Файл слишком большой
+                                        {{passport_side_2errorFile[key].size / 1000000 | number:1}}MB,
+                                        максимальный разрешенный размер 5M
+                                    </div>
                                     <img class="thumbnail"
                                          ng-hide="!passport_side_2[key]"
                                          ngf-src="passport_side_2[key]"
@@ -784,8 +856,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_side_2 && rep_file_ch_passport_side_2[key]"
-                                         ng-src="{{REP_File_back[key]}}"
-                                         width="400">
+                                         ng-src="{{REP_File_back[key]}}">
                                 </td>
                             </tr>
                             <tr class="success">
@@ -804,6 +875,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 </td>
                                 <td>
                                     <input type="file"
+                                           name="passport_copy_{{key}}"
                                            class="form-control"
                                            ngf-select
                                            ng-model="passport_copy[key]"
@@ -811,7 +883,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            ngf-accept="'.jpg'"
                                            ngf-max-size="5MB"
                                            ngf-min-height="100"
+                                           ngf-model-invalid="passport_copy_errorFile[key]"
                                            ng-show="!Data.common.representatives[key].files.passport_copy || !rep_file_ch_passport_copy[key]">
+                                    <p></p>
+                                    <div class="alert alert-danger"
+                                         ng-show="ReqCreateForm.passport_copy_{{key}}.$error.maxSize">
+                                        Файл слишком большой
+                                        {{passport_copy_errorFile[key].size / 1000000 | number:1}}MB,
+                                        максимальный разрешенный размер 5MB
+                                    </div>
                                     <img class="thumbnail"
                                          ng-hide="!passport_copy[key]"
                                          ngf-src="passport_copy[key]"
@@ -819,8 +899,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_copy && rep_file_ch_passport_copy[key]"
-                                         ng-src="{{REP_File_copy[key]}}"
-                                         width="400">
+                                         ng-src="{{REP_File_copy[key]}}">
                                 </td>
                             </tr>
                             </tbody>
@@ -833,10 +912,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <span class="glyphicon glyphicon-plus"></span> Добавить сотрудника
                 </button>
             </div>
-            <div align="center" ng-show="toggle">
+            <div align="center" ng-show="toggle && ReqCreateForm.$valid">
                 <button type="submit" class="btn btn-success">
                     <span class="glyphicon glyphicon-save"></span> Создать заявку
                 </button>
+            </div>
+            <p></p>
+            <div class="alert alert-danger" ng-hide="ReqCreateForm.$valid">
+               <!-- {{ReqCreateForm.$error}}-->
+                Форма содержит ошибки или не заполненые поля.
             </div>
         </form>
 
@@ -882,9 +966,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
     let requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''");//json с предыдущей регистрацией ?>;
     let ownershipForm_id = <?php echo (isset($requisites_json->common->legalForm->ownershipForm->id)) ?
         $requisites_json->common->legalForm->ownershipForm->id : "''"; ?>;
-    let juristicAddress = <?php echo (isset($requisites_json->common->juristicAddress)) ?
-        (isset($requisites_json->common->juristicAddress->settlement->region) ?
-            $requisites_json->common->juristicAddress->settlement->region->id : "'none'") : "''"; ?>;
+    let juristicAddress = <?php
+        echo isset($requisites_json->common->juristicAddress->settlement) ?
+            (isset($requisites_json->common->juristicAddress->settlement->region) ?
+                $requisites_json->common->juristicAddress->settlement->region->id :
+                (isset($requisites_json->common->juristicAddress->settlement->district) ?
+                    $requisites_json->common->juristicAddress->settlement->district->region->id : "'none'")
+            ) : "''";
+        ?>;
+    let physicalAddress = <?php
+        echo isset($requisites_json->common->physicalAddress->settlement) ?
+            (isset($requisites_json->common->physicalAddress->settlement->region) ?
+                $requisites_json->common->physicalAddress->settlement->region->id :
+                (isset($requisites_json->common->physicalAddress->settlement->district) ?
+                    $requisites_json->common->physicalAddress->settlement->district->region->id : "'none'")
+            ) : "''";
+        ?>;
     let chiefBasis_id = <?php echo (isset($requisites_json->common->chiefBasis->id)) ?
         $requisites_json->common->chiefBasis->id : "''"; ?>;
     let tariff_id = <?php echo (isset($requisites_json->sf->tariff->id)) ?
@@ -901,6 +998,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
         $requisites_json->common->civilLegalStatus->id : "''"; ?>;
     let settlement_id = <?php echo (isset($requisites_json->common->juristicAddress->settlement->id)) ?
         $requisites_json->common->juristicAddress->settlement->id : "''"; ?>;
+    let settlement_phy_id = <?php echo (isset($requisites_json->common->physicalAddress->settlement->id)) ?
+        $requisites_json->common->physicalAddress->settlement->id : "''"; ?>;
     let object_pins = <?php  echo json_encode(isset($object_pins) ? $object_pins : "''"); ?>;
-    let eds_count = <?php echo (isset($invoice_data) ? $invoice_data->eds_count : 0 )?>
+    let eds_count = <?php echo(isset($invoice_data) ? $invoice_data->eds_count : 0)?>
 </script>
