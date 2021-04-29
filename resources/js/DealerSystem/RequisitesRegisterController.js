@@ -11,12 +11,16 @@ app.factory('mObjNode', [function () {
     };
 }])
     .controller('RequisitesRegisterController', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval',
-        '$sce', '$window', 'shareData',
-        function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData) {
+        '$sce', '$window', 'shareData', 'RequisitesRegisterErrors',
+        function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData,
+                  RequisitesRegisterErrors) {
             window.scope = $scope;
             window.cookies = $cookies;
 
             /*Load default reference*/
+            $scope.Errors = RequisitesRegisterErrors.get();
+            $scope.errorgked = $scope.Errors.Juristic.gked.require;
+            $scope.errorbik = $scope.Errors.Juristic.bik.require;
             $scope.requisites_json = requisites_json;
             $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
             $scope.eds_count = eds_count;
@@ -242,32 +246,44 @@ app.factory('mObjNode', [function () {
             };
 
             $scope.CheckGked = function () {
-                if ($scope.Data.common.mainActivity.gked.length >= 7) {
-                    $http.post('/index.php/requisites/reference_load', {
-                        reference: 'getCommonActivityByGked',
-                        id: $scope.Data.common.mainActivity.gked
-                    }).then(function (response) {
-                        $scope.Data.common.mainActivity.name = response.data.name;
-                        $scope.Data.common.mainActivity.id = response.data.id;
-                        $scope.Data.common.mainActivity.activity = response.data.activity;
-                        $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
-                    }, function (response) {
-                        $scope.Data.common.mainActivity.name = response.data;
-                    });
+                if (angular.isUndefined($scope.Data.common.mainActivity.gked)) {
+                    $scope.errorgked = $scope.Errors.Juristic.gked.require;
+                    $scope.Data.common.mainActivity.name = null;
+                } else {
+                    if ($scope.Data.common.mainActivity.gked.length >= 7) {
+                        $http.post('/index.php/requisites/reference_load', {
+                            reference: 'getCommonActivityByGked',
+                            id: $scope.Data.common.mainActivity.gked
+                        }).then(function (response) {
+                            $scope.Data.common.mainActivity.name = response.data.name;
+                            $scope.Data.common.mainActivity.id = response.data.id;
+                            $scope.Data.common.mainActivity.activity = response.data.activity;
+                            $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
+                        }, function (response) {
+                            $scope.errorgked = $scope.Errors.Juristic.gked.notFound;
+                            $scope.Data.common.mainActivity.name = null;
+                        });
+                    }
                 }
             };
 
             $scope.loadBankName = function () {
-                if ($scope.Data.common.bank.id.length > 5) {
-                    $http.post('/index.php/requisites/reference_load', {
-                        reference: 'getCommonBankById',
-                        id: $scope.Data.common.bank.id
-                    }).then(function (response) {
-                        mObjNode('Data.common.bank', $scope);
-                        $scope.Data.common.bank.name = response.data.name;
-                    }, function (response) {
-                        $scope.Data.common.bank.name = response.data;
-                    });
+                if (angular.isUndefined($scope.Data.common.bank.id)) {
+                    $scope.Data.common.bank.name = null;
+                    $scope.errorbik = $scope.Errors.Juristic.bik.require;
+                } else {
+                    if ($scope.Data.common.bank.id.length > 5) {
+                        $http.post('/index.php/requisites/reference_load', {
+                            reference: 'getCommonBankById',
+                            id: $scope.Data.common.bank.id
+                        }).then(function (response) {
+                            mObjNode('Data.common.bank', $scope);
+                            $scope.Data.common.bank.name = response.data.name;
+                        }, function (response) {
+                            $scope.errorbik = $scope.Errors.Juristic.bik.notFound;
+                            $scope.Data.common.bank.name = null;
+                        });
+                    }
                 }
             };
 
@@ -377,8 +393,8 @@ app.factory('mObjNode', [function () {
                         $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
                     }
                     $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
-                }, function (response){
-                    $scope.currentjuristicdistrict ={id: '', name: 'Выберите район'};
+                }, function (response) {
+                    $scope.currentjuristicdistrict = {id: '', name: 'Выберите район'};
                 });
             };
             $scope.loadJuristicSettlements = function (region, district) {
@@ -413,8 +429,8 @@ app.factory('mObjNode', [function () {
                         angular.isUndefined($scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)]) ?
                             {id: '', name: 'Выберите населенный пункт'} :
                             $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
-                }, function (response){
-                    $scope.currentjuristicdistrict ={id: '', name: 'Выберите район'};
+                }, function (response) {
+                    $scope.currentjuristicdistrict = {id: '', name: 'Выберите район'};
                 });
             };
             $scope.addNewRepresentative = function () {
@@ -450,10 +466,10 @@ app.factory('mObjNode', [function () {
                     $scope.role_6 = true;
                     for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
                         for (let ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
-                            ($scope.Data.common.representatives[i].roles[ii].id == representativeRoles.chief) ? $scope.role_1 = false : null;
-                            ($scope.Data.common.representatives[i].roles[ii].id == representativeRoles.accountant) ? $scope.role_2 = false : null;
-                            ($scope.Data.common.representatives[i].roles[ii].id == representativeRoles.reciver) ? $scope.role_3 = false : null;
-                            ($scope.Data.common.representatives[i].roles[ii].id == representativeRoles.usege) ? $scope.role_6 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.chief) ? $scope.role_1 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.accountant) ? $scope.role_2 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.reciver) ? $scope.role_3 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.usege) ? $scope.role_6 = false : null;
                         }
                     }
                 } else {
@@ -473,6 +489,24 @@ app.factory('mObjNode', [function () {
                 }
             };
             $scope.Checked_role();
+
+            $scope.Check_role = (role) => {
+                if (role.id == representativeRoles.consalting) {
+                    return true;
+                }
+                let bool = false;
+                for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
+                    if (!angular.isUndefined(scope.Data.common.representatives[i].roles)) {
+                        for (let ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
+                            bool = ($scope.Data.common.representatives[i].roles[ii].id === role.id) ? true : false;
+                            if (bool == true) {
+                                return bool;
+                            }
+                        }
+                    }
+                }
+                return bool;
+            }
 
             $scope.Get_person = function (Series, Number, Key) {
                 if ((Series && Series.length > 1) && (Number && Number.length > 5)) {
@@ -768,5 +802,4 @@ app.factory('mObjNode', [function () {
                 }
                 return input;
             };
-        }])
-;
+        }]);

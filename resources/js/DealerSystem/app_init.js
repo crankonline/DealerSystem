@@ -143,7 +143,7 @@ app.directive('fioMask', function () {
                     }
                     return transformedInput;
                 }
-                return undefined;
+                return null;
             }
 
             ngModelCtrl.$parsers.push(fromUser);
