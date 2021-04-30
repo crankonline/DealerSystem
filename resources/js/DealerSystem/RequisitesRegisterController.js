@@ -491,21 +491,32 @@ app.factory('mObjNode', [function () {
             $scope.Checked_role();
 
             $scope.Check_role = (role) => {
-                if (role.id == representativeRoles.consalting) {
+                if (role.id === representativeRoles.consalting || role.id === representativeRoles.accountant) {
                     return true;
                 }
-                let bool = false;
+                let roles = [];
                 for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
                     if (!angular.isUndefined(scope.Data.common.representatives[i].roles)) {
                         for (let ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
-                            bool = ($scope.Data.common.representatives[i].roles[ii].id === role.id) ? true : false;
-                            if (bool == true) {
-                                return bool;
-                            }
+                            roles.push($scope.Data.common.representatives[i].roles[ii].id);
                         }
                     }
                 }
-                return bool;
+                if (roles.length > 0) {
+                    if (roles.indexOf(representativeRoles.chief) === -1) {
+                        $scope.errorroles = $scope.Errors.Representatives.role.role_chief;
+                    } else if (roles.indexOf(representativeRoles.usege) === -1) {
+                        $scope.errorroles = $scope.Errors.Representatives.role.role_usage;
+                    } else if (roles.indexOf(representativeRoles.reciver) === -1) {
+                        $scope.errorroles = $scope.Errors.Representatives.role.role_resive;
+                    } else {
+                        $scope.errorroles = null;
+                    }
+                    return roles.indexOf(role.id) !== -1;
+                } else {
+                    $scope.errorroles = $scope.Errors.Representatives.role.require;
+                    return false;
+                }
             }
 
             $scope.Get_person = function (Series, Number, Key) {
@@ -548,6 +559,23 @@ app.factory('mObjNode', [function () {
                 }
             }
 
+            $scope.CheckIssuingDate = function (key) {
+                if ($scope.Data.common.representatives?.[key]?.person?.passport?.issuingDate?.length === 10) {
+                    let date =
+                        new Date(scope.Data.common.representatives[key].person.passport.issuingDate.split('.').reverse().join('-'));
+                    let currentdate = Date.now();
+                    if (isNaN(date.getDate())) {
+                        $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_format;
+                    } else if (new Date(date) < new Date(new Date(currentdate).setFullYear(new Date(currentdate)  .getFullYear() - 25))) {
+                        $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_min;
+                    } else if (new Date(date) > new Date()) {
+                        $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_max;
+                    } else {
+                        $scope.errorissuingdate = null;
+                    }
+                }
+            }
+
 
             $scope.SuccessFunc = function (message) {
                 $scope.resultupload = $sce.trustAsHtml(message);
@@ -570,6 +598,11 @@ app.factory('mObjNode', [function () {
                 $scope.SM = '';
 
                 /* checks before upload */
+                if ($scope.Data.common.representatives.length === 0) {
+                    alert('В данном наборе реквизитов отсутсвуют представители');
+                    $scope.toggle = true;
+                    return;
+                }
                 if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
                     alert('Рег. номер Министерства Юстиции не соответствует маске XXXXXX-YYYY-ZZZ');
                     $scope.toggle = true;

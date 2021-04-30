@@ -95,30 +95,6 @@ app.directive('dateMask', function () {
                     if (transformedInput !== text) {
                         ngModelCtrl.$setViewValue(transformedInput);
                         ngModelCtrl.$render();
-                    } else {
-                        let dateCountTracker;
-                        let currentDate = transformedInput;
-                        let currentLength = currentDate.length;
-                        let lastNumberEntered = currentDate[currentLength - 1];
-                        if (currentLength == 1 && currentDate > 3) {
-                            transformedInput = "0" + currentDate + '.';
-                            dateCountTracker = 2;
-                            currentLength = transformedInput.length;
-                        } else if (currentLength == 4 && currentDate[3] > 1) {
-                            transformedInput = currentDate.substring(0, 3) + "0" + currentDate[3] + '.';
-                            dateCountTracker = 5;
-                        } else if (currentLength == 2 && (dateCountTracker != 2 && dateCountTracker != 3)) {
-                            dateCountTracker = currentLength;
-                            transformedInput = currentDate + ".";
-                        } else if (currentLength == 5 && (dateCountTracker != 5 && dateCountTracker != 6)) {
-                            dateCountTracker = currentLength;
-                            transformedInput = currentDate + ".";
-                        } else if (currentLength == 7 && currentDate[6] > 2) {
-                            dateCountTracker = currentLength;
-                            transformedInput = currentDate.substring(0, 6) + "20";
-                        }
-                        ngModelCtrl.$setViewValue(transformedInput);
-                        ngModelCtrl.$render();
                     }
                     return transformedInput;
                 }

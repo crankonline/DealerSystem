@@ -377,7 +377,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        placeholder="6 цифр"
                                        minlength="6"
                                        maxlength="6"
-                                       required="!SameAddress"
+                                       ng-disabled="SameAddress"
+                                       ng-required="!SameAddress"
+                                       required=""
                                        numbers-only
                                        ng-model="Data.common.physicalAddress.postCode" ng-disabled="SameAddress"
                                        ng-class="{'alert-danger': !ReqCreateForm.data_common_physicalAddress_postCode.$valid}">
@@ -389,7 +391,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <div style="display: block">
                                     <select class="form-control"
                                             ng-model="currentphysicalregion"
-                                            ng-disabled="SameAddress"
                                             ng-options="option.name disable when option.id === null for option in PhysicalRegions track by option.id"
                                             ng-change="loadPhysicalDistricts()"
                                             ng-disabled="SameAddress"
@@ -727,8 +728,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            maxlength="10"
                                            required=""
                                            date-mask
+                                           ng-keyup="CheckIssuingDate(key)"
                                            ng-model="Data.common.representatives[key].person.passport.issuingDate"
                                            ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_passport_issuingDate.$valid}">
+                                    <p></p>
+                                    <div class=" alert alert-danger"
+                                         ng-show="errorissuingdate">
+                                        {{errorissuingdate}}
+                                    </div>
                                 </td>
                             </tr>
                             <tr>
@@ -789,7 +796,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <td>
                                     <p ng-repeat="role in Roles">
                                         <input type="checkbox"
-                                               name="data_common_representatives{{key}}_role{{role_id}}"
+                                               name="data_common_representatives{{key}}_role{{role.id}}"
                                                data-checklist-model="Data.common.representatives[key].roles"
                                                data-checklist-value="role"
                                                ng-disabled="(role.id == 1 && !role_1 && !checked) ||
@@ -800,13 +807,19 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                                ng-click="Checked_role(role)">
                                         {{role.name}}
                                     </p>
+                                    <p></p>
+                                    <div class=" alert alert-danger"
+                                         ng-show="errorroles">
+                                        {{errorroles}}
+                                    </div>
                                 </td>
                             </tr>
                             <tr ng-hide="Check_chief(key)">
                                 <td>Основание занимаемой должности</td>
                                 <td>
                                     <select class="form-control"
-                                            ng-require="!Check_chief(key)"
+                                            ng-disabled="Check_chief(key)"
+                                            required=""
                                             ng-model="Data.common.chiefBasis"
                                             ng-options="option.name disable when option.id === null for option in ChiefBasises track by option.id"
                                             ng-class="{'alert-danger': Data.common.chiefBasis.id==''}">
@@ -897,7 +910,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     <p></p>
                                     <div class=" alert alert-danger"
                                          ng-show="ReqCreateForm.passport_side_1_{{key}}.$error.maxSize">
-                                        {{Errors.Files.maxSize}} {{passport_side_1errorFile[key].size / 1000000 | number:1}}MB.
+                                        {{Errors.Files.maxSize}}
+                                        {{passport_side_1errorFile[key].size / 1000000 | number:1}}MB.
                                     </div>
                                     <img class="thumbnail"
                                          ng-hide="!passport_side_1[key]"
@@ -933,7 +947,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     <p></p>
                                     <div class="alert alert-danger"
                                          ng-show="ReqCreateForm.passport_side_2_{{key}}.$error.maxSize">
-                                        {{Errors.Files.maxSize}} {{passport_side_2errorFile[key].size / 1000000 | number:1}}MB.
+                                        {{Errors.Files.maxSize}}
+                                        {{passport_side_2errorFile[key].size / 1000000 | number:1}}MB.
                                     </div>
                                     <img class="thumbnail"
                                          ng-hide="!passport_side_2[key]"
@@ -975,7 +990,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     <p></p>
                                     <div class="alert alert-danger"
                                          ng-show="ReqCreateForm.passport_copy_{{key}}.$error.maxSize">
-                                        {{Errors.Files.maxSize}} {{passport_copy_errorFile[key].size / 1000000 | number:1}}MB.
+                                        {{Errors.Files.maxSize}}
+                                        {{passport_copy_errorFile[key].size / 1000000 | number:1}}MB.
                                     </div>
                                     <img class="thumbnail"
                                          ng-hide="!passport_copy[key]"
