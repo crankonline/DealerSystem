@@ -1022,16 +1022,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <p></p>
             <div class="alert alert-danger" ng-hide="ReqCreateForm.$valid">
                 Форма содержит ошибки или не заполненые поля.
-                <p>{{ReqCreateForm.$error}}</p>
             </div>
         </form>
 
         <div class="alert alert-success" ng-hide="!resultupload">
-            <!--            <strong>Well done! </strong> {{resultupload}}-->
             <p ng-bind-html="ResUpload"></p>
         </div>
         <div class="alert alert-danger" ng-hide="!errorMsg">
-            <!--            <strong>Oh snap! </strong> {{errorMsg}}-->
             <p ng-bind-html="ErrorMessages"></p>
         </div>
         <div ng-hide="!progressjur || progressjur === 100">

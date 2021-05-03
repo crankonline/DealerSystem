@@ -566,19 +566,14 @@ app.factory('mObjNode', [function () {
                     let currentdate = Date.now();
                     if (isNaN(date.getDate())) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_format;
-                        ReqCreateForm.data_common_representatives0_person_passport_issuingDate.$valid = false;
-
-                    } else if (new Date(date) < new Date(new Date(currentdate).setFullYear(new Date(currentdate)  .getFullYear() - 25))) {
+                    } else if (new Date(date) < new Date(new Date(currentdate).setFullYear(new Date(currentdate).getFullYear() - 25))) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_min;
-                        //ReqCreateForm.data_common_representatives[key]_person_passport_issuingDate.$valid = false;
                     } else if (new Date(date) > new Date()) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_max;
-                        //ReqCreateForm.data_common_representatives[key]_person_passport_issuingDate.$valid = false;
                     } else {
                         $scope.errorissuingdate = null;
                     }
-                } else
-                {
+                } else {
                     $scope.errorissuingdate = null;
                 }
             }
