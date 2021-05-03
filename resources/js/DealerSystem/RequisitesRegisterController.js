@@ -566,13 +566,20 @@ app.factory('mObjNode', [function () {
                     let currentdate = Date.now();
                     if (isNaN(date.getDate())) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_format;
+                        ReqCreateForm.data_common_representatives0_person_passport_issuingDate.$valid = false;
+
                     } else if (new Date(date) < new Date(new Date(currentdate).setFullYear(new Date(currentdate)  .getFullYear() - 25))) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_min;
+                        //ReqCreateForm.data_common_representatives[key]_person_passport_issuingDate.$valid = false;
                     } else if (new Date(date) > new Date()) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_max;
+                        //ReqCreateForm.data_common_representatives[key]_person_passport_issuingDate.$valid = false;
                     } else {
                         $scope.errorissuingdate = null;
                     }
+                } else
+                {
+                    $scope.errorissuingdate = null;
                 }
             }
 
@@ -603,6 +610,7 @@ app.factory('mObjNode', [function () {
                     $scope.toggle = true;
                     return;
                 }
+
                 if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
                     alert('Рег. номер Министерства Юстиции не соответствует маске XXXXXX-YYYY-ZZZ');
                     $scope.toggle = true;

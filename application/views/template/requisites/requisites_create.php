@@ -556,7 +556,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_ru)"
                                        ng-show="!Data.common.files.mu_file_ru || !jur_file_ch_ru"
                                        ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'"
-                                       ng-class="{'alert-danger': !ReqCreateForm.mu_file_kg.$valid}">
+                                       ng-class="{'alert-danger': !ReqCreateForm.mu_file_ru.$valid}">
                                 <p></p>
                                 <div class="alert alert-danger" ng-show="ReqCreateForm.mu_file_ru.$error.maxSize">
                                     {{Errors.Files.maxSize}} {{mu_file_ru_errorFile.size / 1000000 | number:1}}MB.
@@ -726,6 +726,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            class="form-control"
                                            placeholder="ДД.ММ.ГГГГ"
                                            maxlength="10"
+                                           minlength="10"
                                            required=""
                                            date-mask
                                            ng-keyup="CheckIssuingDate(key)"
@@ -1021,7 +1022,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <p></p>
             <div class="alert alert-danger" ng-hide="ReqCreateForm.$valid">
                 Форма содержит ошибки или не заполненые поля.
-                <p>{{ ReqCreateForm.$error.required}}</p>
+                <p>{{ReqCreateForm.$error}}</p>
             </div>
         </form>
 
