@@ -566,15 +566,20 @@ app.factory('mObjNode', [function () {
                     let currentdate = Date.now();
                     if (isNaN(date.getDate())) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_format;
+                        return false;
                     } else if (new Date(date) < new Date(new Date(currentdate).setFullYear(new Date(currentdate).getFullYear() - 25))) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_min;
+                        return false;
                     } else if (new Date(date) > new Date()) {
                         $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_max;
+                        return false;
                     } else {
                         $scope.errorissuingdate = null;
+                        return true;
                     }
                 } else {
                     $scope.errorissuingdate = null;
+                    return false;
                 }
             }
 
@@ -640,6 +645,11 @@ app.factory('mObjNode', [function () {
                     });
                     if (angular.isUndefined(scope.Data.common.representatives[i].roles)) {
                         alert("Не выставлены роли у представителя - №" + i + 1);
+                        return;
+                    }
+                    if ($scope.CheckIssuingDate(i) == false){
+                        alert("Введена некорректная дата выдачи паспорта у представителя - №" + i +1);
+                        return;
                     }
                 }
                 if (!angular.isUndefined(object_pins)) {
