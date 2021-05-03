@@ -647,8 +647,8 @@ app.factory('mObjNode', [function () {
                         alert("Не выставлены роли у представителя - №" + i + 1);
                         return;
                     }
-                    if ($scope.CheckIssuingDate(i) == false){
-                        alert("Введена некорректная дата выдачи паспорта у представителя - №" + i +1);
+                    if ($scope.CheckIssuingDate(i) == false) {
+                        alert("Введена некорректная дата выдачи паспорта у представителя - №" + i + 1);
                         return;
                     }
                 }
