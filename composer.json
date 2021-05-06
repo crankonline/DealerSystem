@@ -25,6 +25,6 @@
     "paragonie/random_compat": "Provides better randomness in PHP 5.x"
   },
   "require-dev": {
-    "mikey179/vfstream": "1.1.*"
+    "mikey179/vfsstream": "1.1.*"
   }
 }
