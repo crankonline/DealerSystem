@@ -34,7 +34,7 @@ app.directive('numbersOnly', function () {
                     }
                     return transformedInput;
                 }
-                return undefined;
+                return null;
             }
 
             ngModelCtrl.$parsers.push(fromUser);
@@ -138,7 +138,7 @@ app.directive('trimValidator', function () {
                     ngModelCtrl.$render();
                     return transformedInput;
                 }
-                return undefined;
+                return null;
             }
 
             ngModelCtrl.$parsers.push(fromUser);
