@@ -351,7 +351,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <tr>
                             <td>Квартира</td>
                             <td><input type="text"
-                                       name="data_common_juristicAddress_apartment"
                                        class="form-control"
                                        placeholder="Квартира"
                                        maxlength="4"
@@ -439,10 +438,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </td>
                         <tr ng-hide="SameAddress">
                             <td>Квартира</td>
-                            <td><input type="text" class="form-control" placeholder="Квартира" maxlength="4"
-                                       ng-model="Data.common.physicalAddress.apartment" ng-disabled="SameAddress"
-                                       trim-validator
-                                       ng-required="!SameAddress">
+                            <td><input type="text"
+                                       class="form-control"
+                                       placeholder="Квартира"
+                                       maxlength="4"
+                                       ng-model="Data.common.physicalAddress.apartment"
+                                       ng-disabled="SameAddress"
+                                       trim-validator>
                             </td>
                         </tr>
                         </tbody>
@@ -869,6 +871,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            minlength="10"
                                            maxlength="10"
                                            numbers-only
+                                           ng-required="!(Data.common.representatives[key].edsUsageModel.id == 2 ||
+                                           (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3))"
                                            ng-model="Data.common.representatives[key].deviceSerial"
                                            ng-disabled="Data.common.representatives[key].edsUsageModel.id == 2 ||
                                            (Data.common.representatives[key].roles.length == 1 && Data.common.representatives[key].roles[0].id == 3)"
@@ -1026,6 +1030,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <p></p>
             <div class="alert alert-danger" ng-hide="ReqCreateForm.$valid">
                 Форма содержит ошибки или не заполненые поля.
+                {{ReqCreateForm.$error}}
             </div>
         </form>
 

@@ -442,6 +442,22 @@ app.factory('mObjNode', [function () {
             };
 
             $scope.RemoveRepresentative = function (key) {
+                angular.forEach($scope.Data.common.representatives[key].roles, function (role) {
+                    if (role.id === 1) {
+                        $scope.role_1 = ($scope.role_1 === true) ? false : true;
+                    }
+                    if (role.id === 2) {
+                        $scope.role_2 = ($scope.role_2 === true) ? false : true;
+                    }
+                    if (role.id === 3) {
+                        $scope.role_3 = ($scope.role_3 === true) ? false : true;
+                    }
+                    if (role.id === 6) {
+                        $scope.role_6 = ($scope.role_6 === true) ? false : true;
+                    }
+                });
+
+
                 $scope.Data.common.representatives.splice(key, 1);
                 $scope.count--;
             };
@@ -643,12 +659,18 @@ app.factory('mObjNode', [function () {
                             object_pins.splice(index, 1);
                         }
                     });
-                    if (angular.isUndefined(scope.Data.common.representatives[i].roles)) {
+                    $scope.Data.common.representatives[i].roles = $scope.Data.common.representatives[i].roles.filter(
+                        (item, index) => {
+                            return scope.Data.common.representatives[i].roles.findIndex(x => x.id == item.id) === index
+                        }); // удаление дубликатов ролей
+                    if (angular.isUndefined($scope.Data.common.representatives[i].roles)) {
                         alert("Не выставлены роли у представителя - №" + i + 1);
+                        $scope.toggle = true;
                         return;
                     }
                     if ($scope.CheckIssuingDate(i) == false) {
-                        alert("Введена некорректная дата выдачи паспорта у представителя - №" + i + 1);
+                        alert("Введена некорректная дата выдачи паспорта у представителя - №" + (i + 1));
+                        $scope.toggle = true;
                         return;
                     }
                 }
