@@ -198,7 +198,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        name="data_common_email"
                                        class="form-control"
                                        placeholder="E-mail"
-                                       maxlength="30"
+                                       maxlength="50"
                                        required=""
                                        ng-model="Data.common.eMail"
                                        ng-class="{'alert-danger': !ReqCreateForm.data_common_email.$valid}">
@@ -515,7 +515,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ng-model="mu_file_kg"
                                        ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_kg)"
                                        ng-show="!Data.common.files.mu_file_kg || !jur_file_ch_kg"
-                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'"
+                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо' &&
+                                                    !jur_file_ch_kg"
                                        ng-class="{'alert-danger': !ReqCreateForm.mu_file_kg.$valid}">
                                 <p></p>
                                 <div class="alert alert-danger" ng-show="ReqCreateForm.mu_file_kg.$error.maxSize">
@@ -555,7 +556,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ngf-model-invalid="mu_file_ru_errorFile"
                                        ng-disabled="(Data.common.civilLegalStatus.name === 'Физическое лицо') || (jur_file_ch_ru)"
                                        ng-show="!Data.common.files.mu_file_ru || !jur_file_ch_ru"
-                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо'"
+                                       ng-required="Data.common.civilLegalStatus.name !== 'Физическое лицо' &&
+                                                    !jur_file_ch_ru"
                                        ng-class="{'alert-danger': !ReqCreateForm.mu_file_ru.$valid}">
                                 <p></p>
                                 <div class="alert alert-danger" ng-show="ReqCreateForm.mu_file_ru.$error.maxSize">
@@ -595,7 +597,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        ngf-max-size="4MB"
                                        ngf-min-height="100"
                                        ngf-model-invalid="ie_file_errorFile"
-                                       ng-required="Data.common.civilLegalStatus.name === 'Физическое лицо'"
+                                       ng-required="Data.common.civilLegalStatus.name === 'Физическое лицо' &&
+                                                    !ie_file"
                                        ng-disabled="(Data.common.civilLegalStatus.name !== 'Физическое лицо') || (ie_file_ch)"
                                        ng-show="!Data.common.files.ie_file || !ie_file_ch"
                                        ng-class="{'alert-danger': !ReqCreateForm.ie_file.$valid}">
@@ -898,7 +901,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     <input type="file"
                                            name="passport_side_1_{{key}}"
                                            class="form-control"
-                                           ng-required="get_require_pin(Data.common.representatives[key].person.pin)"
+                                           ng-required="get_require_pin(Data.common.representatives[key].person.pin) &&
+                                                        !rep_file_ch_passport_side_1[key]"
                                            ngf-select
                                            ng-model="passport_side_1[key]"
                                            ngf-pattern="'image/*'" ngf-accept="'.jpg'"
