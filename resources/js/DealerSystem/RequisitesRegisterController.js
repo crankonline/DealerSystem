@@ -303,7 +303,9 @@ app.factory('mObjNode', [function () {
 
                     if (Object.keys($scope.requisites_json.common.physicalAddress).length == 0) {
                         $scope.requisites_json.common.physicalAddress.settlement = {
-                            district: null
+                            settlement: {
+                                district: null
+                            }
                         }
                     }
 
@@ -319,11 +321,12 @@ app.factory('mObjNode', [function () {
                         $scope.currentphysicaldistrict = $scope.PhysicalDistricts[0];
                     }
                     $scope.loadPhysicalSettlements($scope.currentphysicalregion.id, $scope.currentphysicaldistrict);
+                }, function (response) {
+                    $scope.currentphysicaldistrict = {id: '', name: 'Выберите район'};
                 });
             };
             $scope.loadPhysicalSettlements = function (region, district) {
-                if ($scope.currentphysicaldistrict === '' || $scope.currentphysicaldistrict == null ||
-                    $scope.currentphysicalregion === '') {
+                if ($scope.currentphysicaldistrict === '' || $scope.currentphysicalregion.id === '') {
                     return;
                 }
 
@@ -356,6 +359,8 @@ app.factory('mObjNode', [function () {
                         angular.isUndefined($scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)]) ?
                             {id: '', name: 'Выберите населенный пункт'} :
                             $scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)];
+                }, function (response) {
+                    $scope.currentphysicaldistrict = {id: '', name: 'Выберите район'}
                 });
             };
 

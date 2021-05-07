@@ -42,6 +42,27 @@ app.directive('numbersOnly', function () {
     };
 });
 
+app.directive('telephoneCell', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.replace(/[^0-9, ]/g, '');
+                    if (transformedInput !== text) {
+                        ngModelCtrl.$setViewValue(transformedInput);
+                        ngModelCtrl.$render();
+                    }
+                    return transformedInput;
+                }
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
 app.directive('passportOnly', function () {
     return {
         require: 'ngModel',
@@ -55,7 +76,7 @@ app.directive('passportOnly', function () {
                     }
                     return transformedInput;
                 }
-                return undefined;
+                return null;
             }
 
             ngModelCtrl.$parsers.push(fromUser);
@@ -98,7 +119,7 @@ app.directive('dateMask', function () {
                     }
                     return transformedInput;
                 }
-                return undefined;
+                return null;
             }
 
             ngModelCtrl.$parsers.push(fromUser);
