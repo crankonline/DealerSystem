@@ -29,14 +29,17 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         };
 
         $scope.filterItems = function (key) {
-            if ($scope.minlength <= $scope.enteredPin[key].length) {
-                let queryPromise = querySearch($scope.enteredPin[key]);
-                queryPromise.then(function (result) {
-                    $scope.filteredChoices = result;
-                    $scope.isVisible[key].suggestions = $scope.filteredChoices.length > 0 ? true : false;
-                });
-            } else {
-                $scope.isVisible[key].suggestions = false;
+            console.log(key);
+            if ($scope.enteredPin[key] != null) {
+                if ($scope.minlength <= $scope.enteredPin[key].length) {
+                    let queryPromise = querySearch($scope.enteredPin[key]);
+                    queryPromise.then(function (result) {
+                        $scope.filteredChoices = result;
+                        $scope.isVisible[key].suggestions = $scope.filteredChoices.length > 0 ? true : false;
+                    });
+                } else {
+                    $scope.isVisible[key].suggestions = false;
+                }
             }
         };
 
@@ -62,7 +65,11 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
             }).then(function (response) {
                 $scope.choices = response.data;
                 $scope.items = $scope.choices;
-                return $scope.choices.filter(createFilterFor(query));
+                if (!($scope.choices == "null")) {
+                    return $scope.choices.filter(createFilterFor(query));
+                } else {
+                    return [];
+                }
             }, function (response) {
                 console.log("Error: " + response.data);
                 return [];

@@ -221,7 +221,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            ng-model="enteredPin[key]"
                                            ng-change="filterItems(key)"
                                            numbers-only=""
-                                           minlength="5"
                                            maxlength="14"/>
                                     <div class="choices"
                                          ng-show="isVisible[key].suggestions">
