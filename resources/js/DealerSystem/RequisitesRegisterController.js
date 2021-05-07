@@ -649,21 +649,22 @@ app.factory('mObjNode', [function () {
                 }
                 let object_pins = $scope.object_pins.pins;
                 for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
-                    if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
+                    if ($scope.Data.common.representatives[i].roles.length === 1 && $scope.Data.common.representatives[i].roles[0].id === 3) { //если указано лицо только на получение
                         $scope.Data.common.representatives[i].deviceSerial = null;
                         $scope.Data.common.representatives[i].edsUsageModel = null;
                     }
                     if ($scope.Data.common.representatives[i].edsUsageModel != null) {
-                        if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
+                        if ($scope.Data.common.representatives[i].edsUsageModel.id === 2) {
                             $scope.Data.common.representatives[i].deviceSerial = null;
                         }
                     }
                     angular.forEach($scope.object_pins.pins, function (item_pin) { //поиск отсутвующих лиц в регистрации
-                        if ($scope.Data.common.representatives[i].person.pin == item_pin.pin) {
+                        if ($scope.Data.common.representatives[i].person.pin === item_pin.pin) {
                             let index = object_pins.indexOf(item_pin);
                             object_pins.splice(index, 1);
                         }
                     });
+
                     $scope.Data.common.representatives[i].roles = $scope.Data.common.representatives[i].roles.filter(
                         (item, index) => {
                             return scope.Data.common.representatives[i].roles.findIndex(x => x.id == item.id) === index
@@ -673,6 +674,7 @@ app.factory('mObjNode', [function () {
                         $scope.toggle = true;
                         return;
                     }
+
                     if ($scope.CheckIssuingDate(i) == false) {
                         alert("Введена некорректная дата выдачи паспорта у представителя - №" + (i + 1));
                         $scope.toggle = true;

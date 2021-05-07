@@ -837,7 +837,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td>Рабочий телефон</td>
-                                <td><input type="text" class="form-control" placeholder="до 20 символов" maxlength="20"
+                                <td><input type="text" class="form-control" placeholder="до 20 символов" maxlength="254"
                                            name="data_common_representatives{{key}}_phone"
                                            required=""
                                            telephone-cell
