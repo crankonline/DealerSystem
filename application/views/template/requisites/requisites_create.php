@@ -397,6 +397,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             ng-class="{'alert-danger': currentphysicalregion.id==''}">
                                     </select>
                                 </div>
+                                <p></p>
                                 <div ng-hide="(currentphysicalregion.id == 'none' || currentphysicalregion.id == '')">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-not-empty" required
                                             ng-model="currentphysicaldistrict"
@@ -404,7 +405,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                             ng-change="loadPhysicalSettlements()"
                                             ng-required="!(currentphysicalregion.id == 'none' || currentphysicalregion.id == '')"
                                             ng-class="{'alert-danger': currentphysicaldistrict.id==''}">
-                                    </select></div>
+                                    </select>
+                                </div>
+                                <p></p>
                                 <div ng-hide="(currentphysicalregion.id == '' && (currentphysicaldistrict.id == '' || currentphysicaldistrict.id == null))">
                                     <select class="form-control ng-pristine ng-untouched ng-valid ng-empty"
                                             ng-model="Data.common.physicalAddress.settlement"
@@ -434,7 +437,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        trim-validator
                                        ng-model="Data.common.physicalAddress.building"
                                        ng-disabled="SameAddress"
-                                       ng-class="{'alert-danger': !ReqCreateForm.data_common_physicalAddress_street.$valid}">
+                                       ng-class="{'alert-danger': !ReqCreateForm.data_common_physicalAddress_building.$valid}">
                             </td>
                         <tr ng-hide="SameAddress">
                             <td>Квартира</td>
@@ -836,7 +839,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <td>Рабочий телефон</td>
                                 <td><input type="text" class="form-control" placeholder="до 20 символов" maxlength="20"
                                            name="data_common_representatives{{key}}_phone"
-                                           required="" numbers-only
+                                           required=""
+                                           telephone-cell
                                            ng-model="Data.common.representatives[key].phone"
                                            ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_phone.$valid}">
                                 </td>
@@ -861,7 +865,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                          (Data.common.representatives[key].roles != undefined && Data.common.representatives[key].roles.length == 1 &&
                                            Data.common.representatives[key].roles[0].id == 3)">
                                 <td>
-                                    Серийный номер РуТокен (<a href="" ng-click="getSerialNumber(key, 0)">Прочитать<a>)
+                                    Серийный номер РуТокен
+                                    <!--(<a href="" ng-click="getSerialNumber(key, 0)">Прочитать<a>)-->
                                 </td>
                                 <td>
                                     <input type="text"
