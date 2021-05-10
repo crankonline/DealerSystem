@@ -6,7 +6,7 @@ app.directive('gkedMask', function () {
         link: function (scope, element, attr, ngModelCtrl) {
             function fromUser(text) {
                 if (text) {
-                    var transformedInput = text.replace(/[^0-9.]/g, '');
+                    let transformedInput = text.replace(/[^0-9.]/g, '');
                     if (transformedInput !== text) {
                         ngModelCtrl.$setViewValue(transformedInput);
                         ngModelCtrl.$render();
@@ -27,14 +27,77 @@ app.directive('numbersOnly', function () {
         link: function (scope, element, attr, ngModelCtrl) {
             function fromUser(text) {
                 if (text) {
-                    var transformedInput = text.replace(/[^0-9]/g, '');
+                    let transformedInput = text.replace(/[^0-9]/g, '');
                     if (transformedInput !== text) {
                         ngModelCtrl.$setViewValue(transformedInput);
                         ngModelCtrl.$render();
                     }
                     return transformedInput;
                 }
-                return undefined;
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
+app.directive('moneyOnly', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.replace(/[^0-9-]/g, '');
+                    if (transformedInput !== text) {
+                        ngModelCtrl.$setViewValue(transformedInput);
+                        ngModelCtrl.$render();
+                    }
+                    return transformedInput;
+                }
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
+app.directive('telephoneCell', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.replace(/[^0-9, ]/g, '');
+                    if (transformedInput !== text) {
+                        ngModelCtrl.$setViewValue(transformedInput);
+                        ngModelCtrl.$render();
+                    }
+                    return transformedInput;
+                }
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
+app.directive('passportOnly', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.replace(/[^A-Z0-9]/g, '');
+                    if (transformedInput !== text) {
+                        ngModelCtrl.$setViewValue(transformedInput);
+                        ngModelCtrl.$render();
+                    }
+                    return transformedInput;
+                }
+                return null;
             }
 
             ngModelCtrl.$parsers.push(fromUser);
@@ -46,26 +109,85 @@ app.directive('upperCase', function () {
     return {
         require: 'ngModel',
         link: function (scope, element, attrs, modelCtrl) {
-            var upperCaseFunc = function (inputValue) {
+            let upperCaseFunc = function (inputValue) {
 
                 if (typeof inputValue == "undefined") {
                     return;
                 }
-
-                var upperCasedString = inputValue.toUpperCase();
+                let upperCasedString = inputValue.toUpperCase();
                 if (upperCasedString !== inputValue) {
                     modelCtrl.$setViewValue(upperCasedString);
                     modelCtrl.$render();
                 }
-
                 return upperCasedString;
             }
-
             modelCtrl.$parsers.push(upperCaseFunc);
             upperCaseFunc(scope[attrs.ngModel]);
         }
     };
 });
+
+app.directive('dateMask', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.replace(/[^0-9.]/g, '');
+                    if (transformedInput !== text) {
+                        ngModelCtrl.$setViewValue(transformedInput);
+                        ngModelCtrl.$render();
+                    }
+                    return transformedInput;
+                }
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
+app.directive('fioMask', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.replace(/[^А-Яа-я ]/g, '');
+                    if (transformedInput !== text) {
+                        ngModelCtrl.$setViewValue(transformedInput);
+                        ngModelCtrl.$render();
+                    }
+                    return transformedInput;
+                }
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
+app.directive('trimValidator', function () {
+    return {
+        require: 'ngModel',
+        link: function (scope, element, attr, ngModelCtrl) {
+            function fromUser(text) {
+                if (text) {
+                    let transformedInput = text.trim();
+                    ngModelCtrl.$setViewValue(transformedInput);
+                    ngModelCtrl.$render();
+                    return transformedInput;
+                }
+                return null;
+            }
+
+            ngModelCtrl.$parsers.push(fromUser);
+        }
+    };
+});
+
 
 app.service('shareData', function () {
     return {

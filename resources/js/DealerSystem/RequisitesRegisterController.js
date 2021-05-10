@@ -10,12 +10,17 @@ app.factory('mObjNode', [function () {
         }
     };
 }])
-    .controller('RequisitesRegisterController', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval', '$sce', '$window', 'shareData',
-        function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData) {
+    .controller('RequisitesRegisterController', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval',
+        '$sce', '$window', 'shareData', 'RequisitesRegisterErrors',
+        function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData,
+                  RequisitesRegisterErrors) {
             window.scope = $scope;
             window.cookies = $cookies;
 
             /*Load default reference*/
+            $scope.Errors = RequisitesRegisterErrors.get();
+            $scope.errorgked = $scope.Errors.Juristic.gked.require;
+            $scope.errorbik = $scope.Errors.Juristic.bik.require;
             $scope.requisites_json = requisites_json;
             $scope.count = isNaN($scope.requisites_json.common.representatives.length) ? 0 : $scope.requisites_json.common.representatives.length;
             $scope.eds_count = eds_count;
@@ -29,6 +34,13 @@ app.factory('mObjNode', [function () {
             $scope.REP_File_copy = [];
             $scope.Data = $scope.requisites_json;
             $scope.pluginManager = new PluginManager();
+            let representativeRoles = {
+                chief: 1,
+                accountant: 2,
+                reciver: 3,
+                usege: 4,
+                consalting: 6
+            };
 
             $scope.EM = '';
             $scope.SM = '';
@@ -85,12 +97,14 @@ app.factory('mObjNode', [function () {
                 $scope.JuristicRegions = [
                     {id: '', name: 'Выберите область'},
                     {id: 'none', name: 'Республиканского подчинения'}].concat(response.data);
-                let defualtId = juristicAddress;
-                $scope.currentjuristicregion = $scope.JuristicRegions[$scope.JuristicRegions.findIndex(x => x.id == defualtId)];
                 $scope.PhysicalRegions = $scope.JuristicRegions;
-                $scope.currentPhysicalregion = $scope.PhysicalRegions[0];
+                let defualtId = juristicAddress;
+                let defaultphyid = physicalAddress;
+                $scope.currentjuristicregion = $scope.JuristicRegions[$scope.JuristicRegions.findIndex(x => x.id == defualtId)];
+                $scope.currentphysicalregion = $scope.PhysicalRegions[$scope.PhysicalRegions.findIndex(x => x.id == defaultphyid)];
                 if (defualtId !== '') {
                     $scope.loadJuristicDistricts();
+                    $scope.loadPhysicalDistricts();
                 }
             });
             $http.post('/index.php/requisites/reference_load', {
@@ -232,37 +246,49 @@ app.factory('mObjNode', [function () {
             };
 
             $scope.CheckGked = function () {
-                if ($scope.Data.common.mainActivity.gked.length >= 7) {
-                    $http.post('/index.php/requisites/reference_load', {
-                        reference: 'getCommonActivityByGked',
-                        id: $scope.Data.common.mainActivity.gked
-                    }).then(function (response) {
-                        $scope.Data.common.mainActivity.name = response.data.name;
-                        $scope.Data.common.mainActivity.id = response.data.id;
-                        $scope.Data.common.mainActivity.activity = response.data.activity;
-                        $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
-                    }, function (response) {
-                        $scope.Data.common.mainActivity.name = response.data;
-                    });
+                if (angular.isUndefined($scope.Data.common.mainActivity.gked)) {
+                    $scope.errorgked = $scope.Errors.Juristic.gked.require;
+                    $scope.Data.common.mainActivity.name = null;
+                } else {
+                    if ($scope.Data.common.mainActivity.gked.length >= 7) {
+                        $http.post('/index.php/requisites/reference_load', {
+                            reference: 'getCommonActivityByGked',
+                            id: $scope.Data.common.mainActivity.gked
+                        }).then(function (response) {
+                            $scope.Data.common.mainActivity.name = response.data.name;
+                            $scope.Data.common.mainActivity.id = response.data.id;
+                            $scope.Data.common.mainActivity.activity = response.data.activity;
+                            $scope.Data.common.mainActivity.isFinal = response.data.isFinal;
+                        }, function (response) {
+                            $scope.errorgked = $scope.Errors.Juristic.gked.notFound;
+                            $scope.Data.common.mainActivity.name = null;
+                        });
+                    }
                 }
             };
 
             $scope.loadBankName = function () {
-                if ($scope.Data.common.bank.id.length > 5) {
-                    $http.post('/index.php/requisites/reference_load', {
-                        reference: 'getCommonBankById',
-                        id: $scope.Data.common.bank.id
-                    }).then(function (response) {
-                        mObjNode('Data.common.bank', $scope);
-                        $scope.Data.common.bank.name = response.data.name;
-                    }, function (response) {
-                        $scope.Data.common.bank.name = response.data;
-                    });
+                if (angular.isUndefined($scope.Data.common.bank.id)) {
+                    $scope.Data.common.bank.name = null;
+                    $scope.errorbik = $scope.Errors.Juristic.bik.require;
+                } else {
+                    if ($scope.Data.common.bank.id.length > 5) {
+                        $http.post('/index.php/requisites/reference_load', {
+                            reference: 'getCommonBankById',
+                            id: $scope.Data.common.bank.id
+                        }).then(function (response) {
+                            mObjNode('Data.common.bank', $scope);
+                            $scope.Data.common.bank.name = response.data.name;
+                        }, function (response) {
+                            $scope.errorbik = $scope.Errors.Juristic.bik.notFound;
+                            $scope.Data.common.bank.name = null;
+                        });
+                    }
                 }
             };
 
             $scope.loadPhysicalDistricts = function () {
-                if ($scope.currentphysicalregion.id === 'none') {
+                if ($scope.currentphysicalregion.id === 'none' || $scope.currentphysicalregion.id === '') {
                     $scope.currentphysicaldistrict = null;
                     $scope.loadPhysicalSettlements($scope.currentphysicalregion.id, $scope.currentphysicaldistrict);
                     return;
@@ -274,13 +300,38 @@ app.factory('mObjNode', [function () {
                     $scope.PhysicalDistricts = [
                         {id: '', name: 'Выберите район'},
                         {id: 'none', name: 'Областного подчинения'}].concat(response.data);
-                    $scope.currentphysicaldistrict = $scope.PhysicalDistricts[0];
+
+                    if (Object.keys($scope.requisites_json.common.physicalAddress).length == 0) {
+                        $scope.requisites_json.common.physicalAddress.settlement = {
+                            settlement: {
+                                district: null
+                            }
+                        }
+                    }
+
+                    if ($scope.requisites_json.common.physicalAddress.settlement.district != null) {
+                        let defualtId = $scope.requisites_json.common.physicalAddress.settlement.district.id;
+                        $scope.currentphysicaldistrict =
+                            angular.isUndefined($scope.PhysicalDistricts[$scope.PhysicalDistricts.findIndex(x => x.id == defualtId)]) ?
+                                {id: '', name: 'Выберите район'} :
+                                $scope.PhysicalDistricts[$scope.PhysicalDistricts.findIndex(x => x.id == defualtId)];
+                    } else if ($scope.requisites_json.common.physicalAddress.settlement.region != null) {
+                        $scope.currentphysicaldistrict = $scope.PhysicalDistricts[1];
+                    } else {
+                        $scope.currentphysicaldistrict = $scope.PhysicalDistricts[0];
+                    }
+                    $scope.loadPhysicalSettlements($scope.currentphysicalregion.id, $scope.currentphysicaldistrict);
+                }, function (response) {
+                    $scope.currentphysicaldistrict = {id: '', name: 'Выберите район'};
                 });
             };
             $scope.loadPhysicalSettlements = function (region, district) {
+                if ($scope.currentphysicaldistrict === '' || $scope.currentphysicalregion.id === '') {
+                    return;
+                }
+
                 region = $scope.currentphysicalregion.id;
                 district = $scope.currentphysicaldistrict;
-                //console.log(district);
                 let districtid = $scope.currentphysicaldistrict ? (district.id || null) : null;
                 if (region === 'none' && !district) {
                     region = null;
@@ -303,16 +354,23 @@ app.factory('mObjNode', [function () {
                         name: 'Выберите населенный пункт'
                     }].concat(response.data);
                     mObjNode('Data.common.physicalAddress.settlement', $scope);
-                    $scope.Data.common.physicalAddress.settlement = $scope.PhysicalSettlements[0];
+                    let defaultId = settlement_phy_id;
+                    $scope.Data.common.physicalAddress.settlement =
+                        angular.isUndefined($scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)]) ?
+                            {id: '', name: 'Выберите населенный пункт'} :
+                            $scope.PhysicalSettlements[$scope.PhysicalSettlements.findIndex(x => x.id == defaultId)];
+                }, function (response) {
+                    $scope.currentphysicaldistrict = {id: '', name: 'Выберите район'}
                 });
             };
 
             $scope.loadJuristicDistricts = function () {
-                if ($scope.currentjuristicregion.id === 'none') {
+                if ($scope.currentjuristicregion.id === 'none' || $scope.currentjuristicregion.id === '') {
                     $scope.currentjuristicdistrict = null;
                     $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
                     return;
                 }
+
                 $http.post('/index.php/requisites/reference_load', {
                     reference: 'getCommonDistricts',
                     id: $scope.currentjuristicregion.id
@@ -320,17 +378,36 @@ app.factory('mObjNode', [function () {
                     $scope.JuristicDistricts = [
                         {id: '', name: 'Выберите район'},
                         {id: 'none', name: 'Областного подчинения'}].concat(response.data);
-                    $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
+
+                    if (Object.keys($scope.requisites_json.common.juristicAddress).length == 0) {
+                        $scope.requisites_json.common.juristicAddress = {
+                            settlement: {
+                                district: null
+                            }
+                        }
+                    }
+                    if ($scope.requisites_json.common.juristicAddress.settlement.district != null) {
+                        let defualtId = $scope.requisites_json.common.juristicAddress.settlement.district.id;
+                        $scope.currentjuristicdistrict =
+                            angular.isUndefined($scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id == defualtId)]) ?
+                                {id: '', name: 'Выберите район'} :
+                                $scope.JuristicDistricts[$scope.JuristicDistricts.findIndex(x => x.id == defualtId)];
+                    } else if ($scope.requisites_json.common.juristicAddress.settlement.region != null) {
+                        $scope.currentjuristicdistrict = $scope.JuristicDistricts[1];
+                    } else {
+                        $scope.currentjuristicdistrict = $scope.JuristicDistricts[0];
+                    }
+                    $scope.loadJuristicSettlements($scope.currentjuristicregion.id, $scope.currentjuristicdistrict);
+                }, function (response) {
+                    $scope.currentjuristicdistrict = {id: '', name: 'Выберите район'};
                 });
             };
             $scope.loadJuristicSettlements = function (region, district) {
-                //console.log($scope.currentjuristicdistrict);
-                if ($scope.currentjuristicdistrict === '') {
+                if ($scope.currentjuristicdistrict === '' || $scope.currentjuristicregion.id === '') {
                     return;
                 }
                 region = $scope.currentjuristicregion.id;
                 district = $scope.currentjuristicdistrict;
-                //console.log(district);
                 let districtid = $scope.currentjuristicdistrict ? (district.id || null) : null;
                 if (region === 'none' && !district) {
                     region = null;
@@ -342,7 +419,6 @@ app.factory('mObjNode', [function () {
                 if (districtid !== null) {
                     region = null;
                 }
-                //console.log(region + ' ' + districtid);
                 $http.post('/index.php/requisites/reference_load', {
                     reference: 'getCommonSettlements',
                     id_region: region,
@@ -352,23 +428,55 @@ app.factory('mObjNode', [function () {
                         id: '',
                         name: 'Выберите населенный пункт'
                     }].concat(response.data);
-                    //console.log(response.data);
                     mObjNode('Data.common.juristicAddress.settlement', $scope);
                     let defaultId = settlement_id;
-                    //console.log(defaultId);
-                    //console.log($scope.JuristicSettlements.findIndex(x => x.id == defaultId));//без условное сравнение
                     $scope.Data.common.juristicAddress.settlement =
-                        $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
+                        angular.isUndefined($scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)]) ?
+                            {id: '', name: 'Выберите населенный пункт'} :
+                            $scope.JuristicSettlements[$scope.JuristicSettlements.findIndex(x => x.id == defaultId)];
+                }, function (response) {
+                    $scope.currentjuristicdistrict = {id: '', name: 'Выберите район'};
                 });
             };
             $scope.addNewRepresentative = function () {
                 $scope.count++;
-                $scope.Data.common.representatives.push({position: $scope.Positions[0]});
+                $scope.Data.common.representatives.push({
+                    position: $scope.Positions[0],
+                    edsUsageModel: $scope.edsUsageModels[0]
+                });
             };
+
             $scope.RemoveRepresentative = function (key) {
+                angular.forEach($scope.Data.common.representatives[key].roles, function (role) {
+                    if (role.id === 1) {
+                        $scope.role_1 = ($scope.role_1 === true) ? false : true;
+                    }
+                    if (role.id === 2) {
+                        $scope.role_2 = ($scope.role_2 === true) ? false : true;
+                    }
+                    if (role.id === 3) {
+                        $scope.role_3 = ($scope.role_3 === true) ? false : true;
+                    }
+                    if (role.id === 6) {
+                        $scope.role_6 = ($scope.role_6 === true) ? false : true;
+                    }
+                });
+
+
                 $scope.Data.common.representatives.splice(key, 1);
                 $scope.count--;
             };
+
+            $scope.Check_chief = function (key) {
+                if (angular.isUndefined($scope.Data.common.representatives[key].roles)) {
+                    return true;
+                } else {
+                    let result = $scope.Data.common.representatives[key].roles[
+                        $scope.Data.common.representatives[key].roles.findIndex(x => x.id == representativeRoles.chief)];
+                    angular.isUndefined(result) ? result = true : result = false;
+                    return result;
+                }
+            }
 
             $scope.Checked_role = function (role = false) {
                 if (role === false) {
@@ -379,35 +487,58 @@ app.factory('mObjNode', [function () {
                     $scope.role_6 = true;
                     for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
                         for (let ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
-                            ($scope.Data.common.representatives[i].roles[ii].id == 1) ? $scope.role_1 = false : null;
-                            ($scope.Data.common.representatives[i].roles[ii].id == 2) ? $scope.role_2 = false : null;
-                            ($scope.Data.common.representatives[i].roles[ii].id == 3) ? $scope.role_3 = false : null;
-                            ($scope.Data.common.representatives[i].roles[ii].id == 6) ? $scope.role_6 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.chief) ? $scope.role_1 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.accountant) ? $scope.role_2 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.reciver) ? $scope.role_3 = false : null;
+                            ($scope.Data.common.representatives[i].roles[ii].id === representativeRoles.usege) ? $scope.role_6 = false : null;
                         }
                     }
-                    //console.log('Default: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3);
                 } else {
                     //user changes
                     if (role.id == 1) {
                         $scope.role_1 = ($scope.role_1 === false) ? true : false;
-                        //console.log('ruk = ' + $scope.role_1);
                     }
                     if (role.id == 2) {
                         $scope.role_2 = ($scope.role_2 === false) ? true : false;
-                        //console.log('buh = ' + $scope.role_2);
                     }
                     if (role.id == 3) {
                         $scope.role_3 = ($scope.role_3 === false) ? true : false;
-                        //console.log('rep = ' + $scope.role_3);
                     }
                     if (role.id == 6) {
                         $scope.role_6 = ($scope.role_6 === false) ? true : false;
-                        //console.log('rep = ' + $scope.role_6);
                     }
-                    //console.log(role.id + ' User: ruk = '+ $scope.role_1+' buk = '+ $scope.role_2 + ' rep = '+$scope.role_3);
                 }
             };
             $scope.Checked_role();
+
+            $scope.Check_role = (role) => {
+                if (role.id === representativeRoles.consalting || role.id === representativeRoles.accountant) {
+                    return true;
+                }
+                let roles = [];
+                for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
+                    if (!angular.isUndefined(scope.Data.common.representatives[i].roles)) {
+                        for (let ii = 0; ii < $scope.Data.common.representatives[i].roles.length; ii++) {
+                            roles.push($scope.Data.common.representatives[i].roles[ii].id);
+                        }
+                    }
+                }
+                if (roles.length > 0) {
+                    if (roles.indexOf(representativeRoles.chief) === -1) {
+                        $scope.errorroles = $scope.Errors.Representatives.role.role_chief;
+                    } else if (roles.indexOf(representativeRoles.usege) === -1) {
+                        $scope.errorroles = $scope.Errors.Representatives.role.role_usage;
+                    } else if (roles.indexOf(representativeRoles.reciver) === -1) {
+                        $scope.errorroles = $scope.Errors.Representatives.role.role_resive;
+                    } else {
+                        $scope.errorroles = null;
+                    }
+                    return roles.indexOf(role.id) !== -1;
+                } else {
+                    $scope.errorroles = $scope.Errors.Representatives.role.require;
+                    return false;
+                }
+            }
 
             $scope.Get_person = function (Series, Number, Key) {
                 if ((Series && Series.length > 1) && (Number && Number.length > 5)) {
@@ -449,6 +580,30 @@ app.factory('mObjNode', [function () {
                 }
             }
 
+            $scope.CheckIssuingDate = function (key) {
+                if ($scope.Data.common.representatives?.[key]?.person?.passport?.issuingDate?.length === 10) {
+                    let date =
+                        new Date(scope.Data.common.representatives[key].person.passport.issuingDate.split('.').reverse().join('-'));
+                    let currentdate = Date.now();
+                    if (isNaN(date.getDate())) {
+                        $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_format;
+                        return false;
+                    } else if (new Date(date) < new Date(new Date(currentdate).setFullYear(new Date(currentdate).getFullYear() - 25))) {
+                        $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_min;
+                        return false;
+                    } else if (new Date(date) > new Date()) {
+                        $scope.errorissuingdate = $scope.Errors.Representatives.passport.issuingDate.error_year_max;
+                        return false;
+                    } else {
+                        $scope.errorissuingdate = null;
+                        return true;
+                    }
+                } else {
+                    $scope.errorissuingdate = null;
+                    return false;
+                }
+            }
+
 
             $scope.SuccessFunc = function (message) {
                 $scope.resultupload = $sce.trustAsHtml(message);
@@ -463,7 +618,7 @@ app.factory('mObjNode', [function () {
                 $scope.toggle = true;
             }
 
-            $scope.Upload = function () {
+            $scope.UploadForm = function () {
                 $scope.errorMsg = null;
                 $scope.resultupload = null;
                 $scope.toggle = false;
@@ -471,13 +626,19 @@ app.factory('mObjNode', [function () {
                 $scope.SM = '';
 
                 /* checks before upload */
+                if ($scope.Data.common.representatives.length === 0) {
+                    alert('В данном наборе реквизитов отсутсвуют представители');
+                    $scope.toggle = true;
+                    return;
+                }
+
                 if ((!$scope.Data.common.rnmj || !/^\d+\-\d+\-.+$/.test($scope.Data.common.rnmj)) && ($scope.Data.common.civilLegalStatus.name !== 'Физическое лицо')) {
                     alert('Рег. номер Министерства Юстиции не соответствует маске XXXXXX-YYYY-ZZZ');
                     $scope.toggle = true;
                     return;
                 }
                 if (!$scope.Data.common.mainActivity.gked || !/^\d{2,2}\.\d{2,2}\.\d+$/.test($scope.Data.common.mainActivity.gked)) {
-                    alert('Номер ГКЕД не соответствует маске XX.YY.ZZ');
+                    alert('Номер ГКЭД не соответствует маске XX.YY.ZZ');
                     $scope.toggle = true;
                     return;
                 }
@@ -488,21 +649,37 @@ app.factory('mObjNode', [function () {
                 }
                 let object_pins = $scope.object_pins.pins;
                 for (let i = 0; i < $scope.Data.common.representatives.length; i++) {
-                    if ($scope.Data.common.representatives[i].roles.length == 1 && $scope.Data.common.representatives[i].roles[0].id == 3) { //если указано лицо только на получение
+                    if ($scope.Data.common.representatives[i].roles.length === 1 && $scope.Data.common.representatives[i].roles[0].id === 3) { //если указано лицо только на получение
                         $scope.Data.common.representatives[i].deviceSerial = null;
                         $scope.Data.common.representatives[i].edsUsageModel = null;
                     }
                     if ($scope.Data.common.representatives[i].edsUsageModel != null) {
-                        if ($scope.Data.common.representatives[i].edsUsageModel.id == 2) {
+                        if ($scope.Data.common.representatives[i].edsUsageModel.id === 2) {
                             $scope.Data.common.representatives[i].deviceSerial = null;
                         }
                     }
                     angular.forEach($scope.object_pins.pins, function (item_pin) { //поиск отсутвующих лиц в регистрации
-                        if ($scope.Data.common.representatives[i].person.pin == item_pin.pin) {
+                        if ($scope.Data.common.representatives[i].person.pin === item_pin.pin) {
                             let index = object_pins.indexOf(item_pin);
                             object_pins.splice(index, 1);
                         }
                     });
+
+                    $scope.Data.common.representatives[i].roles = $scope.Data.common.representatives[i].roles.filter(
+                        (item, index) => {
+                            return scope.Data.common.representatives[i].roles.findIndex(x => x.id == item.id) === index
+                        }); // удаление дубликатов ролей
+                    if (angular.isUndefined($scope.Data.common.representatives[i].roles)) {
+                        alert("Не выставлены роли у представителя - №" + i + 1);
+                        $scope.toggle = true;
+                        return;
+                    }
+
+                    if ($scope.CheckIssuingDate(i) == false) {
+                        alert("Введена некорректная дата выдачи паспорта у представителя - №" + (i + 1));
+                        $scope.toggle = true;
+                        return;
+                    }
                 }
                 if (!angular.isUndefined(object_pins)) {
                     if (object_pins.length != 0) {
@@ -532,9 +709,7 @@ app.factory('mObjNode', [function () {
                     invoice_id: $scope.invoice_id,
                     invoice_serial_number: $scope.invoice_serial_number,
                     json: $scope.Data
-                    //json_original: $scope.json_original
                 }).then(function (responce) {
-                    //console.log(responce);
                     id_requisites = responce.data.id_requisites;
                     if (!id_requisites) {//if null form server
                         $scope.ErrorFunc('<p>Ошибка при сохранении изображений. ID реквизита не определен</p>');
@@ -656,7 +831,6 @@ app.factory('mObjNode', [function () {
                                 check_rep_ident = true;
                             } else {
                                 let keys = Object.keys(scope.Data.common.representatives[i].files);
-                                //console.log(keys);
                                 for (let ii = 0; ii < keys.length; ii++) {
                                     //console.log('Go JUR - ' + $scope.Data.common.representatives[i].files[keys[ii]].file_ident);
                                     $http.post('/index.php/requisites/requisites_file_upload_skip', {
@@ -703,5 +877,4 @@ app.factory('mObjNode', [function () {
                 }
                 return input;
             };
-        }])
-;
+        }]);

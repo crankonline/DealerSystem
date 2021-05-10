@@ -221,7 +221,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            ng-model="enteredPin[key]"
                                            ng-change="filterItems(key)"
                                            numbers-only=""
-                                           minlength="5"
                                            maxlength="14"/>
                                     <div class="choices"
                                          ng-show="isVisible[key].suggestions">
@@ -295,7 +294,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                                placeholder="<?php echo 'Сумма к оплате - ' . ($invoice_data[0]->total_sum - $invoice_data[0]->pay_sum); ?>"
                                                required="" maxlength="9"
                                                ng-model="val2"
-                                               numbers-only>
+                                               money-only>
                                         <input name="invoice_serial_number" type="text" hidden=""
                                                value="<?php echo $invoice_data[0]->invoice_serial_number; ?>">
                                     </td>
