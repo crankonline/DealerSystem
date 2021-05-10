@@ -941,7 +941,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td>Cторона 2
-                                    <label ng-show="Data.common.representatives[key].files.passport_side_2">Изображение
+                                    <label ng-show="Data.common.representatives[key].files.passport_side_2 &&
+                                            get_require_pin(Data.common.representatives[key].person.pin, 1) &&
+                                            object_pins != undefined ">Изображение
                                         из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_2[key]"
@@ -983,7 +985,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td>Нотариально заверенная копия
-                                    <label ng-show="Data.common.representatives[key].files.passport_copy">Изображение из
+                                    <label ng-show="Data.common.representatives[key].files.passport_copy &&
+                                            get_require_pin(Data.common.representatives[key].person.pin, 1) &&
+                                            object_pins != undefined ">Изображение из
                                         архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_copy[key]"
