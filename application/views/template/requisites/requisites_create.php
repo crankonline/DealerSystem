@@ -899,13 +899,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <tr>
                                 <td style="width: 266px">Cторона 1
                                     <label ng-show="Data.common.representatives[key].files.passport_side_1 &&
-                                            get_require_pin(Data.common.representatives[key].person.pin, 1) &&
-                                            object_pins != undefined ">
+                                           get_require_pin(Data.common.representatives[key].person.pin) &&
+                                           object_pins.length != 2">
                                         Изображение из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_1[key]"
                                                ng-init="rep_file_ch_passport_side_1[key] =
-                                               (Data.common.representatives[key].files.passport_side_1) ? true : false"/>
+                                               (Data.common.representatives[key].files.passport_side_1 &&
+                                               object_pins.length != 2) ? true : false"/>
                                     </label>
                                 </td>
                                 <td>
@@ -942,12 +943,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <tr>
                                 <td>Cторона 2
                                     <label ng-show="Data.common.representatives[key].files.passport_side_2 &&
-                                            get_require_pin(Data.common.representatives[key].person.pin, 1) &&
-                                            object_pins != undefined ">Изображение
-                                        из архива
+                                            get_require_pin(Data.common.representatives[key].person.pin) &&
+                                           object_pins.length != 2">
+                                        Изображение из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_2[key]"
-                                               ng-init="rep_file_ch_passport_side_2[key] = (Data.common.representatives[key].files.passport_side_2) ? true : false"/>
+                                               ng-init="rep_file_ch_passport_side_2[key] =
+                                               (Data.common.representatives[key].files.passport_side_2 &&
+                                               object_pins.length != 2) ? true : false"/>
                                     </label>
                                 </td>
                                 <td>
@@ -986,12 +989,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             <tr>
                                 <td>Нотариально заверенная копия
                                     <label ng-show="Data.common.representatives[key].files.passport_copy &&
-                                            get_require_pin(Data.common.representatives[key].person.pin, 1) &&
-                                            object_pins != undefined ">Изображение из
-                                        архива
+                                            get_require_pin(Data.common.representatives[key].person.pin) &&
+                                           object_pins.length != 2">
+                                        Изображение из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_copy[key]"
-                                               ng-init="rep_file_ch_passport_copy[key] = (Data.common.representatives[key].files.passport_copy) ? true : false"/>
+                                               ng-init="rep_file_ch_passport_copy[key] =
+                                               (Data.common.representatives[key].files.passport_copy &&
+                                               object_pins.length != 2) ? true : false"/>
                                     </label>
                                 </td>
                                 <td>
