@@ -898,8 +898,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td style="width: 266px">Cторона 1
-                                    <label ng-show="Data.common.representatives[key].files.passport_side_1">Изображение
-                                        из архива
+                                    <label ng-show="Data.common.representatives[key].files.passport_side_1 &&
+                                            get_require_pin(Data.common.representatives[key].person.pin, 1) &&
+                                            object_pins != undefined ">
+                                        Изображение из архива
                                         <input type="checkbox"
                                                ng-model="rep_file_ch_passport_side_1[key]"
                                                ng-init="rep_file_ch_passport_side_1[key] =
