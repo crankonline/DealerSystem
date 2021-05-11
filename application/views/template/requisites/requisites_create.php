@@ -90,7 +90,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <p></p>
                                 <div class="alert alert-danger"
                                      ng-show="ReqCreateForm.data_common_name.$error.maxlength">
-                                    {{Errors.Juristic.name.maxlength}} -
+                                    {{Errors.Juristic.name.maxlength}}
                                     {{ReqCreateForm.data_common_name.$viewValue.length}}
                                 </div>
                             </td>
