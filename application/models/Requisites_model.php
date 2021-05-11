@@ -425,7 +425,7 @@ class Requisites_model extends CI_Model
                 FULL JOIN "Dealer_images".files_juridical ON requisites.id_requisites = files_juridical.requisites_id
                 FULL JOIN "Dealer_images".files_representatives ON requisites.id_requisites = files_representatives.requisites_id
                 WHERE json -> 'common' ->> 'inn' = ?
-                ORDER BY id_requisites DESC
+                ORDER BY requisites_creating_date_time DESC
 SQL;
         $result = $this->db->query($sql, $inn)->row();
         if (!empty($result)) {
