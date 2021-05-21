@@ -464,6 +464,9 @@ app.factory('mObjNode', [function () {
 
 
                 $scope.Data.common.representatives.splice(key, 1);
+                $scope.passport_side_1.splice(key, 1);
+                $scope.passport_side_2.splice(key, 1);
+                $scope.passport_copy.splice(key, 1);
                 $scope.count--;
             };
 
