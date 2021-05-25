@@ -29,6 +29,10 @@ app.factory('mObjNode', [function () {
             $scope.passport_copy = [];
             $scope.rep_file_ch_passport_copy = [];
             $scope.rep_file_ch_passport_side_2 = []; //не рекваиред
+            $scope.rep_file_ch_passport_side_1 = [];
+            $scope.passport_side_1errorFile = [];
+            $scope.passport_side_2errorFile = [];
+            $scope.passport_copy_errorFile = [];
             $scope.REP_File_front = [];
             $scope.REP_File_back = [];
             $scope.REP_File_copy = [];
@@ -193,7 +197,7 @@ app.factory('mObjNode', [function () {
                         item.filetype_id == 5 ? $scope.REP_File_back[i] = response.data : null;
                         item.filetype_id == 6 ? $scope.REP_File_copy[i] = response.data : null;
                     }, function (response) {
-                        console.log(response.data);
+                        console.log('Error: ' + response.data);
                     });
                 });
             }
@@ -462,14 +466,20 @@ app.factory('mObjNode', [function () {
                     }
                 });
 
-
-                $scope.Data.common.representatives.splice(key, 1);
+                $scope.rep_file_ch_passport_side_1.splice(key, 1);
+                $scope.rep_file_ch_passport_side_2.splice(key, 1);
+                $scope.rep_file_ch_passport_copy.splice(key, 1);
+                $scope.passport_side_1errorFile.splice(key, 1);
+                $scope.passport_side_2errorFile.splice(key, 1);
+                $scope.passport_copy_errorFile.splice(key, 1);
                 $scope.passport_side_1.splice(key, 1);
-                $scope.REP_File_front.splice(key, 1);
-                $scope.REP_File_back.splice(key,1);
-                $scope.REP_File_copy.splice(key, 1);
                 $scope.passport_side_2.splice(key, 1);
                 $scope.passport_copy.splice(key, 1);
+                $scope.REP_File_front.splice(key, 1);
+                $scope.REP_File_back.splice(key, 1);
+                $scope.REP_File_copy.splice(key, 1);
+
+                $scope.Data.common.representatives.splice(key, 1);
                 $scope.count--;
             };
 
