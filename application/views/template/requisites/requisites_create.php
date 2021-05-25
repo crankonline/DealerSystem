@@ -658,8 +658,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_m2a && jur_file_ch_m2a"
-                                     ng-src="{{JUR_File_m2a}}"
-                                     width="400">
+                                     ng-src="{{JUR_File_m2a}}">
                             </td>
                         </tr>
                         </tbody>
