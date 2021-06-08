@@ -1075,15 +1075,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <?php endif; ?>
 </div>
 
-<script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem//app_init.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterErrors.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterController.js"); ?>"></script>
-
 <script type="text/javascript">
     /* Инициализация переменных для справочников и дефаулт значений для RequisitesRegisterForm контроллера */
     let requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''");//json с предыдущей регистрацией ?>;

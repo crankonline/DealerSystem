@@ -37,7 +37,7 @@ app.factory('mObjNode', [function () {
             $scope.REP_File_back = [];
             $scope.REP_File_copy = [];
             $scope.Data = $scope.requisites_json;
-            $scope.pluginManager = new PluginManager();
+            //$scope.pluginManager = new PluginManager();
             let representativeRoles = {
                 chief: 1,
                 accountant: 2,
@@ -577,7 +577,7 @@ app.factory('mObjNode', [function () {
             $scope.getSerialNumber = function (key, tokenIndex) {
                 //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
                 //$scope.Data.common.representatives[key].deviceSerial =
-                let result = $scope.pluginManager.getDeviceSerial(tokenIndex);
+                //let result = $scope.pluginManager.getDeviceSerial(tokenIndex);
                 //console.log(result);
             }
 

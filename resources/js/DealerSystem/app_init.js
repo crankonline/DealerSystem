@@ -1,4 +1,4 @@
-let app = angular.module('DealerSystem', ['ngFileUpload', 'checklist-model', 'ngCookies']);
+let app = angular.module('DealerSystem', ['ngFileUpload', 'checklist-model', 'ngCookies', 'ui.bootstrap']);
 
 app.directive('gkedMask', function () {
     return {
