@@ -363,5 +363,5 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <?php //endif; ?>
 </div>
 <script type="text/javascript">
-    let url = <?php echo '"' . getenv('BASE_URL') . 'application/views/template/requisites/show_image.html' . '"'; ?>
+    let url = "<?php echo getenv('BASE_URL') . 'application/views/template/requisites/show_image.html';?>"
 </script>

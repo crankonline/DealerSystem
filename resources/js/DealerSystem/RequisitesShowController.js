@@ -22,18 +22,12 @@ app.controller('RequisitesShowController', ['$scope', '$uibModal', '$log', '$htt
                 controllerAs: 'pc',
                 size: 'lg',
                 resolve: {
-                    data: function () {
-                        return pc.data;
-                    }
+                    data: () => pc.data
                 }
             });
             modalInstance.result.then(function () {
-            }, function () {
-                modalInstance.close();
-            });
-        }, function (response) {
-            console.log(response.data);
-        });
+            }, () => modalInstance.close());
+        }, (response) => console.log(response.data))
     };
 }]);
 
