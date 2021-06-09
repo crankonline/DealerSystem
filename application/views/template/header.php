@@ -33,11 +33,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <style id="holderjs-style" type="text/css"></style>
     <script src="<?php echo base_url("resources/js/jquery-1.11.1.min.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/angular.min.js"); ?>"></script>
-    <script src="<?php echo base_url("resources/js/DealerSystem/app_init.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
-    <script src="<?php echo base_url("resources/js/ui-bootstrap-tpls-2.5.0.min.js");?>"</script>
+    <script src="<?php echo base_url("resources/js/ui-bootstrap-tpls-2.5.0.min.js");?>"></script>
+    <script src="<?php echo base_url("resources/js/DealerSystem/app_init.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/InvoiceCreateController.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/InvoiceShowController.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterController.js"); ?>"></script>
