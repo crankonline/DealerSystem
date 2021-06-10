@@ -587,12 +587,14 @@ app.factory('mObjNode', [function () {
                 });
                 let message = $scope.Errors.Representatives.copy.error;
                 counter = Object.entries(counter);
+                let pointer = false;
                 counter.forEach(function (i) {
                     if (i[1] > 1) {
-                        message +=  i[0] +'\n';
+                        message += i[0] + '\n';
+                        pointer = true;
                     }
                 });
-                if (message) {
+                if (pointer) {
                     alert(message);
                     return false;
                 } else {
@@ -733,7 +735,7 @@ app.factory('mObjNode', [function () {
                         return;
                     }
                 }
-                if(!$scope.Check_Persons_Copy()){
+                if (!$scope.Check_Persons_Copy()) {
                     $scope.toggle = true;
                     return;
                 }
