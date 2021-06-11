@@ -568,11 +568,39 @@ app.factory('mObjNode', [function () {
                         $scope.Data.common.representatives[Key].person.name = response.data.name;
                         $scope.Data.common.representatives[Key].person.middleName = response.data.middleName;
                         $scope.Data.common.representatives[Key].person.pin = response.data.pin;
+                        $scope.Check_Persons_Copy();//проверяем на наличие повторяющихся представителей по ПИН
                     }, function (response) {
 
                     });
                 }
             };
+
+            $scope.Check_Persons_Copy = function () {
+                let counter = {};
+                $scope.Data.common.representatives.forEach(function (rep) {
+                    let item = rep.person.surname + ' ' + rep.person.name + ' ' + rep.person.middleName;
+                    if (!counter[item]) {
+                        counter[item] = 1;
+                    } else {
+                        counter[item] += 1;
+                    }
+                });
+                let message = $scope.Errors.Representatives.copy.error;
+                counter = Object.entries(counter);
+                let pointer = false;
+                counter.forEach(function (i) {
+                    if (i[1] > 1) {
+                        message += i[0] + '\n';
+                        pointer = true;
+                    }
+                });
+                if (pointer) {
+                    alert(message);
+                    return false;
+                } else {
+                    return true;
+                }
+            }
 
             $scope.getSerialNumber = function (key, tokenIndex) {
                 //$scope.Data.common.representatives[key].deviceSerial = $scope.pluginManager.getDeviceInfo(tokenIndex, $scope.pluginManager.TOKEN_INFO_SERIAL);
@@ -706,6 +734,10 @@ app.factory('mObjNode', [function () {
                         $scope.ErrorFunc(message);
                         return;
                     }
+                }
+                if (!$scope.Check_Persons_Copy()) {
+                    $scope.toggle = true;
+                    return;
                 }
                 /* end checks */
 
