@@ -1,4 +1,5 @@
-app.controller('RequisitesShowController', ['$scope', '$uibModal', '$log', '$http', function ($scope, $uibModal, $log, $http) {
+app.controller('RequisitesShowController', ['$scope', '$uibModal', '$log', '$http', 'ModalImageService',
+    function ($scope, $uibModal, $log, $http, ModalImageService) {
     //window.scope = $scope;
 
     let pc = this;
@@ -7,36 +8,7 @@ app.controller('RequisitesShowController', ['$scope', '$uibModal', '$log', '$htt
         Image: ''
     };
 
-    $scope.showImage = function (file_ident) {
-        $http.post('/index.php/requisites/get_image_reference', {
-            file_ident: file_ident,
-            large: true
-        }).then(function (response) {
-            pc.data.Image = response.data;
-            let modalInstance = $uibModal.open({
-                animation: true,
-                ariaLabelledBy: 'modal-title',
-                ariaDescribedBy: 'modal-body',
-                templateUrl: url,
-                controller: 'ModalInstanceCtrl',
-                controllerAs: 'pc',
-                size: 'lg',
-                resolve: {
-                    data: () => pc.data
-                }
-            });
-            modalInstance.result.then(function () {
-            }, () => modalInstance.close());
-        }, (response) => console.log(response.data))
-    };
+    $scope.showImage = function (file_ident){
+        ModalImageService.ShowModalImage(file_ident);
+    }
 }]);
-
-app.controller('ModalInstanceCtrl', function ($uibModalInstance, data) {
-    let pc = this;
-    pc.data = data;
-
-    pc.ok = function () {
-        pc.data = {};
-        $uibModalInstance.close();
-    };
-});
