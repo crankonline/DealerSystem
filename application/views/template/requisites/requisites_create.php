@@ -1123,5 +1123,4 @@ defined('BASEPATH') or exit('No direct script access allowed');
         $requisites_json->common->physicalAddress->settlement->id : "''"; ?>;
     let object_pins = <?php  echo json_encode(isset($object_pins) ? $object_pins : "''"); ?>;
     let eds_count = <?php echo(isset($invoice_data) ? $invoice_data->eds_count : 0)?>;
-    let url = "<?php echo getenv('BASE_URL') . 'application/views/template/requisites/show_image.html';?>"
 </script>
