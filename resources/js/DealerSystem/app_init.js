@@ -1,4 +1,5 @@
-let app = angular.module('DealerSystem', ['ngFileUpload', 'checklist-model', 'ngCookies', 'ui.bootstrap']);
+let app = angular.module('DealerSystem',
+    ['ngFileUpload', 'checklist-model', 'ngCookies', 'ui.bootstrap', 'wipImageZoom']);
 
 app.directive('gkedMask', function () {
     return {
@@ -203,4 +204,34 @@ app.service('shareData', function () {
     function getData() {
         return this.shared_data
     }
+});
+
+app.service('ModalImageService', function ($http, $uibModal) {
+    let pc = this;
+    pc.data = {
+        Text: 'Сканированное изображение',
+        Image: ''
+    };
+    this.ShowModalImage = function (file_ident) {
+        $http.post('/index.php/requisites/get_image_reference', {
+            file_ident: file_ident,
+            large: true
+        }).then(function (response) {
+            pc.data.Image = response.data;
+            let modalInstance = $uibModal.open({
+                animation: true,
+                ariaLabelledBy: 'modal-title',
+                ariaDescribedBy: 'modal-body',
+                templateUrl: url,
+                controller: 'ModalInstanceCtrl',
+                controllerAs: 'pc',
+                size: 'customImageSize',
+                resolve: {
+                    data: () => pc.data
+                }
+            });
+            modalInstance.result.then(function () {
+            }, () => modalInstance.close());
+        }, (response) => console.log(response.data))
+    };
 });

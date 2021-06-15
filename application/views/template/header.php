@@ -20,6 +20,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
     <!-- Custom styles for this template -->
     <link href="<?php echo base_url(); ?>resources/css/theme.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>resources/css/modal.css" rel="stylesheet">
+    <link rel="stylesheet" href="<?php echo base_url("resources/css/wip-image-zoom.css"); ?>">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->
     <!--[if lt IE 9]>
@@ -33,16 +35,20 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <style id="holderjs-style" type="text/css"></style>
     <script src="<?php echo base_url("resources/js/jquery-1.11.1.min.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/angular.min.js"); ?>"></script>
+    <script src="<?php echo base_url("resources/js/angular-sanitize-1.7.8.js"); ?>"></script>
+    <script src="<?php echo base_url("resources/js/angular-ngtouch-1.8.0.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
-    <script src="<?php echo base_url("resources/js/ui-bootstrap-tpls-2.5.0.min.js");?>"></script>
+    <script src="<?php echo base_url("resources/js/ui-bootstrap-tpls-2.5.0.min.js"); ?>"></script>
+    <script src="<?php echo base_url("resources/js/wip-image-zoom.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/app_init.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/InvoiceCreateController.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/InvoiceShowController.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterController.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/RequisitesShowController.js"); ?>"></script>
     <script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterErrors.js"); ?>"></script>
+    <script src="<?php echo base_url("resources/js/DealerSystem/ModalImageController.js"); ?>"></script>
 </head>
 
 <body role="document">

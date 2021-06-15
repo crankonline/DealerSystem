@@ -11,9 +11,9 @@ app.factory('mObjNode', [function () {
     };
 }])
     .controller('RequisitesRegisterController', ['$scope', '$http', '$cookies', 'mObjNode', 'Upload', '$interval',
-        '$sce', '$window', 'shareData', 'RequisitesRegisterErrors',
+        '$sce', '$window', 'shareData', 'RequisitesRegisterErrors', 'ModalImageService',
         function ($scope, $http, $cookies, mObjNode, Upload, $interval, $sce, $window, shareData,
-                  RequisitesRegisterErrors) {
+                  RequisitesRegisterErrors, ModalImageService) {
             window.scope = $scope;
             window.cookies = $cookies;
 
@@ -646,6 +646,10 @@ app.factory('mObjNode', [function () {
                     $scope.errorissuingdate = null;
                     return false;
                 }
+            }
+
+            $scope.showImage = function (file_ident){
+                ModalImageService.ShowModalImage(file_ident);
             }
 
 
