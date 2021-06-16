@@ -577,20 +577,18 @@ app.factory('mObjNode', [function () {
 
             $scope.Check_Persons_Copy = function () {
                 let counter = {};
+                let pointer = false;
+                let message = $scope.Errors.Representatives.copy.error;
                 $scope.Data.common.representatives.forEach(function (rep) {
-                    let item = rep.person.surname + ' ' + rep.person.name + ' ' + rep.person.middleName;
+                    let passport = rep.person.passport.series + rep.person.passport.number;
+                    let fio = rep.person.surname + ' ' + rep.person.name + ' ' + rep.person.middleName;
+                    let item = passport + rep.person.pin;
+
                     if (!counter[item]) {
                         counter[item] = 1;
                     } else {
                         counter[item] += 1;
-                    }
-                });
-                let message = $scope.Errors.Representatives.copy.error;
-                counter = Object.entries(counter);
-                let pointer = false;
-                counter.forEach(function (i) {
-                    if (i[1] > 1) {
-                        message += i[0] + '\n';
+                        message += rep.position.name + ' - ' + passport + ' ' + fio + '\n';
                         pointer = true;
                     }
                 });
@@ -648,7 +646,7 @@ app.factory('mObjNode', [function () {
                 }
             }
 
-            $scope.showImage = function (file_ident){
+            $scope.showImage = function (file_ident) {
                 ModalImageService.ShowModalImage(file_ident);
             }
 
