@@ -35,7 +35,7 @@
             method              : 'lens', // fallow 'lens' or 'pointer'
             cursor              : 'crosshair', // 'none', 'default', 'crosshair', 'pointer', 'move'
             lens                : true, // Lens toggle
-            zoomLevel           : 0, // 0: not scales, uses the original large image size, use 1 and above to adjust.
+            zoomLevel           : 3, // 0: not scales, uses the original large image size, use 1 and above to adjust.
             immersiveMode       : '769', // false or 0 for disable, always, max width(px) for trigger
             immersiveModeOptions: {}, // can extend immersed mode options
             immersiveModeMessage: 'Click to Zoom', // Immersive mode message

@@ -222,7 +222,15 @@ app.service('ModalImageService', function ($http, $uibModal) {
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                templateUrl: url,
+                template:
+                    '<div class="modal-body" id="modal-body">\n' +
+                    '    <img id="modal-image" \n' +
+                    '         wip-image-zoom\n' +
+                    '         ng-src="{{pc.data.Image}}">\n' +
+                    '</div>\n' +
+                    '<div class="modal-footer">\n' +
+                    '    <button class="btn btn-primary" type="button" ng-click="pc.ok()">OK</button>\n' +
+                    '</div>',
                 controller: 'ModalInstanceCtrl',
                 controllerAs: 'pc',
                 size: 'customImageSize',
