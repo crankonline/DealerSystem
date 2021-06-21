@@ -88,11 +88,11 @@ class Dash extends CI_Controller
     public function news()
     {
         try {
-            $content = file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=');
+            $content = file_get_contents(getenv('NEWS_SERVICE'));
             if (!$content) {
                 throw new Exception('Failed to connect news service: HTTP request failed!');
             }
-            $Json = json_decode(file_get_contents('http://dostek.kg/api/?action=News.getList&limit=5&offset=' . $this->uri->segment(3)));
+            $Json = json_decode(file_get_contents(getenv('NEWS_SERVICE') . $this->uri->segment(3)));
             $data['messages'] = $Json->data;
             $data['pagination_message'] = $this->pagination_gen($this->per_page_messages, $Json->count);
         } catch (Exception $ex) {
