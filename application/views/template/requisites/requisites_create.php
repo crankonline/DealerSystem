@@ -761,7 +761,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            required
                                            numbers-only
                                            ng-model="Data.common.representatives[key].person.pin"
-                                           ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_pin.$valid}">
+                                           ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_pin.$valid}"
+                                            ng-change="Check_Persons_Copy('pin')">
                                 </td>
                             </tr>
                             <tr class="success">
