@@ -222,11 +222,9 @@ app.service('ModalImageService', function ($http, $uibModal) {
                 animation: true,
                 ariaLabelledBy: 'modal-title',
                 ariaDescribedBy: 'modal-body',
-                template: '<div class="modal-header">\n' +
-                    '    <h3 class="modal-title" id="modal-title">{{pc.data.Text}}</h3>\n' +
-                    '</div>\n' +
+                template:
                     '<div class="modal-body" id="modal-body">\n' +
-                    '    <img id="modal-image" width="95%"\n' +
+                    '    <img id="modal-image" \n' +
                     '         wip-image-zoom\n' +
                     '         ng-src="{{pc.data.Image}}">\n' +
                     '</div>\n' +
