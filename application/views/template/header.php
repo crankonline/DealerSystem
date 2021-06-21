@@ -20,7 +20,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
     <!-- Custom styles for this template -->
     <link href="<?php echo base_url(); ?>resources/css/theme.css" rel="stylesheet">
-    <link href="<?php echo base_url(); ?>resources/css/modal.css" rel="stylesheet">
+    <link href="<?php echo base_url(); ?>resources/css/custom.css" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo base_url("resources/css/wip-image-zoom.css"); ?>">
 
     <!-- Just for debugging purposes. Don't actually copy this line! -->

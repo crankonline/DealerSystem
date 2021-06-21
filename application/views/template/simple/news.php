@@ -1,5 +1,5 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 ?>
 <!--<style type="text/css">
     .spoiler >  input + .box {
@@ -9,16 +9,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         display: block;
     }
 </style>-->
-  <style>
-   .leftimg {
-    float:left; /* Выравнивание по левому краю */
-    margin: 7px 15px 3px 0; /* Отступы вокруг картинки */
-   }
-   .rightimg  {
-    float: right; /* Выравнивание по правому краю  */ 
-    margin: 7px 0 15px 3px; /* Отступы вокруг картинки */
-   }
-  </style>
+<style>
+    .leftimg {
+        float: left; /* Выравнивание по левому краю */
+        margin: 7px 15px 3px 0; /* Отступы вокруг картинки */
+    }
+
+    .rightimg {
+        float: right; /* Выравнивание по правому краю  */
+        margin: 7px 0 15px 3px; /* Отступы вокруг картинки */
+    }
+</style>
 
 <div class="container theme-showcase" role="main">
     <?php if (isset($error_message)): // вывод ошибки если счет не на оплату найденхотя можно и show_error в контороллере  ?>
@@ -30,13 +31,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         <?php if (isset($messages)): ?>
             <div class="page-header"><h2><span class="glyphicon glyphicon-tags"></span> Новости</h2></div>
             <?php foreach ($messages as $message): ?>
-        <div class="well">
+                <div class="well-news">
                     <h3 align="left"> <?php echo $message->CaptionRu; ?></h3>
-                    <img src="<?php echo $message->Illustration; ?>" style = "width: 25%; height:25%" class="leftimg"> <!--верстка-->
+                    <img src="<?php echo $message->Illustration; ?>" style="width: 25%; height:25%" class="leftimg">
+                    <!--верстка-->
                     <?php echo $message->ContentRu; ?>
                     <p align="right">
                         <?php echo $message->Date; ?>
-                    </p>       
+                    </p>
                 </div>
             <?php endforeach; ?>
             <ul class="pagination">
