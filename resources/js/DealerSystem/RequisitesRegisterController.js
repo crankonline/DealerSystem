@@ -583,7 +583,8 @@ app.factory('mObjNode', [function () {
                 for (let i = 0; i < rep.length; i++) {
                     let passport = rep[i].person.passport.series + rep[i].person.passport.number;
                     let pin = rep[i].person.pin;
-                    let fio = rep[i].person.surname + ' ' + rep[i].person.name + ' ' + rep[i].person.middleName;
+                    let fio = rep[i].person.surname + ' ' + rep[i].person.name;
+                    fio += (rep[i].person.middleName != undefined) ? ' ' + rep[i].person.middleName : '';
                     let val = (check === 'passport') ? passport : pin;
                     message = (check === 'passport') ? $scope.Errors.Representatives.copy.error.passport :
                         $scope.Errors.Representatives.copy.error.pin;
@@ -593,7 +594,7 @@ app.factory('mObjNode', [function () {
                         message += passport + ' ' + fio + '\n';
                         pointer = true;
                         break;
-                    }   
+                    }
                 }
                 if (pointer) {
                     alert(message);
