@@ -584,27 +584,16 @@ app.factory('mObjNode', [function () {
                     let passport = rep[i].person.passport.series + rep[i].person.passport.number;
                     let pin = rep[i].person.pin;
                     let fio = rep[i].person.surname + ' ' + rep[i].person.name + ' ' + rep[i].person.middleName;
-                    if (check === 'passport') {
-                        if (!counter[passport]) {
-                            counter[passport] = 1;
-                        } else {
-                            message += $scope.Errors.Representatives.copy.error.passport +
-                                passport + ' ' + fio + '\n';
-                            pointer = true;
-                            break;
-                        }
-                    }
-                    if (check === 'pin') {
-                        if (!counter[pin]) {
-                            counter[pin] = 1;
-                        } else {
-                            message += $scope.Errors.Representatives.copy.error.pin +
-                                passport + ' ' + fio + '\n';
-                            pointer = true;
-                            break;
-                        }
-
-                    }
+                    let val = (check === 'passport') ? passport : pin;
+                    message = (check === 'passport') ? $scope.Errors.Representatives.copy.error.passport :
+                        $scope.Errors.Representatives.copy.error.pin;
+                    if (!counter[val]) {
+                        counter[val] = 1;
+                    } else {
+                        message += passport + ' ' + fio + '\n';
+                        pointer = true;
+                        break;
+                    }   
                 }
                 if (pointer) {
                     alert(message);
