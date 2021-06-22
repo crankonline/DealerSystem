@@ -534,7 +534,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_kg && jur_file_ch_kg"
-                                     ng-src="{{JUR_File_kg}}">
+                                     ng-src="{{JUR_File_kg}}"
+                                     ng-click="showImage(Data.common.files.mu_file_kg.file_ident)">
                                 <div align="center"
                                      ng-show="!Data.common.files.mu_file_kg && jur_file_ch_kg">
                                     Документ отсутсвует
@@ -575,7 +576,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_ru && jur_file_ch_ru"
-                                     ng-src="{{JUR_File_ru}}">
+                                     ng-src="{{JUR_File_ru}}"
+                                     ng-click="showImage(Data.common.files.mu_file_ru.file_ident)">
                                 <div align="center"
                                      ng-show="!Data.common.files.mu_file_ru && jur_file_ch_ru">
                                     Документ отсутсвует
@@ -617,7 +619,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                      width="50%">
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.ie_file && ie_file_ch"
-                                     ng-src="{{IE_File_load}}">
+                                     ng-src="{{IE_File_load}}"
+                                     ng-click="showImage(Data.common.files.ie_file.file_ident)">
                                 <div align="center"
                                      ng-show="!Data.common.files.ie_file && ie_file_ch">
                                     Документ отсутсвует
@@ -658,7 +661,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                 <img class="thumbnail"
                                      ng-show="Data.common.files.mu_file_m2a && jur_file_ch_m2a"
-                                     ng-src="{{JUR_File_m2a}}">
+                                     ng-src="{{JUR_File_m2a}}"
+                                     ng-click="showImage(Data.common.files.mu_file_m2a.file_ident)">
                             </td>
                         </tr>
                         </tbody>
@@ -757,7 +761,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            required
                                            numbers-only
                                            ng-model="Data.common.representatives[key].person.pin"
-                                           ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_pin.$valid}">
+                                           ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_pin.$valid}"
+                                            ng-change="Check_Persons_Copy('pin')">
                                 </td>
                             </tr>
                             <tr class="success">
@@ -936,7 +941,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_side_1 && rep_file_ch_passport_side_1[key]"
-                                         ng-src="{{REP_File_front[key]}}">
+                                         ng-src="{{REP_File_front[key]}}"
+                                         ng-click="showImage(Data.common.representatives[key].files.passport_side_1.file_ident)">
                                 </td>
                             </tr>
                             <tr>
@@ -977,7 +983,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_side_2 && rep_file_ch_passport_side_2[key]"
-                                         ng-src="{{REP_File_back[key]}}">
+                                         ng-src="{{REP_File_back[key]}}"
+                                         ng-click="showImage(Data.common.representatives[key].files.passport_side_2.file_ident)">
                                 </td>
                             </tr>
                             <tr class="success">
@@ -1024,7 +1031,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                                     <img class="thumbnail"
                                          ng-show="Data.common.representatives[key].files.passport_copy && rep_file_ch_passport_copy[key]"
-                                         ng-src="{{REP_File_copy[key]}}">
+                                         ng-src="{{REP_File_copy[key]}}"
+                                         ng-click="showImage(Data.common.representatives[key].files.passport_copy.file_ident)">
                                 </td>
                             </tr>
                             </tbody>
@@ -1075,15 +1083,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <?php endif; ?>
 </div>
 
-<script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/rutoken/dependencies.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/rutoken//PluginManager.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem//app_init.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterErrors.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/RequisitesRegisterController.js"); ?>"></script>
-
 <script type="text/javascript">
     /* Инициализация переменных для справочников и дефаулт значений для RequisitesRegisterForm контроллера */
     let requisites_json = <?php echo json_encode(isset($requisites_json) ? $requisites_json : "''");//json с предыдущей регистрацией ?>;
@@ -1124,5 +1123,5 @@ defined('BASEPATH') or exit('No direct script access allowed');
     let settlement_phy_id = <?php echo (isset($requisites_json->common->physicalAddress->settlement->id)) ?
         $requisites_json->common->physicalAddress->settlement->id : "''"; ?>;
     let object_pins = <?php  echo json_encode(isset($object_pins) ? $object_pins : "''"); ?>;
-    let eds_count = <?php echo(isset($invoice_data) ? $invoice_data->eds_count : 0)?>
+    let eds_count = <?php echo(isset($invoice_data) ? $invoice_data->eds_count : 0)?>;
 </script>

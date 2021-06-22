@@ -141,8 +141,3 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <?php endif; ?>
     </div>
 </div>
-<script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/app_init.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/InvoiceCreateController.js"); ?>"></script>

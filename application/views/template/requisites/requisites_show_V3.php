@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 ?>
-<div class="container theme-showcase" role="main" ng-app="RequisitesForm" ng-controller="RequisitesFormData">
+<div class="container theme-showcase" role="main" ng-app="DealerSystem" ng-controller="RequisitesShowController">
 
     <?php if (isset($error_message)): ?>
         <div class="alert alert-danger">
@@ -262,9 +262,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="row">
                 <?php foreach ($requisites_data->json->common->files as $file): ?>
                     <div class="col-xs-6 col-md-3">
-                        <a href="#" class="thumbnail">
-                            <img src=<?php echo $file->data ?> alt="...">
-                        </a>
+                        <img src=<?php echo $file->data ?>
+                             ng-click=<?php echo "showImage('" . $file->file_ident . "')"; ?>>
                         <p align="center">
                             <?php echo DateTime::createFromFormat('Y-m-d H:i:s.u', $file->timestamp)->format('d.m.Y H:i'); ?>
                         </p>
@@ -349,9 +348,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <div class="row">
                         <?php foreach ($person->files as $file): ?>
                             <div class="col-xs-6 col-md-3">
-                                <a href="#" class="thumbnail">
-                                    <img src=<?php echo $file->data ?> alt="...">
-                                </a>
+                                <img src=<?php echo $file->data ?>
+                                     ng-click=<?php echo "showImage('" . $file->file_ident . "')"; ?>>
                                 <p align="center">
                                     <?php echo DateTime::createFromFormat('Y-m-d H:i:s.u', $file->timestamp)->format('d.m.Y H:i'); ?>
                                 </p>
@@ -364,11 +362,3 @@ defined('BASEPATH') or exit('No direct script access allowed');
     <?php endif; ?>
     <?php //endif; ?>
 </div>
-<script type="text/javascript">
-    var RequisitesForm = angular.module('RequisitesForm', []);
-    RequisitesForm.controller('RequisitesFormData', ['$scope', function ($scope) {
-        $scope.person_scan = false;
-        $scope.juridical_scan = false;
-    }
-    ]);
-</script>

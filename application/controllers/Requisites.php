@@ -515,8 +515,9 @@ class Requisites extends CI_Controller
             $postdate = file_get_contents("php://input");
             $request = json_decode($postdate);
             $Dumpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $request->file_ident;
-            file_put_contents($Dumpfile, fopen(getenv('MEDIA_SERVER') . 'file/download/' . $request->file_ident .
-                '?w=350&h=&f=center', 'r'));
+            $imageUrl = getenv('MEDIA_SERVER') . 'file/download/' . $request->file_ident .
+                ( !isset($request->large) ? '?w=350&h=&f=center' : '');
+            file_put_contents($Dumpfile, fopen($imageUrl, 'r'));
             echo 'data:image/jpeg;base64,' . base64_encode(file_get_contents($Dumpfile));
         } catch (Exception $ex) {
             \Sentry\captureException($ex);

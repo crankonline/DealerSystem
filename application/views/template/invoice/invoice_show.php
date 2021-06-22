@@ -360,12 +360,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
     </div>
 </div>
 
-<script src="<?php echo base_url("resources/js/ng-file-upload.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/check-list-model.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/angular-cookies.min.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/app_init.js"); ?>"></script>
-<script src="<?php echo base_url("resources/js/DealerSystem/InvoiceShowController.js"); ?>"></script>
-
 <script type="text/javascript">
     let eds_count = <?php echo $eds_count; ?>;
     let id_invoice = <?php echo $invoice_data[0]->id_invoice; ?>
