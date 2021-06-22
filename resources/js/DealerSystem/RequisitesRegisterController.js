@@ -568,30 +568,33 @@ app.factory('mObjNode', [function () {
                         $scope.Data.common.representatives[Key].person.name = response.data.name;
                         $scope.Data.common.representatives[Key].person.middleName = response.data.middleName;
                         $scope.Data.common.representatives[Key].person.pin = response.data.pin;
-                        $scope.Check_Persons_Copy();//проверяем на наличие повторяющихся представителей по ПИН
+                        $scope.Check_Persons_Copy('passport');//проверяем на наличие повторяющихся представителей по ПИН
                     }, function (response) {
 
                     });
                 }
             };
 
-            $scope.Check_Persons_Copy = function () {
+            $scope.Check_Persons_Copy = function (check) {
                 let counter = {};
                 let pointer = false;
-                let message = $scope.Errors.Representatives.copy.error;
-                $scope.Data.common.representatives.forEach(function (rep) {
-                    let passport = rep.person.passport.series + rep.person.passport.number;
-                    let fio = rep.person.surname + ' ' + rep.person.name + ' ' + rep.person.middleName;
-                    let item = passport + rep.person.pin;
-
-                    if (!counter[item]) {
-                        counter[item] = 1;
+                let message = '';
+                let rep = $scope.Data.common.representatives;
+                for (let i = 0; i < rep.length; i++) {
+                    let passport = rep[i].person.passport.series + rep[i].person.passport.number;
+                    let pin = rep[i].person.pin;
+                    let fio = rep[i].person.surname + ' ' + rep[i].person.name + ' ' + rep[i].person.middleName;
+                    let val = (check === 'passport') ? passport : pin;
+                    message = (check === 'passport') ? $scope.Errors.Representatives.copy.error.passport :
+                        $scope.Errors.Representatives.copy.error.pin;
+                    if (!counter[val]) {
+                        counter[val] = 1;
                     } else {
-                        counter[item] += 1;
-                        message += rep.position.name + ' - ' + passport + ' ' + fio + '\n';
+                        message += passport + ' ' + fio + '\n';
                         pointer = true;
-                    }
-                });
+                        break;
+                    }   
+                }
                 if (pointer) {
                     alert(message);
                     return false;
@@ -737,12 +740,11 @@ app.factory('mObjNode', [function () {
                         return;
                     }
                 }
-                if (!$scope.Check_Persons_Copy()) {
+                if (!$scope.Check_Persons_Copy('passport') || !$scope.Check_Persons_Copy('pin')) {
                     $scope.toggle = true;
                     return;
                 }
                 /* end checks */
-
                 let id_requisites = null;
                 let check_jur = false; //for redirect
                 let count_of_count = 0; //for redirect
@@ -927,4 +929,5 @@ app.factory('mObjNode', [function () {
                 }
                 return input;
             };
-        }]);
+        }])
+;
