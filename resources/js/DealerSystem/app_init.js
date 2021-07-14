@@ -91,7 +91,7 @@ app.directive('passportOnly', function () {
         link: function (scope, element, attr, ngModelCtrl) {
             function fromUser(text) {
                 if (text) {
-                    let transformedInput = text.replace(/[^A-Z0-9]/g, '');
+                    let transformedInput = text.replace(/[^A-Z0-9\-]/g, '');
                     if (transformedInput !== text) {
                         ngModelCtrl.$setViewValue(transformedInput);
                         ngModelCtrl.$render();
