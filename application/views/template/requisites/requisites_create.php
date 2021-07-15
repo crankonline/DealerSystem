@@ -689,17 +689,25 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <td colspan="2" align="center">Паспортные данные</td>
                             </tr>
                             <tr>
-                                <td style="width: 266px">Серия паспорта</td>
+                                <td style="width: 266px">Серия паспорта ( <input type="checkbox"
+                                                                                 ng-checked="Data.common.representatives[key].person.passport.series === 'N/A'"
+                                                                                 ng-model="checkbox_passport_series[key]"
+                                                                                 ng-click="!checkbox_passport_series[key] ?
+                                                                        Data.common.representatives[key].person.passport.series = 'N/A' :
+                                                                        Data.common.representatives[key].person.passport.series = ''">
+                                    Серия присутствует)
+                                </td>
                                 <td>
                                     <input type="text"
                                            name="data_common_representatives{{key}}_person_passport_series"
                                            class="form-control"
                                            placeholder="до 4 символов"
-                                           minlength="2"
-                                           maxlength="4"
+                                           minlength="1"
+                                           maxlength="5"
                                            required=""
                                            upper-case
                                            passport-only
+                                           ng-readonly="checkbox_passport_series[key]"
                                            ng-model="Data.common.representatives[key].person.passport.series"
                                            ng-change="Get_person(Data.common.representatives[key].person.passport.series, Data.common.representatives[key].person.passport.number, key)"
                                            ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_passport_series.$valid}">
@@ -762,7 +770,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            numbers-only
                                            ng-model="Data.common.representatives[key].person.pin"
                                            ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_pin.$valid}"
-                                            ng-change="Check_Persons_Copy('pin')">
+                                           ng-change="Check_Persons_Copy('pin')">
                                 </td>
                             </tr>
                             <tr class="success">
