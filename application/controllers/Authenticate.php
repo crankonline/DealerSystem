@@ -97,7 +97,7 @@ class Authenticate extends CI_Controller
                 $session_data = $this->create_session_data($result);
                 $this->session->set_userdata('logged_in', $session_data);
                 $this->session->userdata['logged_in']['UserRoleID'] == '1' ?
-                    redirect(base_url('index.php/admin/')) :
+                    redirect(base_url('index.php/admin/users')) :
                     redirect(base_url('index.php/dash/'));
                 //redirect(base_url() . 'index.php/dash/');
             }

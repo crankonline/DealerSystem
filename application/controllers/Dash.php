@@ -10,8 +10,7 @@ class Dash extends CI_Controller
         parent::__construct();
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6
-        $this->session->userdata['logged_in']['UserRoleID'] == 1 ? redirect('/admin/users') : null; //Админам тут делать нечего
-
+        $this->session->userdata['logged_in']['UserID'] == 5 ? redirect('/admin/users') : null; //Админам тут делать нечего
         $this->load->model('invoice_model'); //в меню есть запросы
         $this->load->model('messages_model');
         $this->load->library('pagination');
