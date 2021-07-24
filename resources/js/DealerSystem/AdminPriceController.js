@@ -22,7 +22,7 @@ app.controller('AdminPriceController', ['$scope', '$http', 'orderByFilter', func
     $scope.changeInventory = () => {
         $scope.dataInventoryId = $scope.dataInventory.id_inventory;
         $scope.dataInventoryName = $scope.dataInventory.inventory_name;
-        $scope.dataInventoryPrice = $scope.dataInventory.price;
+        $scope.dataInventoryPrice = Math.ceil($scope.dataInventory.price);
     }
 
     $scope.savePrice = () => {
@@ -36,7 +36,6 @@ app.controller('AdminPriceController', ['$scope', '$http', 'orderByFilter', func
             dataInventoryPrice: $scope.dataInventoryPrice
         }).then((response) => {
             $scope.loadDataInventory();
-            //alert('Данные сохранены');
         }, (response) => {
             alert(response.data);
         });

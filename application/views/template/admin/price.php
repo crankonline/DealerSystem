@@ -12,7 +12,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-list"></span>
-                        Текуцие ТМЦ
+                        Текущие товары и услуги
                     </h3>
                 </div>
                 <div class="panel-body">
@@ -38,7 +38,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="panel panel-warning">
                 <div class="panel-heading">
                     <h3 class="panel-title"><span class="glyphicon glyphicon-cog"></span>
-                        Редактирование ТМЦ
+                        Редактирование товаров и услуг
                     </h3>
                 </div>
                 <div class="panel-body">
