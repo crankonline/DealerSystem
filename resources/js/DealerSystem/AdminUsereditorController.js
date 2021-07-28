@@ -25,6 +25,9 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
             }
             if (reference === reference_type.get_users_acl) {
                 $scope.dataUsersAcl = response.data;
+                if ($scope.SelectedUserAcl != []) {
+                    $scope.changeUsersSelect();
+                }
             }
         });
     }
@@ -60,7 +63,9 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
 
         $http.post('/index.php/admin/save_users_acl', {
             data: $scope.SelectedUserAcl
-        })
+        }).then((response) => {
+            $scope.loadReference(reference_type.get_users_acl);
+        });
     }
 
     $scope.loadReference(reference_type.get_users);
