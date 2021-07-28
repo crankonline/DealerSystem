@@ -33,7 +33,6 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
         $scope.SelectedUserAcl = $scope.dataUsersAcl.filter((value) => {
             return value.users_id === $scope.dataUsersSelect.id_users;
         });
-        console.log($scope.SelectedUserAcl);
         angular.forEach($scope.dataAcl, (acl) => {
             acl.checked = false;
         });
@@ -59,13 +58,9 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
             }
         });
 
-        console.log($scope.SelectedUserAcl);
-        //$scope.loadReference($scope.SelectedUserAcl);
         $http.post('/index.php/admin/save_users_acl', {
-            data : $scope.SelectedUserAcl
-        }).then ((response) =>{
-
-        });
+            data: $scope.SelectedUserAcl
+        })
     }
 
     $scope.loadReference(reference_type.get_users);
