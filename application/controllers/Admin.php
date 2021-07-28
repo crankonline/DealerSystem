@@ -9,9 +9,10 @@ class Admin extends CI_Controller
         //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
         isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6
         $this->session->userdata['logged_in']['UserID'] != 5 ? redirect('/dash/news') : null; //Не админам тут делать нечего
-        $this->load->model('requisites_model');
         $this->load->model('price_model');
-        $this->load->model('account_model');
+        $this->load->model('acl_model');
+        $this->load->model('users_acl_model');
+        $this->load->model('users_model');
     }
 
     public function users()
@@ -102,6 +103,47 @@ class Admin extends CI_Controller
                 throw new Exception('Данные не получены.');
             }
             $this->price_model->update($postdata);
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500);
+            echo $ex->getMessage();
+        }
+    }
+
+    public function save_users_acl()
+    {
+        $postdata = json_decode(file_get_contents("php://input"));
+        if (!$postdata) {
+            throw new Exception('Данные не получены.');
+        }
+        $users_acl = $this->users_acl_model->get_users_acl();
+        foreach ($users_acl as $key => $row_user_acl) {
+            if ($row_user_acl->users_id != $postdata->data[0]->users_id) {
+                unset($users_acl[$key]);
+            }
+        }
+        foreach ($postdata->data as $row_postdata) {
+            if (array_search($row_postdata->acl_id, array_column($users_acl, 'acl_id')) === false) {
+                $this->users_acl_model->insert_users_acl($row_postdata);
+            }
+        }
+        foreach ($users_acl as $row_users_acl){
+            if(array_search($row_users_acl->acl_id, array_column($postdata->data, 'acl_id')) === false){
+                $this->users_acl_model->delete_users_acl($row_users_acl);
+            }
+        }
+    }
+
+    public function references()
+    {
+        try {
+            $result = null;
+            $postdata = json_decode(file_get_contents("php://input"));
+            $postdata->reference == 'get_users' ? $result = $this->users_model->get_users() : null;
+            $postdata->reference == 'get_acl' ? $result = $this->acl_model->get_acl() : null;
+            $postdata->reference == 'get_users_acl' ? $result = $this->users_acl_model->get_users_acl() : null;
+            echo json_encode($result);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());

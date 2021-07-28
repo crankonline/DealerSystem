@@ -26,7 +26,7 @@ app.controller('AdminPriceController', ['$scope', '$http', 'orderByFilter', func
     }
 
     $scope.savePrice = () => {
-        if (!$scope.dataInventoryPrice || !$scope.dataInventoryName) {
+        if (!$scope.dataInventoryPrice || !$scope.dataInventoryName || $scope.dataInventoryPrice < 0) {
             alert('Введите корректные данные.');
             return;
         }
