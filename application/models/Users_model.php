@@ -8,4 +8,10 @@ class Users_model extends CI_Model
     {
         return $this->db->get('"Dealer_data".users')->result();
     }
+
+    public function update_users($data)
+    {
+        $this->db->where('id_users', $data->id_users);
+        $this->db->update('"Dealer_data".users', $data);
+    }
 }

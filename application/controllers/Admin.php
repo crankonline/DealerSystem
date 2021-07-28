@@ -113,25 +113,48 @@ class Admin extends CI_Controller
 
     public function save_users_acl()
     {
-        $postdata = json_decode(file_get_contents("php://input"));
-        if (!$postdata) {
-            throw new Exception('Данные не получены.');
-        }
-        $users_acl = $this->users_acl_model->get_users_acl();
-        foreach ($users_acl as $key => $row_user_acl) {
-            if ($row_user_acl->users_id != $postdata->data[0]->users_id) {
-                unset($users_acl[$key]);
+        try {
+            $postdata = json_decode(file_get_contents("php://input"));
+            if (!$postdata) {
+                throw new Exception('Данные не получены.');
             }
-        }
-        foreach ($postdata->data as $row_postdata) {
-            if (array_search($row_postdata->acl_id, array_column($users_acl, 'acl_id')) === false) {
-                $this->users_acl_model->insert_users_acl($row_postdata);
+            $users_acl = $this->users_acl_model->get_users_acl();
+            foreach ($users_acl as $key => $row_user_acl) {
+                if ($row_user_acl->users_id != $postdata->data[0]->users_id) {
+                    unset($users_acl[$key]);
+                }
             }
-        }
-        foreach ($users_acl as $row_users_acl){
-            if(array_search($row_users_acl->acl_id, array_column($postdata->data, 'acl_id')) === false){
-                $this->users_acl_model->delete_users_acl($row_users_acl);
+            foreach ($postdata->data as $row_postdata) {
+                if (array_search($row_postdata->acl_id, array_column($users_acl, 'acl_id')) === false) {
+                    $this->users_acl_model->insert_users_acl($row_postdata);
+                }
             }
+            foreach ($users_acl as $row_users_acl) {
+                if (array_search($row_users_acl->acl_id, array_column($postdata->data, 'acl_id')) === false) {
+                    $this->users_acl_model->delete_users_acl($row_users_acl);
+                }
+            }
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500);
+            echo $ex->getMessage();
+        }
+    }
+
+    public function update_users()
+    {
+        try {
+            $postdata = json_decode(file_get_contents("php://input"));
+            if (!$postdata->data) {
+                throw new Exception('Данные не получены.');
+            }
+            $this->users_model->update_users($postdata->data);
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500);
+            echo $ex->getMessage();
         }
     }
 
