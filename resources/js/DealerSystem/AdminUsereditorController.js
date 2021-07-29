@@ -5,7 +5,9 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
         get_users: 'get_users',
         get_acl: 'get_acl',
         get_users_acl: 'get_users_acl',
-        save_users_acl: 'save_users_acl'
+        save_users_acl: 'save_users_acl',
+        get_role: 'get_role',
+        get_distributor: 'get_distributor'
     };
 
 
@@ -29,6 +31,12 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
                     $scope.changeUsersSelect();
                 }
             }
+            if (reference === reference_type.get_role) {
+                $scope.dataRole = orderBy(response.data, 'name', false);
+            }
+            if (reference === reference_type.get_distributor) {
+                $scope.dataDistributor = orderBy(response.data, 'id_distributor', false);
+            }
         });
     }
 
@@ -49,6 +57,9 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
 
         $scope.NewPassword1 = '';
         $scope.NewPassword2 = '';
+
+        $scope.loadReference(reference_type.get_role);
+        $scope.loadReference(reference_type.get_distributor);
     }
 
     $scope.saveUserAcl = () => {
@@ -68,19 +79,23 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
             data: $scope.SelectedUserAcl
         }).then((response) => {
             $scope.loadReference(reference_type.get_users_acl);
+            alert('Привилегии успешно обновлены.');
         });
     }
 
     $scope.updateUsers = () => {
-        $scope.dataUsersSelect.user_password = CryptoJS.SHA1($scope.NewPassword1).toString();
+        if ($scope.NewPassword1 !== '') {
+            $scope.dataUsersSelect.user_password = CryptoJS.SHA1($scope.NewPassword1).toString();
+        }
         $http.post('/index.php/admin/update_users', {
             data: $scope.dataUsersSelect
         }).then((response) => {
-            alert('Пароль успешно обновлен.')
+            alert('Данные успешно обновлены.');
         });
     }
 
     $scope.loadReference(reference_type.get_users);
     $scope.loadReference(reference_type.get_acl);
     $scope.loadReference(reference_type.get_users_acl);
-}]);
+}])
+;

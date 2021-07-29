@@ -13,6 +13,8 @@ class Admin extends CI_Controller
         $this->load->model('acl_model');
         $this->load->model('users_acl_model');
         $this->load->model('users_model');
+        $this->load->model('role_model');
+        $this->load->model('distributor_model');
     }
 
     public function users()
@@ -166,6 +168,8 @@ class Admin extends CI_Controller
             $postdata->reference == 'get_users' ? $result = $this->users_model->get_users() : null;
             $postdata->reference == 'get_acl' ? $result = $this->acl_model->get_acl() : null;
             $postdata->reference == 'get_users_acl' ? $result = $this->users_acl_model->get_users_acl() : null;
+            $postdata->reference == 'get_role' ? $result = $this->role_model->get_role() : null;
+            $postdata->reference == 'get_distributor' ? $result = $this->distributor_model->get_distributor() : null;
             echo json_encode($result);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);

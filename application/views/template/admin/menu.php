@@ -16,6 +16,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <a href="" class="dropdown-toggle" data-toggle="dropdown"><span
                                 class="glyphicon glyphicon-user"></span> Пользователи <b class="caret"></b></a>
                     <ul class="dropdown-menu">
+                        <li><a href="<?php echo base_url(); ?>index.php/admin/users"><span
+                                        class="glyphicon glyphicon-edit"></span> Редактирование пользователя</a></li>
                         <li><a href="<?php echo base_url(); ?>index.php/admin/user_roles"><span
                                         class="glyphicon glyphicon-log-in"></span> Привелегии</a></li>
                         <li><a href="<?php echo base_url(); ?>index.php/admin/user_password"><span
