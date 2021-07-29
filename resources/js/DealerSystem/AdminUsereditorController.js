@@ -7,7 +7,7 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
         get_users_acl: 'get_users_acl',
         save_users_acl: 'save_users_acl'
     };
-    $scope.SelectedUserAcl = [];
+
 
     $scope.loadReference = (reference) => {
         $http.post('/index.php/admin/references', {
@@ -25,7 +25,7 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
             }
             if (reference === reference_type.get_users_acl) {
                 $scope.dataUsersAcl = response.data;
-                if ($scope.SelectedUserAcl != []) {
+                if ($scope.SelectedUserAcl) {
                     $scope.changeUsersSelect();
                 }
             }
@@ -46,6 +46,9 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
                 }
             });
         });
+
+        $scope.NewPassword1 = '';
+        $scope.NewPassword2 = '';
     }
 
     $scope.saveUserAcl = () => {
@@ -65,6 +68,15 @@ app.controller('AdminUsereditorController', ['$scope', '$http', 'orderByFilter',
             data: $scope.SelectedUserAcl
         }).then((response) => {
             $scope.loadReference(reference_type.get_users_acl);
+        });
+    }
+
+    $scope.updateUsers = () => {
+        $scope.dataUsersSelect.user_password = CryptoJS.SHA1($scope.NewPassword1).toString();
+        $http.post('/index.php/admin/update_users', {
+            data: $scope.dataUsersSelect
+        }).then((response) => {
+            alert('Пароль успешно обновлен.')
         });
     }
 
