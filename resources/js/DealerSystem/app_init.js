@@ -243,3 +243,14 @@ app.service('ModalImageService', function ($http, $uibModal) {
         }, (response) => console.log(response.data))
     };
 });
+
+const admin_reference_type = {
+    get_users: 'get_users',
+    get_acl: 'get_acl',
+    get_users_acl: 'get_users_acl',
+    save_users_acl: 'save_users_acl',
+    get_role: 'get_role',
+    get_distributor: 'get_distributor',
+    get_where_invoice: 'get_where_invoice',
+    get_where_requisites: 'get_where_requisites'
+};

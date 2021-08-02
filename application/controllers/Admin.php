@@ -15,6 +15,7 @@ class Admin extends CI_Controller
         $this->load->model('users_model');
         $this->load->model('role_model');
         $this->load->model('distributor_model');
+        $this->load->model('invoice_model');
     }
 
     public function users()
@@ -53,7 +54,6 @@ class Admin extends CI_Controller
     {
         try {
             $data = null;
-
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
@@ -69,7 +69,6 @@ class Admin extends CI_Controller
     {
         try {
             $data = null;
-
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
@@ -85,7 +84,6 @@ class Admin extends CI_Controller
     {
         try {
             $data = null;
-
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());
@@ -163,6 +161,7 @@ class Admin extends CI_Controller
     public function references()
     {
         try {
+
             $result = null;
             $postdata = json_decode(file_get_contents("php://input"));
             $postdata->reference == 'get_users' ? $result = $this->users_model->get_users() : null;
@@ -170,6 +169,7 @@ class Admin extends CI_Controller
             $postdata->reference == 'get_users_acl' ? $result = $this->users_acl_model->get_users_acl() : null;
             $postdata->reference == 'get_role' ? $result = $this->role_model->get_role() : null;
             $postdata->reference == 'get_distributor' ? $result = $this->distributor_model->get_distributor() : null;
+            $postdata->reference == 'get_where_invoice' ? $result = $this->invoice_model->get_where_invoice($postdata->data) : null;
             echo json_encode($result);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -178,4 +178,14 @@ class Admin extends CI_Controller
             echo $ex->getMessage();
         }
     }
+
+//    public function get_data(){
+//        try{
+//            $result = null;
+//            $postdata = json_decode(file_get_contents("php://input"));
+//            if($postdata)
+//        } catch (Exception $ex){
+//
+//        }
+//    }
 }

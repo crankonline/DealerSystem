@@ -29,7 +29,6 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         };
 
         $scope.filterItems = function (key) {
-            console.log(key);
             if ($scope.enteredPin[key] != null) {
                 if ($scope.minlength <= $scope.enteredPin[key].length) {
                     let queryPromise = querySearch($scope.enteredPin[key]);
