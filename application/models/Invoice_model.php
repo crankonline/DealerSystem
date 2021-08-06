@@ -275,8 +275,7 @@ class Invoice_model extends CI_Model
 
     public function get_where_invoice($data)
     {
-        return $this->db->get_where('"Dealer_data".invoice',
-            ['invoice_serial_number' => $data->invoice_serial_number])->row();
+        return $this->db->get_where('"Dealer_data".invoice', $data)->result();
     }
 
 }

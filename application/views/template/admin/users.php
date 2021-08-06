@@ -26,7 +26,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <div class="panel-body">
                     <select class="form-control"
                             ng-model="dataUsersSelect"
-                            ng-options="option.user_login +' '+ option.surname +' '+ option.name disable when option.id_users === null
+                            ng-options="option.user_login +' '+ option.surname +' '+ option.name
+                            disable when option.id_users === null
                                 for option in dataUsers track by option.id_users"
                             ng-change="changeUsersSelect()">
                     </select>
@@ -63,13 +64,26 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     value="{{option.id_distributor}}">{{option.full_name}}
                             </option>
                         </select>
+                        <hr/>
+                        <strong>Введите новый пароль</strong>
+                        <input type="password"
+                               class="form-control "
+                               ng-model="NewPassword1">
+                        <strong>Повторно введите новый пароль</strong>
+                        <input type="password"
+                               class="form-control"
+                               ng-model="NewPassword2">
                     </div>
                 </div>
+                <div class="alert alert-danger" ng-hide="NewPassword1 == NewPassword2">
+                    Введенные пароли должны совпадать.
+                </div>
+            </div>
                 <div align="center" ng-hide="dataUsersSelect.id_users=== '0'">
                     <p>
                         <button type="submit"
                                 class="btn btn-success"
-                                ng-click="updateUsers()">
+                                ng-click="saveUsers()">
                             <span class="glyphicon glyphicon-save"></span>
                             Сохранить
                         </button>
@@ -79,4 +93,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <?php endif; ?>
     </div>
 </div>
+<script src="<?php echo base_url("resources/js/DealerSystem/AdminServices.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/DealerSystem/AdminUsereditorController.js"); ?>"></script>
+<script src="<?php echo base_url("resources/js/sha1.js"); ?>"></script>
