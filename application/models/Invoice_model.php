@@ -278,4 +278,10 @@ class Invoice_model extends CI_Model
         return $this->db->get_where('"Dealer_data".invoice', $data)->result();
     }
 
+    public function delete_invoice($data){
+        $this->db->where('id_invoice', $data->id_invoice);
+        $this->db->where('delete_marker', 'true');
+        $this->db->delete('"Dealer_data".invoice');
+    }
+
 }

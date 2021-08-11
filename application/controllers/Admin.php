@@ -16,7 +16,12 @@ class Admin extends CI_Controller
         $this->load->model('role_model');
         $this->load->model('distributor_model');
         $this->load->model('invoice_model');
+        $this->load->model('invoice_sochi_model');
         $this->load->model('requisites_model');
+        $this->load->model('files_juridical_model');
+        $this->load->model('files_type_model');
+        $this->load->model('files_owner_model');
+        $this->load->model('files_representatives_model');
     }
 
     private function viewConstructor($view, $data)
@@ -105,12 +110,22 @@ class Admin extends CI_Controller
             if (!$postdata) {
                 throw new Exception('Данные не получены.');
             }
-            $result_requisites = $this->requisites_model->get_where_requisites(['users_id' => $postdata->data->id_users]);
-            if (!$result_requisites) {
+            $result_invoice_deleted = $this->invoice_model->get_where_invoice([
+                'users_id' => $postdata->data->id_users,
+                'delete_marker' => 'true']);
+            $result_invoice = $this->invoice_model->get_where_invoice([
+                'users_id' => $postdata->data->id_users,
+                'delete_marker' => 'false']);
+            $result_invoice_sochi = $this->invoice_sochi_model->get_where_invoice_sochi([
+                'users_id' => $postdata->data->id_users
+            ]);
+            if (count($result_invoice_deleted) >= 0 && count($result_invoice) == 0 && count($result_invoice_sochi) == 0) {
+                $this->invoice_model->delete_invoice($result_invoice_deleted[0]);
+                $this->users_acl_model->delete_users_acl(['users_id' => $postdata->data->id_users]);
                 $this->users_model->delete_users($postdata->data);
                 echo 'Данные успешно удалены.';
             } else {
-                echo 'У пользователя существуют реализованные регистрации.';
+                echo 'У пользователя существуют выданные счета на оплату.';
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -140,7 +155,9 @@ class Admin extends CI_Controller
             }
             foreach ($users_acl as $row_users_acl) {
                 if (array_search($row_users_acl->acl_id, array_column($postdata->data, 'acl_id')) === false) {
-                    $this->users_acl_model->delete_users_acl($row_users_acl);
+                    $this->users_acl_model->delete_users_acl([
+                        'acl_id' => $row_users_acl->acl_id,
+                        'users_id' => $row_users_acl->users_id]);
                 }
             }
             echo 'Привилегии успешно обновлены.';
@@ -286,8 +303,17 @@ class Admin extends CI_Controller
             $postdata->reference == 'get_users_acl' ? $result = $this->users_acl_model->get_users_acl() : null;
             $postdata->reference == 'get_role' ? $result = $this->role_model->get_role() : null;
             $postdata->reference == 'get_distributor' ? $result = $this->distributor_model->get_distributor() : null;
+            $postdata->reference == 'get_files_type' ? $result = $this->files_type_model->get_files_type() : null;
+            $postdata->reference == 'get_files_owner' ? $result = $this->files_owner_model->get_files_owner() : null;
             $postdata->reference == 'get_where_invoice' ? $result = $this->invoice_model->
-            get_where_invoice(['invoice_serial_number' => $postdata->data->invoice_serial_number]) : null;
+            get_where_invoice(['invoice_serial_number' => $postdata->data]) : null;
+            $postdata->reference == 'get_where_requisites' ? $result = $this->requisites_model->
+            get_where_requisites(['requisites_invoice_id' => $postdata->data]) : null;
+            $postdata->reference == 'get_where_files_juridical' ? $result = $this->files_juridical_model->
+            get_where_files_juridical(['requisites_id' => $postdata->data]) : null;
+            $postdata->reference == 'get_where_files_representatives' ? $result = $this->files_representatives_model->
+            get_where_files_representatives(['representative_ident' => $postdata->data]) : null;
+
             echo json_encode($result);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);

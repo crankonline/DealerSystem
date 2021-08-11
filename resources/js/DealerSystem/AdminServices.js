@@ -6,7 +6,10 @@ const admin_reference_type = {
     get_role: 'get_role',
     get_distributor: 'get_distributor',
     get_where_invoice: 'get_where_invoice',
-    get_where_requisites: 'get_where_requisites'
+    get_where_requisites: 'get_where_requisites',
+    get_where_files_juridical: 'get_where_files_juridical',
+    get_files_type: 'get_files_type',
+    get_files_owner: 'get_files_owner'
 };
 
 const admin_service_type = {
@@ -33,7 +36,7 @@ app.service('AdminServices', function ($http) {
     this.loadReference = (reference, data = null) => {
         return $http.post('/index.php/admin/references', {
             reference: reference,
-            data: (data) ? {invoice_serial_number: data} : null
+            data: data
         }).then(response => {
             return response.data;
         }, response => {

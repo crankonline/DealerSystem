@@ -16,7 +16,6 @@ class Users_acl_model extends CI_Model
 
     public function delete_users_acl($data)
     {
-        $this->db->delete('"Dealer_data".users_acl', ['acl_id' => $data->acl_id,
-            'users_id' => $data->users_id]);
+        $this->db->delete('"Dealer_data".users_acl', $data);
     }
 }
