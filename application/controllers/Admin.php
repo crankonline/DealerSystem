@@ -322,4 +322,99 @@ class Admin extends CI_Controller
             echo $ex->getMessage();
         }
     }
+
+    const OwnerJur = 'Juridical';
+    const OwnerRep = 'Representatives';
+    const MediaServiceId = '1';
+
+    public function upload_file($id_req, $id_file_type, $rep_ident)
+    {
+        try {
+            $config['upload_path'] = sys_get_temp_dir() . DIRECTORY_SEPARATOR;
+            $config['allowed_types'] = 'jpg';
+            $this->load->library('upload', $config);
+            $date = date_create();
+            $config['file_name'] = date_timestamp_get($date) . '_' . $id_req . '_' . $id_file_type . '_' . $rep_ident . '.jpg';
+            $this->upload->initialize($config);
+            if (!$this->upload->do_upload('file')) {
+                throw new Exception($this->upload->display_errors());
+            } else {
+//code here     search current img if exits update then insert
+
+                $file_ident = $this->media_upload($config['upload_path'] . $config['file_name'], $config['file_name']);
+                $data_insert = [
+                    'requisites_id' => $id_req,
+                    'filetype_id' => $id_file_type,
+                    'file_ident' => $file_ident];
+
+                $resultFileOwner = $this->files_owner_model->get_files_owner();
+                $resultFileType = $this->files_type_model->get_files_type();
+                $keys_jur = array_keys(array_column($resultFileType, 'file_owner_id'),
+                    $resultFileOwner[array_search(self::OwnerJur, array_column($resultFileOwner, 'name'))]->id_file_owner);
+                $keys_rep = array_keys(array_column($resultFileType, 'file_owner_id'),
+                    $resultFileOwner[array_search(self::OwnerRep, array_column($resultFileOwner, 'name'))]->id_file_owner);
+                if (in_array($id_file_type, $keys_jur)) {
+                    $resultFilesJuridical = $this->files_juridical_model->get_where_files_juridical([
+                        'requisites_id' => $id_req,
+                        'filetype_id' => $id_file_type]);
+                    if (count($resultFilesJuridical) == 0) {
+                        $this->files_juridical_model->insert_files_juridical($data_insert);
+                    } else {
+                        $this->files_juridical_model->update_files_juridical($data_insert);
+                    }
+                } elseif (in_array($id_file_type, $keys_rep)) {
+                    $resultFilesRepresentatives = $this->files_representatives_model->get_where_files_representatives([
+                        'requisites_id' => $id_req,
+                        'filetype_id' => $id_file_type,
+                        'representative_ident' => $rep_ident
+                    ]);
+                    $data_insert += ['representative_ident' => $rep_ident];
+                    if (count($resultFilesRepresentatives) == 0) {
+                        $this->files_representatives_model->insert_files_representatives($data_insert);
+                    } else {
+                        $this->files_representatives_model->update_files_representatives($data_insert);
+                    }
+                }
+                echo json_encode($this->upload->data());
+            }
+        } catch (Exception $ex) {
+            \Sentry\captureException($ex);
+            log_message('error', $ex->getMessage());
+            http_response_code(500);
+            echo $ex->getMessage();
+        }
+    }
+
+    /**
+     * @throws Exception
+     */
+    private function media_upload($path, $posted_filename)
+    {
+        //var_dump($posted_filename);die();
+        $error = 'Ошибка при обращении к медиасерверу: ';
+        $url = getenv('MEDIA_SERVER') . 'file/s';
+        $fields = [
+            'image' => new \CurlFile($path, 'image/jpg', $posted_filename),
+            'service' => self::MediaServiceId
+        ];
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        curl_setopt($ch, CURLINFO_HEADER_OUT, 1);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: multipart/form-data'));
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        $response = curl_exec($ch);
+        unlink($path);
+        if ($response === false) {
+            throw new Exception($error . curl_error($ch));
+        } else {
+            if (isset(json_decode($response)->fileName)) {
+                return json_decode($response)->fileName;
+            } else {
+                throw new Exception($error . ' сервер вернул не действительное значение');
+            }
+        }
+    }
 }

@@ -22,7 +22,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
                 </div>
                 <p align="center" ng-hide="searchInvoiceNumber.length != 16">
-                    <button type="submit"
+                    <button type="button"
                             class="btn btn-success"
                             ng-click="searchMediaData(searchInvoiceNumber)">
                         <span class="glyphicon glyphicon-search"></span>
@@ -81,33 +81,21 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                ngf-min-height="100">
                     </div>
                     <hr/>
-                    <p align="center" ng-show="dataFileSelected!=null">
-                        <button type="submit"
+                    <p align="center" ng-show="dataFileSelected != null">
+                        <button type="button"
                                 class="btn btn-success"
-                                ng-click="searchMediaData(uploadFile())">
+                                ng-click="uploadFile()">
                             <span class="glyphicon glyphicon-upload"></span>
                             Загрузить
                         </button>
                     </p>
-                    <!--                    <div ng-hide="">-->
-                    <!--                        <div ng-repeat="file in Files_type | filter: 'Juridical' as results track by file.id_file_type">-->
-                    <!--                            <strong>{{file.id_file_type}} - {{file.name}}</strong>-->
-                    <!--                            <input type="file" class="form-control" ng-model="files">-->
-                    <!--                        </div>-->
-                    <!--                    </div>-->
-                    <!--                    <hr/>-->
-                    <!--                    <div ng-hide="" ng-repeat="rep in Invoice.Requisites.json.common.representatives">-->
-                    <!--                        <div>-->
-                    <!--                            <strong>Паспорт</strong> {{rep.person.passport.series + rep.person.passport.number}}-->
-                    <!--                        </div>-->
-                    <!--                        <div>-->
-                    <!--                            <strong>ФИО</strong> {{rep.person.surname}} {{rep.person.name}} {{rep.person.middleName}}-->
-                    <!--                        </div>-->
-                    <!--                        <div ng-repeat="file in Files_type | filter: 'Representatives' as results track by file.id_file_type">-->
-                    <!--                            <strong>{{file.id_file_type}} - {{file.name}}</strong>-->
-                    <!--                        </div>-->
-                    <!--                        <p></p>-->
-                    <!--                    </div>-->
+                    <div class="progress progress-striped active" ng-hide="!progress || progress == 100">
+                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="0"
+                             aria-valuemin="0"
+                             aria-valuemax="100" style="width: {{progress}}%">
+                            <span class="sr-only">{{progress}}%</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         <?php endif; ?>

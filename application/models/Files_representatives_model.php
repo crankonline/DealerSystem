@@ -11,7 +11,9 @@ class Files_representatives_model extends CI_Model
 
     public function update_files_representatives($data)
     {
-        $this->db->where('requisites_id', $data->id_users);
+        $this->db->where('requisites_id', $data['requisites_id']);
+        $this->db->where('filetype_id', $data['filetype_id']);
+        $this->db->where('representative_ident', $data['representative_ident']);
         $this->db->update('"Dealer_images".files_representatives', $data);
     }
 

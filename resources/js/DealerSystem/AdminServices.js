@@ -17,20 +17,27 @@ const admin_service_type = {
     saveUsers: 'save_users',
     deleteUsers: 'delete_users',
     saveDistributor: 'save_distributor',
-    deleteDistributor: 'delete_distributor'
+    deleteDistributor: 'delete_distributor',
+    uploadFile: 'upload_file'
 }
 
-app.service('AdminServices', function ($http) {
+app.service('AdminServices', function ($http, Upload) {
 
     this.callServices = (url_part, data) => {
-        return $http.post('/index.php/admin/' + url_part, {
-            data: data
-        }).then(response => {
-            return response.data
-        }, response => {
-            console.log('Error: ' + response.data);
-        });
-
+        if (url_part == admin_service_type.uploadFile) {
+            return Upload.upload({
+                url: '/index.php/admin/' + url_part + '/' + data.id_requisites + '/' + data.id_file_type + '/'+ data.rep_ident,
+                file: data.file
+            });
+        } else {
+            return $http.post('/index.php/admin/' + url_part, {
+                data: data
+            }).then(response => {
+                return response.data
+            }, response => {
+                console.log('Error: ' + response.data);
+            });
+        }
     }
 
     this.loadReference = (reference, data = null) => {

@@ -11,7 +11,8 @@ class Files_juridical_model extends CI_Model
 
     public function update_files_juridical($data)
     {
-        $this->db->where('requisites_id', $data->id_users);
+        $this->db->where('requisites_id', $data['requisites_id']);
+        $this->db->where('filetype_id', $data['filetype_id']);
         $this->db->update('"Dealer_images".files_juridical', $data);
     }
 
