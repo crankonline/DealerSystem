@@ -17,6 +17,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <div class="panel-body">
                     <strong>Поиск по номеру счета на оплату.</strong>
                     <input type="text"
+                           numbers-only
                            class="form-control"
                            ng-model="searchInvoiceNumber">
 
