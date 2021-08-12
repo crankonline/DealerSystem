@@ -26,17 +26,13 @@ app.service('AdminServices', function ($http, Upload) {
     this.callServices = (url_part, data) => {
         if (url_part == admin_service_type.uploadFile) {
             return Upload.upload({
-                url: '/index.php/admin/' + url_part + '/' + data.id_requisites + '/' + data.id_file_type + '/'+ data.rep_ident,
+                url: '/index.php/admin/' + url_part + '/' + data.id_requisites + '/' + data.id_file_type + '/' + data.rep_ident,
                 file: data.file
             });
         } else {
             return $http.post('/index.php/admin/' + url_part, {
                 data: data
-            }).then(response => {
-                return response.data
-            }, response => {
-                console.log('Error: ' + response.data);
-            });
+            }).then(response => response.data, response => console.log('Error: ' + response.data));
         }
     }
 
@@ -44,10 +40,6 @@ app.service('AdminServices', function ($http, Upload) {
         return $http.post('/index.php/admin/references', {
             reference: reference,
             data: data
-        }).then(response => {
-            return response.data;
-        }, response => {
-            console.log('Error: ' + response.data);
-        });
+        }).then(response => response.data, response => console.log('Error: ' + response.data));
     }
 });

@@ -3,12 +3,15 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class Admin extends CI_Controller
 {
+    const OwnerJur = 'Juridical';
+    const OwnerRep = 'Representatives';
+    const MediaServiceId = '1';
+
     public function __construct()
     {
         parent::__construct();
-        //isset($this->session->userdata['logged_in']) ?? redirect('/'); //php 7.0
-        isset($this->session->userdata['logged_in']) ? $this->session->userdata['logged_in'] : redirect('/'); //php 5.6
-        $this->session->userdata['logged_in']['UserID'] != 5 ? redirect('/dash/news') : null; //Не админам тут делать нечего
+        if (!isset($this->session->userdata['logged_in'])) redirect('/');
+        if ($this->session->userdata['logged_in']['UserID'] != 5) redirect('/dash/news'); //Не админам тут делать нечего
         $this->load->model('price_model');
         $this->load->model('acl_model');
         $this->load->model('users_acl_model');
@@ -298,22 +301,21 @@ class Admin extends CI_Controller
         try {
             $result = null;
             $postdata = json_decode(file_get_contents("php://input"));
-            $postdata->reference == 'get_users' ? $result = $this->users_model->get_users() : null;
-            $postdata->reference == 'get_acl' ? $result = $this->acl_model->get_acl() : null;
-            $postdata->reference == 'get_users_acl' ? $result = $this->users_acl_model->get_users_acl() : null;
-            $postdata->reference == 'get_role' ? $result = $this->role_model->get_role() : null;
-            $postdata->reference == 'get_distributor' ? $result = $this->distributor_model->get_distributor() : null;
-            $postdata->reference == 'get_files_type' ? $result = $this->files_type_model->get_files_type() : null;
-            $postdata->reference == 'get_files_owner' ? $result = $this->files_owner_model->get_files_owner() : null;
-            $postdata->reference == 'get_where_invoice' ? $result = $this->invoice_model->
-            get_where_invoice(['invoice_serial_number' => $postdata->data]) : null;
-            $postdata->reference == 'get_where_requisites' ? $result = $this->requisites_model->
-            get_where_requisites(['requisites_invoice_id' => $postdata->data]) : null;
-            $postdata->reference == 'get_where_files_juridical' ? $result = $this->files_juridical_model->
-            get_where_files_juridical(['requisites_id' => $postdata->data]) : null;
-            $postdata->reference == 'get_where_files_representatives' ? $result = $this->files_representatives_model->
-            get_where_files_representatives(['representative_ident' => $postdata->data]) : null;
-
+            if ($postdata->reference == 'get_users') $result = $this->users_model->get_users();
+            if ($postdata->reference == 'get_acl') $result = $this->acl_model->get_acl();
+            if ($postdata->reference == 'get_users_acl') $result = $this->users_acl_model->get_users_acl();
+            if ($postdata->reference == 'get_role') $result = $this->role_model->get_role();
+            if ($postdata->reference == 'get_distributor') $result = $this->distributor_model->get_distributor();
+            if ($postdata->reference == 'get_files_type') $result = $this->files_type_model->get_files_type();
+            if ($postdata->reference == 'get_files_owner') $result = $this->files_owner_model->get_files_owner();
+            if ($postdata->reference == 'get_where_invoice') $result = $this->invoice_model->
+            get_where_invoice(['invoice_serial_number' => $postdata->data]);
+            if ($postdata->reference == 'get_where_requisites') $result = $this->requisites_model->
+            get_where_requisites(['requisites_invoice_id' => $postdata->data]);
+            if ($postdata->reference == 'get_where_files_juridical') $result = $this->files_juridical_model->
+            get_where_files_juridical(['requisites_id' => $postdata->data]);
+            if ($postdata->reference == 'get_where_files_representatives') $result = $this->files_representatives_model->
+            get_where_files_representatives(['representative_ident' => $postdata->data]);
             echo json_encode($result);
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -322,10 +324,6 @@ class Admin extends CI_Controller
             echo $ex->getMessage();
         }
     }
-
-    const OwnerJur = 'Juridical';
-    const OwnerRep = 'Representatives';
-    const MediaServiceId = '1';
 
     public function upload_file($id_req, $id_file_type, $rep_ident)
     {
@@ -336,15 +334,12 @@ class Admin extends CI_Controller
             $date = date_create();
             $config['file_name'] = date_timestamp_get($date) . '_' . $id_req . '_' . $id_file_type . '_' . $rep_ident . '.jpg';
             $this->upload->initialize($config);
-            if (!$this->upload->do_upload('file')) {
-                throw new Exception($this->upload->display_errors());
-            } else {
+            if ($this->upload->do_upload('file')) {
                 $file_ident = $this->media_upload($config['upload_path'] . $config['file_name'], $config['file_name']);
                 $data_insert = [
                     'requisites_id' => $id_req,
                     'filetype_id' => $id_file_type,
                     'file_ident' => $file_ident];
-
                 $resultFileOwner = $this->files_owner_model->get_files_owner();
                 $resultFileType = $this->files_type_model->get_files_type();
                 $keys_jur = array_keys(array_column($resultFileType, 'file_owner_id'),
@@ -374,6 +369,8 @@ class Admin extends CI_Controller
                     }
                 }
                 echo json_encode($this->upload->data());
+            } else {
+                throw new Exception($this->upload->display_errors());
             }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -388,7 +385,6 @@ class Admin extends CI_Controller
      */
     private function media_upload($path, $posted_filename)
     {
-        //var_dump($posted_filename);die();
         $error = 'Ошибка при обращении к медиасерверу: ';
         $url = getenv('MEDIA_SERVER') . 'file/s';
         $fields = [
@@ -405,14 +401,10 @@ class Admin extends CI_Controller
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
         $response = curl_exec($ch);
         unlink($path);
-        if ($response === false) {
-            throw new Exception($error . curl_error($ch));
+        if (!$response || isset(json_decode($response)->fileName)) {
+            return json_decode($response)->fileName;
         } else {
-            if (isset(json_decode($response)->fileName)) {
-                return json_decode($response)->fileName;
-            } else {
-                throw new Exception($error . ' сервер вернул не действительное значение');
-            }
+            throw new Exception($error . curl_error($ch));
         }
     }
 }

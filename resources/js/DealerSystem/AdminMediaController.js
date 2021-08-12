@@ -4,11 +4,11 @@ app.controller('AdminMediaController', ['$scope', '$http', 'orderByFilter', 'Adm
 
         $scope.searchMediaData = data => {
             AdminServices.loadReference(admin_reference_type.get_where_invoice, data).then(resultInvoice => {
-                if (resultInvoice[0] != undefined) {
+                if (resultInvoice[0]) {
                     $scope.Invoice = resultInvoice[0];
                     AdminServices.loadReference(admin_reference_type.get_where_requisites, resultInvoice[0].id_invoice)
                         .then(resultRequisites => {
-                            if(resultRequisites[0] != undefined) {
+                            if(resultRequisites[0]) {
                                 $scope.Invoice.Requisites = resultRequisites[0];
                                 $scope.Invoice.Requisites.json = JSON.parse($scope.Invoice.Requisites.json);
                                 $scope.dataRepresentatives = $scope.Invoice.Requisites.json.common.representatives;
@@ -31,11 +31,10 @@ app.controller('AdminMediaController', ['$scope', '$http', 'orderByFilter', 'Adm
                 file: $scope.dataFileSelected
             }).then(result => {
                 alert('Файл ' + result.data.client_name + 'сохранен.');
-                //location.reload();
+                location.reload();
             }, result => {
                 alert('Ошибка: ' + result.data);
             }, evt => {
-                console.log(Math.min(100, parseInt(100.0 * evt.loaded / evt.total)));
                 $scope.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
             });
         }
