@@ -339,8 +339,6 @@ class Admin extends CI_Controller
             if (!$this->upload->do_upload('file')) {
                 throw new Exception($this->upload->display_errors());
             } else {
-//code here     search current img if exits update then insert
-
                 $file_ident = $this->media_upload($config['upload_path'] . $config['file_name'], $config['file_name']);
                 $data_insert = [
                     'requisites_id' => $id_req,
