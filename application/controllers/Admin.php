@@ -1,6 +1,26 @@
 <?php
+
 defined('BASEPATH') or exit('No direct script access allowed');
 
+use function Sentry\captureException;
+
+/**
+ * @property CI_Session $session                  Session Class
+ * @property CI_Upload $upload                    File Uploading Class
+ * @property  users_model $users_model
+ * @property  invoice_model $invoice_model
+ * @property  invoice_sochi_model $invoice_sochi_model
+ * @property  users_acl_model $users_acl_model
+ * @property  distributor_model $distributor_model
+ * @property  price_model $price_model
+ * @property  acl_model $acl_model
+ * @property  role_model $role_model
+ * @property  files_type_model $files_type_model
+ * @property  files_owner_model $files_owner_model
+ * @property  files_juridical_model $files_juridical_model
+ * @property  requisites_model $requisites_model
+ * @property  files_representatives_model $files_representatives_model
+ */
 class Admin extends CI_Controller
 {
     const OwnerJur = 'Juridical';
@@ -30,7 +50,7 @@ class Admin extends CI_Controller
     private function viewConstructor($view, $data)
     {
         $this->load->view('template/header');
-        $this->load->view('template/admin/menu', $this->session->userdata['logged_in']); //взависимости от авторизации
+        $this->load->view('template/admin/menu', $this->session->userdata['logged_in']); //в зависимости от авторизации
         $this->load->view('template/admin/' . $view, $data); //в зависимости от авторизации (может и не надо)
         $this->load->view('template/footer');
     }
@@ -41,7 +61,7 @@ class Admin extends CI_Controller
             $data = null;
 
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -54,7 +74,7 @@ class Admin extends CI_Controller
             $data = null;
 
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -66,7 +86,7 @@ class Admin extends CI_Controller
         try {
             $data = null;
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -78,7 +98,7 @@ class Admin extends CI_Controller
         try {
             $data = null;
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -99,7 +119,7 @@ class Admin extends CI_Controller
             }
             echo 'Данные пользователя успешно обновлены.';
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -131,7 +151,7 @@ class Admin extends CI_Controller
                 echo 'У пользователя существуют выданные счета на оплату.';
             }
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -165,7 +185,7 @@ class Admin extends CI_Controller
             }
             echo 'Привилегии успешно обновлены.';
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -177,7 +197,7 @@ class Admin extends CI_Controller
         try {
             $data = null;
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -189,7 +209,7 @@ class Admin extends CI_Controller
         try {
             $data = null;
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -205,7 +225,7 @@ class Admin extends CI_Controller
             }
             $this->price_model->update($postdata);
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -218,7 +238,7 @@ class Admin extends CI_Controller
             $data = null;
 
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -231,7 +251,7 @@ class Admin extends CI_Controller
             $data = null;
 
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -244,7 +264,7 @@ class Admin extends CI_Controller
             $data = null;
 
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             $data['error_message'] = $ex->getMessage();
         }
@@ -267,7 +287,7 @@ class Admin extends CI_Controller
             }
             echo 'Данные успешно обновлены.';
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -289,7 +309,7 @@ class Admin extends CI_Controller
                 echo 'У дистрибьютора существуют пользователи.';
             }
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -318,7 +338,7 @@ class Admin extends CI_Controller
             get_where_files_representatives(['representative_ident' => $postdata->data]);
             echo json_encode($result);
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -373,7 +393,7 @@ class Admin extends CI_Controller
                 throw new Exception($this->upload->display_errors());
             }
         } catch (Exception $ex) {
-            \Sentry\captureException($ex);
+            captureException($ex);
             log_message('error', $ex->getMessage());
             http_response_code(500);
             echo $ex->getMessage();
@@ -385,10 +405,10 @@ class Admin extends CI_Controller
      */
     private function media_upload($path, $posted_filename)
     {
-        $error = 'Ошибка при обращении к медиасерверу: ';
+        $error = 'Ошибка при обращении к медиа серверу: ';
         $url = getenv('MEDIA_SERVER') . 'file/s';
         $fields = [
-            'image' => new \CurlFile($path, 'image/jpg', $posted_filename),
+            'image' => new CurlFile($path, 'image/jpg', $posted_filename),
             'service' => self::MediaServiceId
         ];
         $ch = curl_init($url);
