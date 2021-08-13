@@ -575,7 +575,7 @@ SQL;
     }
 
     public function get_where_requisites($data){
-        return $this->db->get_where('"Dealer_data".invoice', $data)->result();
+        return $this->db->get_where('"Dealer_data".requisites', $data)->result();
     }
 
 }
