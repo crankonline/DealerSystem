@@ -35,7 +35,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                            class="form-control"
                            numbers-only
                            ng-model="dataDistributorSelect.sti_code">
-                    <strong>Ройон налоговой текстом</strong>
+                    <strong>Район налоговой текстом</strong>
                     <input type="text"
                            class="form-control"
                            ng-model="dataDistributorSelect.sti_region">
