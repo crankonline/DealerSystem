@@ -143,7 +143,9 @@ class Admin extends CI_Controller
                 'users_id' => $postdata->data->id_users
             ]);
             if (count($result_invoice_deleted) >= 0 && count($result_invoice) == 0 && count($result_invoice_sochi) == 0) {
-                $this->invoice_model->delete_invoice($result_invoice_deleted[0]);
+                if (count($result_invoice_deleted)) {
+                    $this->invoice_model->delete_invoice($result_invoice_deleted[0]);
+                }
                 $this->users_acl_model->delete_users_acl(['users_id' => $postdata->data->id_users]);
                 $this->users_model->delete_users($postdata->data);
                 echo 'Данные успешно удалены.';
