@@ -29,7 +29,6 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         };
 
         $scope.filterItems = function (key) {
-            console.log(key);
             if ($scope.enteredPin[key] != null) {
                 if ($scope.minlength <= $scope.enteredPin[key].length) {
                     let queryPromise = querySearch($scope.enteredPin[key]);
@@ -68,7 +67,10 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
                 if (!($scope.choices == "null")) {
                     return $scope.choices.filter(createFilterFor(query));
                 } else {
-                    return [];
+                    return [{
+                        fio: 'Ничего не найдено',
+                        pin: query
+                    }];
                 }
             }, function (response) {
                 console.log("Error: " + response.data);

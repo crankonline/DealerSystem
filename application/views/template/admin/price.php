@@ -79,4 +79,5 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <?php endif; ?>
     </div>
 </div>
+<script src="<?php echo base_url("resources/js/DealerSystem/AdminServices.js"); ?>"></script>
 <script src="<?php echo base_url("resources/js/DealerSystem/AdminPriceController.js"); ?>"></script>

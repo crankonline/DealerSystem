@@ -92,4 +92,8 @@ class Invoice_sochi_model extends CI_Model
             $this->db->where('users.id_users', $this->session->userdata['logged_in']['UserID']);//->
         return $this->db->count_all_results('"Dealer_data".invoice_sochi');
     }
+
+    public function get_where_invoice_sochi($data){
+        return $this->db->get_where('"Dealer_data".invoice_sochi', $data)->result();
+    }
 }

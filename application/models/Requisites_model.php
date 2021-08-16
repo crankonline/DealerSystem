@@ -574,4 +574,8 @@ SQL;
         order_by('filetype_id')->get()->result();
     }
 
+    public function get_where_requisites($data){
+        return $this->db->get_where('"Dealer_data".requisites', $data)->result();
+    }
+
 }
