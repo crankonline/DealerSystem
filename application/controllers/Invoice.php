@@ -111,7 +111,7 @@ class Invoice extends CI_Controller
             }
             $data['invoice_data'] = $InvoiceData;
             $data['pay_log'] = $this->invoice_model->pay_log($InvoiceSerialNumber);
-            $data['eds_count']=$this->requisites_model->get_invoice_data_by_id($InvoiceData[0]->id_invoice)->eds_count;
+            $data['eds_count'] = $this->requisites_model->get_invoice_data_by_id($InvoiceData[0]->id_invoice)->eds_count;
             $data['message'] = $message;
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
@@ -179,12 +179,15 @@ class Invoice extends CI_Controller
         try {
             $postdata = file_get_contents("php://input");
             $request = json_decode($postdata);
-            $request->reference == 'price' ? $result = $this->price_model->get_price() : NULL;
-            $request->reference == 'inn' ? $result = $this->invoice_model->get_companyname_by_inn($request->id) : NULL;
-            $request->reference == 'count_eds' ? $result = $this->requisites_model->get_invoice_data_by_id($request->id) : null;
-            $request->reference == 'search_rep_by_pin' ? $result = $this->requisites_model->get_rep_by_pin($request->id) : null;
-            $request->reference == 'insert_session_data' ? $result = $this->insert_session_data($request->id) : null;
-            echo json_encode($result);
+            if ($request->reference == 'price') $result = $this->price_model->get_price();
+            if ($request->reference == 'inn') $result = $this->invoice_model->get_companyname_by_inn($request->id);
+            if ($request->reference == 'count_eds') $result = $this->requisites_model->get_invoice_data_by_id($request->id);
+            if ($request->reference == 'search_rep_by_pin') $result = $this->requisites_model->get_rep_by_pin($request->id);
+            if ($request->reference == 'insert_session_data') $result = $this->insert_session_data($request->id);
+            if ($request->reference == 'get_requisites_by_inn') $result = $this->requisites_model->get_requisites_by_inn($request->inn);
+            if (isset($result)) {
+                echo json_encode($result);
+            }
         } catch (Exception $ex) {
             \Sentry\captureException($ex);
             log_message('error', $ex->getMessage());

@@ -19,6 +19,8 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
         $scope.minlength = 5;
         $scope.selected = {};
 
+        $scope.representatives = '';
+
         $scope.range = function (min, max, step) {
             step = step || 1;
             let input = [];
@@ -61,18 +63,26 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
             return $http.post('/index.php/invoice/invoice_reference', {
                 reference: 'search_rep_by_pin',
                 id: query
-            }).then(function (response) {
-                $scope.choices = response.data;
-                $scope.items = $scope.choices;
-                if (!($scope.choices == "null")) {
-                    return $scope.choices.filter(createFilterFor(query));
-                } else {
-                    return [{
-                        fio: 'Ничего не найдено',
-                        pin: query
-                    }];
+            }).then(response => {
+                let dataEmpty = [{
+                    fio: 'Ничего не найдено',
+                    pin: query
+                }];
+                if (response.data === '' && $scope.representatives !== '') {
+                    response.data = $scope.representatives
                 }
-            }, function (response) {
+                if (response.data === '' && $scope.representatives === '') {
+                    response.data = dataEmpty;
+                }
+                $scope.choices = response.data
+                $scope.items = response.data;
+                let filterResult = $scope.choices.filter(createFilterFor(query));
+                if (filterResult.length == 0) {
+                    return dataEmpty;
+                } else {
+                    return filterResult;
+                }
+            }, response => {
                 console.log("Error: " + response.data);
                 return [];
             });
@@ -117,4 +127,23 @@ app.controller('InvoiceShowController', ['$scope', '$http', '$cookies', 'shareDa
                 window.location.href = '/index.php/requisites/requisites_create_view/' + id_invoice;
             }
         }
+
+        $scope.getRequisites = () => {
+            $http.post('/index.php/invoice/invoice_reference', {
+                reference: 'get_requisites_by_inn',
+                inn: inn
+            }).then(response => {
+                angular.forEach(response.data.common.representatives, rep => {
+                    let middleName = (rep.person.middleName !== null) ? rep.person.middleName : '';
+                    $scope.representatives.push({
+                        fio: rep.person.surname + ' ' + rep.person.name + ' ' + middleName,
+                        pin: rep.person.pin
+                    })
+                });
+            }, response => {
+                console.log('Error: ' + response.data);
+            });
+        }
+
+        $scope.getRequisites();
     }]);
