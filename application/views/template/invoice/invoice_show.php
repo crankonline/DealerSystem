@@ -362,5 +362,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 <script type="text/javascript">
     let eds_count = <?php echo $eds_count; ?>;
-    let id_invoice = <?php echo $invoice_data[0]->id_invoice; ?>
+    let id_invoice = <?php echo $invoice_data[0]->id_invoice; ?>;
+    let inn = <?php echo $invoice_data[0]->inn;?>;
 </script>

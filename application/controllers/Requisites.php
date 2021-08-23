@@ -82,13 +82,13 @@ class Requisites extends CI_Controller
         $physicalAddressText = implode(', ', $physicalAddressChecked);
 
 
-        $leader = "";
-        $leaderpasport = "";
-        $leadertelephone = "";
-        $leaderposition = "";
-        $accountant = "";
-        $accountantpasport = "";
-        $accountantphone = "";
+        $leader = null;
+        $leaderpasport = null;
+        $leadertelephone = null;
+        $leaderposition = null;
+        $accountant = null;
+        $accountantpasport = null;
+        $accountantphone = null;
         foreach ($json->common->representatives as $key => $rep) {
             foreach ($rep->roles as $role) {
                 if ($role->id == 1) {
@@ -133,6 +133,7 @@ class Requisites extends CI_Controller
         $json_register->position = $leaderposition;
         $json_register->leadertelephone = $leadertelephone;
         $json_register->leadermail = $json->common->eMail;
+        $json_register->fullname = $json->common->fullName;
         $json_register->accountant = $accountant;
         $json_register->accountantpasport = $accountantpasport;
         $json_register->accountantmail = $json->common->eMail;
