@@ -133,6 +133,7 @@ class Requisites extends CI_Controller
         $json_register->position = $leaderposition;
         $json_register->leadertelephone = $leadertelephone;
         $json_register->leadermail = $json->common->eMail;
+        $json_register->fullname = $json->common->fullName;
         $json_register->accountant = $accountant;
         $json_register->accountantpasport = $accountantpasport;
         $json_register->accountantmail = $json->common->eMail;
