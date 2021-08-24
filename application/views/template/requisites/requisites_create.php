@@ -690,9 +690,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
                             </tr>
                             <tr>
                                 <td style="width: 266px">Серия паспорта ( <input type="checkbox"
-                                                                                 ng-checked="Data.common.representatives[key].person.passport.series === 'N/A'"
                                                                                  ng-model="checkbox_passport_series[key]"
-                                                                                 ng-click="!checkbox_passport_series[key] ?
+                                                                                 ng-init="checkbox_passport_series[key] =
+                                                                                 Data.common.representatives[key].person.passport.series !== 'N/A' ? true : false"
+                                                                                 ng-change="!checkbox_passport_series[key] ?
                                                                         Data.common.representatives[key].person.passport.series = 'N/A' :
                                                                         Data.common.representatives[key].person.passport.series = ''">
                                     Серия присутствует)
@@ -707,7 +708,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                            required=""
                                            upper-case
                                            passport-only
-                                           ng-readonly="checkbox_passport_series[key]"
+                                           ng-readonly="!checkbox_passport_series[key]"
                                            ng-model="Data.common.representatives[key].person.passport.series"
                                            ng-change="Get_person(Data.common.representatives[key].person.passport.series, Data.common.representatives[key].person.passport.number, key)"
                                            ng-class="{'alert-danger': !ReqCreateForm.data_common_representatives{{key}}_person_passport_series.$valid}">
