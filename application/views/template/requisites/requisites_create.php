@@ -689,13 +689,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                 <td colspan="2" align="center">Паспортные данные</td>
                             </tr>
                             <tr>
-                                <td style="width: 266px">Серия паспорта ( <input type="checkbox"
-                                                                                 ng-model="checkbox_passport_series[key]"
-                                                                                 ng-init="checkbox_passport_series[key] =
-                                                                                 Data.common.representatives[key].person.passport.series !== 'N/A' ? true : false"
-                                                                                 ng-change="!checkbox_passport_series[key] ?
-                                                                        Data.common.representatives[key].person.passport.series = 'N/A' :
-                                                                        Data.common.representatives[key].person.passport.series = ''">
+                                <td style="width: 266px">Серия паспорта (
+                                    <input type="checkbox"
+                                           ng-model="checkbox_passport_series[key]"
+                                           ng-init="checkbox_passport_series[key] = Data.common.representatives[key].person.passport.series !== 'N/A'"
+                                           ng-change="!checkbox_passport_series[key] ? Data.common.representatives[key].person.passport.series = 'N/A' :
+                                           Data.common.representatives[key].person.passport.series = ''">
                                     Серия присутствует)
                                 </td>
                                 <td>
