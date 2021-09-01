@@ -458,15 +458,11 @@ class Requisites extends CI_Controller
                 $sf_data = null;
                 $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ 
                 $mu_data = $this->requisites_model->get_mu_reference($data['invoice_data']->inn); //поиск в МЮ
-                if (is_array($sf_inninfo)) {
-                    foreach ($sf_inninfo as $value) {
-                        if ($value->PayerState == 'Действующие') {
-                            $value->PayerName = $value->PayerName;
-                            $sf_data = $value;
-                        }
+                foreach ($sf_inninfo as $value) {
+                    if ($value->PayerState == 'Действующие') {
+                        $value->PayerName = $value->PayerName;
+                        $sf_data = $value;
                     }
-                } else {
-                    $sf_data = $sf_inninfo;
                 }
                 if (isset($sf_data->RateType)) {
                     $tariffSf = $this->tariffsf->remapTariffSF($sf_data->RateType);
