@@ -15,6 +15,7 @@ class Requisites extends CI_Controller
         $this->load->model('invoice_model'); //в меню есть запросы
 
         $this->load->library('pagination');
+        $this->load->library('tariffsf');
     }
 
     private $per_page = 20;
@@ -454,18 +455,23 @@ class Requisites extends CI_Controller
                 }
                 $data['message'] = "Данные загружены из предыдущей регистрации. Свертесь с документами!!!";
             } else {// если нет нигде берем из внешних источников
+                $sf_data = null;
                 $sf_inninfo = $this->requisites_model->get_sf_reference($data['invoice_data']->inn); //поиск в СФ 
                 $mu_data = $this->requisites_model->get_mu_reference($data['invoice_data']->inn); //поиск в МЮ
                 if (is_array($sf_inninfo)) {
                     foreach ($sf_inninfo as $value) {
                         if ($value->PayerState == 'Действующие') {
-                            $value->PayerName = htmlspecialchars($value->PayerName);
+                            $value->PayerName = $value->PayerName;
                             $sf_data = $value;
                         }
                     }
                 } else {
                     $sf_data = $sf_inninfo;
                 }
+                if (isset($sf_data->RateType)) {
+                    $tariffSf = $this->tariffsf->remapTariffSF($sf_data->RateType);
+                }
+
                 $requisites = new stdClass();
                 $requisites->common = new stdClass();
                 $requisites->common->inn = $data['invoice_data']->inn;
@@ -479,6 +485,11 @@ class Requisites extends CI_Controller
                 $requisites->common->juristicAddress = new stdClass();
                 $requisites->common->physicalAddress = $requisites->common->juristicAddress;
                 $requisites->common->representatives = array();
+                $requisites->sf = new stdClass();
+                $requisites->sf->tariff = new stdClass();
+                $requisites->sf->tariff->id = isset($tariffSf) ? $tariffSf : "''";
+                $requisites->sf->region = new stdClass();
+                $requisites->sf->region->id = isset($sf_data->DepartmentCode) ? $sf_data->DepartmentCode : "''";
 
                 $data['requisites_json'] = $requisites; // переделать  нахрен!!!
                 $data['message'] = "Это новая организация, внимательно внесите данные!!!";
@@ -517,7 +528,7 @@ class Requisites extends CI_Controller
             $request = json_decode($postdate);
             $Dumpfile = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $request->file_ident;
             $imageUrl = getenv('MEDIA_SERVER') . 'file/download/' . $request->file_ident .
-                ( !isset($request->large) ? '?w=350&h=&f=center' : '');
+                (!isset($request->large) ? '?w=350&h=&f=center' : '');
             file_put_contents($Dumpfile, fopen($imageUrl, 'r'));
             echo 'data:image/jpeg;base64,' . base64_encode(file_get_contents($Dumpfile));
         } catch (Exception $ex) {

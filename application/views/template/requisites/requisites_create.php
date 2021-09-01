@@ -43,7 +43,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                        name="data_common_okpo"
                                        class="form-control"
                                        placeholder="8 цифр"
-                                       minlength="6" maxlength="8"
+                                       minlength="7" maxlength="8"
                                        required=""
                                        numbers-only
                                        ng-model="Data.common.okpo"
@@ -1087,6 +1087,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                     <span class="sr-only">{{progressphy}}%</span>
                 </div>
             </div>
+        </div>
+        <div align="center" ng-show="!toggle">
+            <img src="<?php echo base_url('resources/img/Iphone-spinner-2.gif'); ?>" class="img-circle">
         </div>
     <?php endif; ?>
 </div>
