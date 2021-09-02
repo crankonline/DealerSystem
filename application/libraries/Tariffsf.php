@@ -2,9 +2,9 @@
 
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class TariffSf
+class Tariffsf
 {
-    protected $tariffSf = array(
+    public $tariffSf = array(
         array(
             'value' => 1,
             'name' => 'ОСН'
