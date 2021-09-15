@@ -63,9 +63,12 @@ class Requisites_model extends CI_Model
     {
         $wsdl = getenv('ELEED');
         $options = [
-            'trace' => TRUE,
-            'exceptions' => TRUE,
-            'connection_timeout' => 5
+            'soap_version' => SOAP_1_1,
+            'exceptions' => true,
+            'trace' => 1,
+            'cache_wsdl' => WSDL_CACHE_NONE,
+            'compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP,
+            'connection_timeout' => 10
         ];
         return new SoapClient($wsdl, $options);
     }
@@ -216,12 +219,15 @@ class Requisites_model extends CI_Model
     {
         try {
             $client = $this->sf_inninfo();
-            $result = $client->GetPayersInfo((object)['SearchField' => 'INN', 'values' => [$inn]])->GetPayersInfoResult;
-            if (!isset($result->PayerInfo)) {
-                return [];
-            } else {
-                return $result->PayerInfo;
+            $result = $client->GetPayersInfo((object)['searchField' => 'INN', 'values' => [$inn]]);
+
+            $result = is_object($result->PayerInfo) ? [$result->PayerInfo] : $result->PayerInfo;
+            if (empty($result) || !isset($result[0]->PayerName)) {
+                $result = [];
             }
+
+            return $result;
+
         } catch (SoapFault $ex) {
             log_message('error', 'Запрос в службу социального фонда -> ' . $ex->getMessage());
             \Sentry\captureException($ex);
@@ -487,7 +493,7 @@ SQL;
         select id_inventory
         from "Dealer_data".inventory
         join "Dealer_data".inventory_type on inventory.inventory_type_id = inventory_type.id_inventory_type
-        where inventory_type_id ='. self::inventory_type_eds .'))),\'0\') AS eds_count')->
+        where inventory_type_id =' . self::inventory_type_eds . '))),\'0\') AS eds_count')->
         from('"Dealer_data".invoice')->
         where(array('id_invoice' => $id_invoice))->get()->row();
     }
@@ -574,7 +580,8 @@ SQL;
         order_by('filetype_id')->get()->result();
     }
 
-    public function get_where_requisites($data){
+    public function get_where_requisites($data)
+    {
         return $this->db->get_where('"Dealer_data".requisites', $data)->result();
     }
 

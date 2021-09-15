@@ -20,7 +20,7 @@ class Invoice_sochi extends CI_Controller
 
     private function pagination_gen()
     {
-        $config['base_url'] = base_url() . '/invoice_sochi/invoice_list_view/';
+        $config['base_url'] = base_url() . '/index.php/invoice_sochi/invoice_list_view/';
         $config['per_page'] = $this->per_page;
         $config['num_links'] = 10;
         $config['num_tag_open'] = '<li>';
